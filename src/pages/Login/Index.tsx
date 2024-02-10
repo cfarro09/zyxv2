@@ -45,7 +45,7 @@ export default function SignIn() {
 
         // const token = await recaptchaRef?.current?.executeAsync();
         // setshowError(true);
-        dispatch(login("", ""));
+        dispatch(login(data.get("username") + "", data.get("password") + ""));
         // console.log({
         //     email: data.get('email'),
         //     password: data.get('password'),

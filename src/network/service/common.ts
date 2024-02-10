@@ -4,8 +4,7 @@ import { APIManager } from '../manager';
 import { removeAuthorizationToken } from "common/helpers";
 
 export function login(username: string, password: string) {
-    const data = { username, password };
-    return APIManager.post(apiUrls.LOGIN_URL, { data: { data } }, false);
+    return APIManager.post(apiUrls.LOGIN_URL, { data: { username, password } }, false);
 }
 
 export function logout() {
