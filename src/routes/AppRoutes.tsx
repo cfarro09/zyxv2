@@ -17,7 +17,6 @@ const AppRoutes: React.FC = () => {
                     <Route index path={"login"} element={<Login />} />
                     <Route path={"users"} element={
                         <PrivateRoute
-                            isAuthenticated={true}
                             redirectTo="/login"
                         >
                             <User />

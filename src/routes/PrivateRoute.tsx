@@ -1,24 +1,54 @@
 // routes/PrivateRoute.tsx
 
+import { Backdrop, CircularProgress } from '@mui/material';
+import { getAccessToken } from 'common/helpers';
+import { useSelector } from 'hooks';
 import React, { ReactNode } from 'react';
-import { Navigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { Navigate, useLocation } from 'react-router-dom';
+import { validateToken } from 'stores/login/actions';
 
 interface PrivateRouteProps {
     children: ReactNode;
-    isAuthenticated: boolean;
     redirectTo: string;
 }
 
 const PrivateRoute: React.FC<PrivateRouteProps> = ({
     children,
-    isAuthenticated,
     redirectTo,
 }: PrivateRouteProps) => {
-    if (!isAuthenticated) {
+
+    const resValidateToken = useSelector(state => state.login.validateToken);
+    const applications = resValidateToken?.user?.menu;
+    const location = useLocation();
+
+    const dispatch = useDispatch();
+    const existToken = getAccessToken();
+
+    React.useEffect(() => {
+        if (existToken)
+            dispatch(validateToken(localStorage.getItem("firstLoad") ?? ""));
+    }, [])
+
+    if (!existToken) {
         return <Navigate to={redirectTo} replace />;
+    } else if (resValidateToken.loading && !applications) {
+        return (
+            <Backdrop style={{ zIndex: 999999999, color: '#fff', }} open={true}>
+                <CircularProgress color="inherit" />
+            </Backdrop>
+        );
+    } else if (resValidateToken.error) {
+        return <Navigate to={redirectTo} replace />;
+    // } else if (location.pathname !== "/" && !applications?.[cleanPath(location.pathname)]?.[0]) {
+    //     return <Redirect to={{ pathname: "/403" }} />;
+    // } else if (location.pathname === "/") {
+    //     return <Redirect to={{ pathname: resValidateToken.user?.redirect }} />
+    } else {
+        return children;
     }
 
-    return children;
+    
 };
 
 export default PrivateRoute;
