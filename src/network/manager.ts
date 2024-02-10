@@ -23,20 +23,17 @@ function createFormData(object: any, form?: FormData, namespace?: string): FormD
     for (let property in object) {
         const formKey = namespace ? `${namespace}[${property}]` : property;
 
-        if (object[property] instanceof Date)
-            formData.append(formKey, object[property].toString());
+        if (object[property] instanceof Date) formData.append(formKey, object[property].toString());
         else if (typeof object[property] === 'object' && !(object[property] instanceof File))
             createFormData(object[property], formData, formKey);
-        else if (object[property] instanceof File)
-            formData.append('files', object[property]);
-        else
-            formData.append(formKey, object[property]);
+        else if (object[property] instanceof File) formData.append('files', object[property]);
+        else formData.append(formKey, object[property]);
     }
 
     return formData;
 }
 function timeout(ms: number) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
 }
 const statusAllowed = [200, 201, 202, 204, 400, 401, 404, 500];
 export const APIManager = {
@@ -49,12 +46,12 @@ export const APIManager = {
     async post<T = any>(url: string, config: IRequestConfig = {}, withToken = true) {
         const { params, data, responseType } = config;
         const headers = await getHeaders(RequestType.POST, withToken);
-        let rr = null
+        let rr = null;
         let retry = 3;
         retry = retry - 1;
         while (true) {
             try {
-                rr = await axios.post<T>(url, data, { params, headers, responseType })
+                rr = await axios.post<T>(url, data, { params, headers, responseType });
             } catch (error) {
                 if (error?.response) {
                     if (!statusAllowed.includes(error?.response?.status) && retry !== 0) {
@@ -62,14 +59,14 @@ export const APIManager = {
                         await timeout(3000);
                         continue;
                     }
-                    throw error
+                    throw error;
                 } else {
                     if (retry !== 0) {
                         retry = retry - 1;
                         await timeout(3000);
                         continue;
                     }
-                    throw error
+                    throw error;
                 }
             }
             break;
@@ -130,7 +127,7 @@ export const ExternalRequestManager = {
         const { auth, headers, data } = config;
         return axios.post<T>(url, createFormData(data), await setConfig(auth, headers));
     },
-}
+};
 
 async function setConfig(auth: any, headers: any): Promise<any> {
     const defaults: any = { headers: headers };
@@ -139,7 +136,7 @@ async function setConfig(auth: any, headers: any): Promise<any> {
         defaults['headers']['Authorization'] = `Bearer ${token}`;
     }
     if (type === 'BASIC') {
-        defaults['auth'] = { username, password }
+        defaults['auth'] = { username, password };
     }
     return defaults;
 }
