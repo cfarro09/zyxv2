@@ -4,7 +4,9 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import PrivateRoute from './PrivateRoute'; // Si deseas rutas privadas
 import Login from '../pages/Login/Index';
-import User from '../pages/User/Index';
+import { User } from 'pages/User/Index';
+import MainLayout from 'components/Layout/MainLayout';
+// import User from '../pages/User/Index';
 // import User from '../pages/User/Index';
 
 const AppRoutes: React.FC = () => {
@@ -18,8 +20,10 @@ const AppRoutes: React.FC = () => {
                     <Route path={"users"} element={
                         <PrivateRoute
                             redirectTo="/login"
-                        >
-                            <User />
+                        >   
+                            <MainLayout>
+                                <User/>
+                            </MainLayout>
                         </PrivateRoute>
                     } />
 
