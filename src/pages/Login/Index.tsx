@@ -14,6 +14,8 @@ import Container from '@mui/material/Container';
 import { createTheme, styled, ThemeProvider } from '@mui/material/styles';
 import { useDispatch } from 'react-redux';
 import { login } from 'stores/login/actions';
+import { useSelector } from 'hooks';
+import { getAccessToken } from 'common/helpers';
 
 function Copyright() {
     return (
@@ -39,6 +41,14 @@ const defaultTheme = createTheme();
 
 export default function SignIn() {
     const dispatch = useDispatch();
+    const resLogin = useSelector(state => state.login.login);
+    
+    React.useEffect(() => {
+        if (!resLogin.error && resLogin.user && getAccessToken()) {
+            window.open("users", "_self");
+        }
+    }, [resLogin]);
+
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
