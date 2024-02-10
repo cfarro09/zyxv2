@@ -1,7 +1,6 @@
 import FileSaver from 'file-saver';
 // import * as XLSX from 'xlsx';
 import { Dictionary } from "@types";
-import i18n from 'i18next';
 
 type ColumnTmp = {
     Header: string;
@@ -18,11 +17,11 @@ export function exportExcel(filename: string, csvData: Dictionary[], columnsexpo
         if (columnsexport) {
             datafromtable = csvData.map((x: Dictionary) => {
                 const newx: Dictionary = {};
-                columnsexport.forEach((y: ColumnTmp) => {
-                    newx[y.Header] = y.prefixTranslation !== undefined ? i18n.t(`${y.prefixTranslation}${x[y.accessor]?.toLowerCase()}`).toUpperCase() : (
-                        y.type === "porcentage" ? `${(Number(x[y.accessor]) * 100).toFixed(0)}%` :
-                            x[y.accessor])
-                });
+                // columnsexport.forEach((y: ColumnTmp) => {
+                //     newx[y.Header] = y.prefixTranslation !== undefined ? i18n.t(`${y.prefixTranslation}${x[y.accessor]?.toLowerCase()}`).toUpperCase() : (
+                //         y.type === "porcentage" ? `${(Number(x[y.accessor]) * 100).toFixed(0)}%` :
+                //             x[y.accessor])
+                // });
                 return newx;
             });
         }
