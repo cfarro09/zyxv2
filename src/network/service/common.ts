@@ -1,6 +1,6 @@
 import { apiUrls } from '../../common/constants';
 import { IRequestBody, IRequestBodyPaginated, ITransaction, IRequestBodyDynamic, Dictionary } from '@types';
-import { APIManager, ExternalRequestManager } from '../manager';
+import { APIManager } from '../manager';
 import { removeAuthorizationToken } from "common/helpers";
 
 export function login(username: string, password: string) {
