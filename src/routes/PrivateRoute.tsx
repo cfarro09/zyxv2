@@ -5,9 +5,8 @@ import { getAccessToken } from 'common/helpers';
 import { useSelector } from 'hooks';
 import React, { ReactNode } from 'react';
 import { useDispatch } from 'react-redux';
-import { Navigate, useLocation } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { validateToken } from 'stores/login/actions';
-
 interface PrivateRouteProps {
     children: ReactNode;
     redirectTo: string;
@@ -20,7 +19,6 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({
 
     const resValidateToken = useSelector(state => state.login.validateToken);
     const applications = resValidateToken?.user?.menu;
-    const location = useLocation();
 
     const dispatch = useDispatch();
     const existToken = getAccessToken();
@@ -28,7 +26,7 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({
     React.useEffect(() => {
         if (existToken)
             dispatch(validateToken(localStorage.getItem("firstLoad") ?? ""));
-    }, [])
+    }, [dispatch, existToken])
 
     if (!existToken) {
         return <Navigate to={redirectTo} replace />;
@@ -47,8 +45,6 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({
     } else {
         return children;
     }
-
-    
 };
 
 export default PrivateRoute;
