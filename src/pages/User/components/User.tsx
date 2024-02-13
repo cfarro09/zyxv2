@@ -1,5 +1,5 @@
-import React from "react";
+import React from 'react';
 
 export const User: React.FC<unknown> = () => {
-  return <div>hola mundo</div>;
+    return <div>hola mundo</div>;
 };
