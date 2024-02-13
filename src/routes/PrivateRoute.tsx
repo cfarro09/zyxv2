@@ -7,7 +7,6 @@ import React, { ReactNode } from 'react';
 import { useDispatch } from 'react-redux';
 import { Navigate } from 'react-router-dom';
 import { validateToken } from 'stores/login/actions';
-
 interface PrivateRouteProps {
     children: ReactNode;
     redirectTo: string;
@@ -46,8 +45,6 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({
     } else {
         return children;
     }
-
-    
 };
 
 export default PrivateRoute;

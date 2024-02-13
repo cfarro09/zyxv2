@@ -9,7 +9,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { Inbox } from '@mui/icons-material';
+import { useNavigate  } from 'react-router-dom';
 import { routes } from 'routes/routes';
 import { RouteConfig } from '@types';
 
@@ -63,8 +63,16 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 }));
 
 const ElementMenu: React.FC<{ route: RouteConfig; open: boolean }> = ({ route, open }) => {
+    let navigate = useNavigate();
+
     return (
-        <ListItem key={`${route.path}`} disablePadding sx={{ display: 'block' }}>
+        <ListItem
+            key={`${route.path}`}
+            disablePadding
+            sx={{ display: 'block' }}
+            onClick={() => navigate(route.path)}
+            component="a"
+        >
             <ListItemButton
                 sx={{
                     minHeight: 48,
@@ -89,6 +97,7 @@ const ElementMenu: React.FC<{ route: RouteConfig; open: boolean }> = ({ route, o
 
 const Aside: React.FC<{ open: boolean; handleDrawerClose: () => void }> = ({ open, handleDrawerClose }) => {
     const theme = useTheme();
+
 
     return (
         <Drawer variant="permanent" open={open}>
