@@ -9,7 +9,7 @@ export interface RouteConfig {
     subroute?: boolean;
     /** used when subroute prop is true */
     initialSubroute?: string;
-    icon?: (className: string) => React.ReactNode;
+    icon: () => React.ReactNode;
     show?: () => boolean;
 }
 

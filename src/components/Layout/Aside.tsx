@@ -10,6 +10,8 @@ import ListItemText from '@mui/material/ListItemText';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { Inbox } from '@mui/icons-material';
+import { routes } from 'routes/routes';
+import { RouteConfig } from '@types';
 
 const drawerWidth = 240;
 
@@ -60,10 +62,34 @@ const DrawerHeader = styled('div')(({ theme }) => ({
     ...theme.mixins.toolbar,
 }));
 
+const ElementMenu: React.FC<{ route: RouteConfig; open: boolean }> = ({ route, open }) => {
+    return (
+        <ListItem key={`${route.path}`} disablePadding sx={{ display: 'block' }}>
+            <ListItemButton
+                sx={{
+                    minHeight: 48,
+                    justifyContent: open ? 'initial' : 'center',
+                    px: 2.5,
+                }}
+            >
+                <ListItemIcon
+                    sx={{
+                        minWidth: 0,
+                        mr: open ? 3 : 'auto',
+                        justifyContent: 'center',
+                    }}
+                >
+                    {route.icon()}
+                </ListItemIcon>
+                <ListItemText primary={route.description} sx={{ opacity: open ? 1 : 0 }} />
+            </ListItemButton>
+        </ListItem>
+    )
+}
+
 const Aside: React.FC<{ open: boolean; handleDrawerClose: () => void }> = ({ open, handleDrawerClose }) => {
     const theme = useTheme();
-    const applications = resValidateToken?.user?.menu;
-    
+
     return (
         <Drawer variant="permanent" open={open}>
             <DrawerHeader>
@@ -73,52 +99,15 @@ const Aside: React.FC<{ open: boolean; handleDrawerClose: () => void }> = ({ ope
             </DrawerHeader>
             <Divider />
             <List>
-                {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text) => (
-                    <ListItem key={text} disablePadding sx={{ display: 'block' }}>
-                        <ListItemButton
-                            sx={{
-                                minHeight: 48,
-                                justifyContent: open ? 'initial' : 'center',
-                                px: 2.5,
-                            }}
-                        >
-                            <ListItemIcon
-                                sx={{
-                                    minWidth: 0,
-                                    mr: open ? 3 : 'auto',
-                                    justifyContent: 'center',
-                                }}
-                            >
-                                <Inbox />
-                            </ListItemIcon>
-                            <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
-                        </ListItemButton>
-                    </ListItem>
+                {routes.map((route) => (
+                    <ElementMenu
+                        key={route.path}
+                        route={route}
+                        open={open}
+                    />
                 ))}
             </List>
             <Divider />
-            <List>
-                <ListItem key={"holis"} disablePadding sx={{ display: 'block' }}>
-                    <ListItemButton
-                        sx={{
-                            minHeight: 48,
-                            justifyContent: open ? 'initial' : 'center',
-                            px: 2.5,
-                        }}
-                    >
-                        <ListItemIcon
-                            sx={{
-                                minWidth: 0,
-                                mr: open ? 3 : 'auto',
-                                justifyContent: 'center',
-                            }}
-                        >
-                            <Inbox />
-                        </ListItemIcon>
-                        <ListItemText primary={"holis"} sx={{ opacity: open ? 1 : 0 }} />
-                    </ListItemButton>
-                </ListItem>
-            </List>
         </Drawer>
     );
 }
