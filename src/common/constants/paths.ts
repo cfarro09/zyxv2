@@ -1,10 +1,11 @@
 const paths = {
-    REPORTSCHEDULER: '/reportscheduler',
-    PRODUCTCATALOG: '/productcatalog',
-    CATALOGMASTER: '/catalogmaster',
-    ORDERS: '/orders',
     DASHBOARD: '/dashboard',
-    DASHBOARD_ADD: '/dashboard/add'
+    CLIENTS: '/clients',
+    PRODUCTS: '/products',
+    INVENTORY: '/inventory',
+    DOMAINS: '/domains',
+    PURCHASE_ORDERS: '/purchase_orders',
+    SALE_ORDERS: '/sale_orders',
 };
 
 export default paths;
