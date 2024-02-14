@@ -42,18 +42,6 @@ export const getMultiCollectionPublic = (requestBodies: string[]): IActionCall =
 
 export const resetMain = (): IActionCall => ({ type: actionTypes.MAIN_RESET });
 
-export const triggerRequest = (dictionary: Dictionary): IActionCall => ({
-    callAPI: () => CommonService.testRequest(dictionary),
-    types: {
-        loading: actionTypes.TEST_REQUEST,
-        success: actionTypes.TEST_REQUEST_SUCCESS,
-        failure: actionTypes.TEST_REQUEST_FAILURE,
-    },
-    type: null,
-});
-
-export const resettriggerRequest = (): IActionCall => ({ type: actionTypes.TEST_REQUEST_RESET });
-
 export const getCollectionDynamic = (requestBody: IRequestBodyDynamic): IActionCall => ({
     callAPI: () => CommonService.mainDynamic(requestBody),
     types: {
@@ -101,19 +89,6 @@ export const uploadFile = (data: FormData): IActionCall => ({
 });
 
 export const resetUploadFile = (): IActionCall => ({ type: actionTypes.UPLOAD_FILE_RESET });
-
-export const uploadFileMetadata = (data: FormData): IActionCall => ({
-    callAPI: () => CommonService.uploadFileMetadata(data),
-    types: {
-        loading: actionTypes.UPLOAD_FILE,
-        success: actionTypes.UPLOAD_FILE_SUCCESS,
-        failure: actionTypes.UPLOAD_FILE_FAILURE,
-    },
-    type: null,
-});
-
-export const resetUploadFileMetadata = (): IActionCall => ({ type: actionTypes.UPLOAD_FILE_RESET });
-
 
 export const exportData = (requestBody: IRequestBody, reportName: string = "", formatToExport: "excel" | "csv" = "excel", isNotPaginated: boolean = false, headerClient: Dictionary[] | null = null): IActionCall => ({
     callAPI: () => CommonService.exportData({

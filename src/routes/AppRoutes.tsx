@@ -6,6 +6,7 @@ import PrivateRoute from './PrivateRoute'; // Si deseas rutas privadas
 import Login from '../pages/Login/Index';
 import { User } from 'pages/User/Index';
 import MainLayout from 'components/Layout/MainLayout';
+import { Product } from 'pages/Product/Index';
 // import User from '../pages/User/Index';
 // import User from '../pages/User/Index';
 
@@ -23,6 +24,15 @@ const AppRoutes: React.FC = () => {
                         >   
                             <MainLayout>
                                 <User/>
+                            </MainLayout>
+                        </PrivateRoute>
+                    } />
+                    <Route path={"products"} element={
+                        <PrivateRoute
+                            redirectTo="/login"
+                        >   
+                            <MainLayout>
+                                <Product/>
                             </MainLayout>
                         </PrivateRoute>
                     } />

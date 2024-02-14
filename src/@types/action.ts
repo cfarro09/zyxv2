@@ -1,7 +1,7 @@
 import { AxiosError, AxiosResponse } from 'axios';
 import { Action } from 'redux';
 
-export interface IAction extends Action<string> {
+export interface IAction extends Action<string | null> {
     payload?: any;
 }
 
