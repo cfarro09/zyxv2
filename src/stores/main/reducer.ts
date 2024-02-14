@@ -1,7 +1,7 @@
-import { IListStatePaginated, MultiData, Dictionary, ITemplate } from "@types";
-import { createReducer, initialListPaginatedState, initialCommon } from "common/helpers";
+import { IListStatePaginated, MultiData, Dictionary, ITemplate } from '@types';
+import { createReducer, initialListPaginatedState, initialCommon } from 'common/helpers';
 import * as caseFunctions from './caseFunctions';
-import actionTypes from "./actionTypes";
+import actionTypes from './actionTypes';
 
 export interface itemMulti {
     data: Dictionary[];
@@ -18,7 +18,7 @@ export interface IMemoryTable {
     page: number;
     pageSize: number;
     id: string;
-    filters: { [key: string]: IFilter }
+    filters: { [key: string]: IFilter };
 }
 
 export interface IUpload extends ITemplate {
@@ -28,7 +28,6 @@ export interface IUpload extends ITemplate {
     name?: string;
     thumbnail?: string;
 }
-
 
 export interface IState {
     mainData: IListStatePaginated<Dictionary> & { key?: string };
@@ -69,12 +68,12 @@ export const initialState: IState = {
     exportData: { ...initialCommon },
     exportDynamicData: { ...initialCommon },
     memoryTable: {
-        id: "",
+        id: '',
         page: -1,
         pageSize: -1,
-        filters: {}
+        filters: {},
     },
-    viewChange: ""
+    viewChange: '',
 };
 
 export default createReducer<IState>(initialState, {
@@ -92,7 +91,7 @@ export default createReducer<IState>(initialState, {
     [actionTypes.EXECUTE_MAIN_SUCCESS]: caseFunctions.executeSuccess,
     [actionTypes.EXECUTE_MAIN_FAILURE]: caseFunctions.executeFailure,
     [actionTypes.EXECUTE_MAIN_RESET]: caseFunctions.executeReset,
-    
+
     [actionTypes.TEST_REQUEST]: caseFunctions.testRequest,
     [actionTypes.TEST_REQUEST_SUCCESS]: caseFunctions.testRequestSuccess,
     [actionTypes.TEST_REQUEST_FAILURE]: caseFunctions.testRequestFailure,
