@@ -1,5 +1,5 @@
 import { apiUrls } from '../../common/constants';
-import { IRequestBody, IRequestBodyPaginated, ITransaction, IRequestBodyDynamic, Dictionary } from '@types';
+import { IRequestBody, IRequestBodyPaginated, ITransaction, IRequestBodyDynamic } from '@types';
 import { APIManager } from '../manager';
 import { removeAuthorizationToken } from "common/helpers";
 
@@ -15,6 +15,14 @@ export function logout() {
 
 export function validateToken(firstLoad: string) {
     return APIManager.get(apiUrls.LOGIN_URL + `?firstload=${firstLoad ?? ""}`, {}, true);
+}
+
+export function uploadFile(data: FormData) {
+    return APIManager.post(apiUrls.UPLOAD_FILE, { data }, true);
+}
+
+export function exportData(requestBody: IRequestBody) {
+    return APIManager.post(apiUrls.EXPORT_DATA, { data: requestBody }, true);
 }
 
 export function incrementalInvokeToken() {

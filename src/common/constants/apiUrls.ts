@@ -43,5 +43,6 @@ export const apiUrls = {
     MAIN_GRAPHIC: `${BASE_URL}/main/graphic`,
     MAIN_DYNAMIC: `${BASE_URL}/reportdesigner`,
     MAIN_DYNAMIC_EXPORT: `${BASE_URL}/reportdesigner/export`,
-    
+    UPLOAD_FILE: `${BASE_URL}/upload`,
+    EXPORT_DATA: `${BASE_URL}/main/export`,
 };
