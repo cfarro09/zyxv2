@@ -1,27 +1,14 @@
-import { Add, AdminPanelSettings, DesktopMac, Person, Visibility } from '@mui/icons-material';
-import {
-    Box,
-    Button,
-    Chip,
-    Menu,
-    MenuItem,
-    Paper,
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableRow,
-    TextField,
-    Typography,
-} from '@mui/material';
-import { getCoreRowModel, useReactTable, flexRender, PaginationState } from '@tanstack/react-table';
+import { DesktopMac, Person, VerifiedUser, Visibility } from '@mui/icons-material';
+import { Box, Chip, Paper, Typography } from '@mui/material';
 import { getUserSel, toTitleCase } from 'common/helpers';
-import React, { ReactNode, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from 'stores';
-import { getCollection, getCollectionPaginated } from 'stores/main/actions';
+import { getCollection } from 'stores/main/actions';
 import dayjs from 'dayjs';
 import clsx from 'clsx';
+import TableSimple from 'components/Controls/TableSimple';
+import type { ColumnDef } from '@tanstack/react-table';
 
 const classes = {
     successLabel: 'bg-[#dff7e9] text-[#28c76f]',
@@ -43,17 +30,7 @@ interface IUser {
     createdate: string;
 }
 
-type RowProps = {
-    id: string;
-    original: IUser;
-};
-
-type CellProps = {
-    getValue: () => ReactNode;
-    row: RowProps;
-};
-
-const columns = [
+const columns: ColumnDef<IUser>[] = [
     {
         header: 'USERID',
         accessorKey: 'userid',
@@ -64,8 +41,9 @@ const columns = [
     },
     {
         id: 'rol',
+        accessorKey: 'rolename',
         header: () => <Box className="pl-11">Rol</Box>,
-        cell: (info: CellProps) => {
+        cell: (info) => {
             const rolename = info.row.original.rolename;
             const roleid = info.row.original.roleid;
             return (
@@ -79,7 +57,7 @@ const columns = [
                             ![1, 2, 3].includes(roleid) && classes.suspendLabel,
                         )}
                     >
-                        {roleid === 1 && <AdminPanelSettings className="w-5 h-5" />}
+                        {roleid === 1 && <VerifiedUser className="w-5 h-5" />}
                         {roleid === 2 && <DesktopMac className="w-5 h-5" />}
                         {roleid === 3 && <Person className="w-5 h-5" />}
                         {roleid === 4 && <Visibility className="w-5 h-5" />}
@@ -103,8 +81,9 @@ const columns = [
     },
     {
         id: 'estado',
+        accessorKey: 'status',
         header: () => <Box className="text-center">ESTADO</Box>,
-        cell: (info: CellProps) => {
+        cell: (info) => {
             const status = info.row.original.status;
             return (
                 <Box className="flex justify-center">
@@ -131,63 +110,15 @@ const columns = [
 export const User: React.FC = () => {
     const dispatch = useDispatch();
     const mainResult = useSelector((state: IRootState) => state.main.mainData);
-    const mainPaginated = useSelector((state) => state.main.mainPaginated);
     const [mainData, setMainData] = useState<IUser[]>([]);
-    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-    const open = Boolean(anchorEl);
-    const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
-        pageIndex: 0,
-        pageSize: 2,
-    });
-
-    const pagination = useMemo(
-        () => ({
-            pageIndex,
-            pageSize,
-        }),
-        [pageIndex, pageSize],
-    );
-
-    const table = useReactTable({
-        data: mainData,
-        columns,
-        getCoreRowModel: getCoreRowModel(),
-        // getPaginationRowModel: getPaginationRowModel(),
-        state: {
-            pagination,
-        },
-        onPaginationChange: setPagination,
-        manualPagination: true,
-        debugTable: true,
-    });
-
-    useEffect(() => {
-        if (!mainPaginated.loading && !mainPaginated.error) {
-            // setPageCount(Math.ceil(mainPaginated.count / fetchDataAux.pageSize));
-            // settotalrow(mainPaginated.count);
-        }
-    }, [mainPaginated]);
-
-    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-        setAnchorEl(event.currentTarget);
-    };
-
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
 
     const fetchData = () => {
         dispatch(getCollection(getUserSel({ orgid: 1 })));
     };
 
-    const fetchData2 = ({pageSize, pageIndex, filters = null, sorts = null, daterange = null}) => {
-        dispatch(getCollectionPaginated(getUserSelPaginated({ orgid: 1, pageSize, pageIndex, filters, sorts, daterange }))
-    }
-
-    // useEffect(() => {
-
-    //     fetchData();
-    // }, [dispatch]);
+    useEffect(() => {
+        fetch();
+    }, []);
 
     const fetch = () => {
         console.log('fetch');
@@ -201,78 +132,14 @@ export const User: React.FC = () => {
         }
     }, [mainResult]);
 
-    useEffect(() => {
-        console.log('table.getHeaderGroups()', table.getHeaderGroups());
-    }, [table]);
-
     return (
         <Box className="flex max-w-screen-xl mr-auto ml-auto flex-col">
             <Paper className="w-full mt-6">
                 <Box className="px-6 py-3 border-b">
                     <Typography variant="h5">Usuarios</Typography>
                 </Box>
-                <Box className="py-4 px-6 border-b flex flex-row-reverse gap-4">
-                    <Button className="flex gap-1" id="basic-buttons" variant="contained" onClick={handleClick}>
-                        <Add /> Nuevo usuario
-                    </Button>
-                    <Button
-                        id="basic-button"
-                        aria-controls={open ? 'basic-menu' : undefined}
-                        aria-haspopup="true"
-                        aria-expanded={open ? 'true' : undefined}
-                        onClick={handleClick}
-                        className="px-4 bg-light-grey text-grey"
-                    >
-                        Exportar
-                    </Button>
-                    <Menu
-                        id="basic-menu"
-                        anchorEl={anchorEl}
-                        open={open}
-                        onClose={handleClose}
-                        MenuListProps={{
-                            'aria-labelledby': 'basic-button',
-                        }}
-                    >
-                        <MenuItem onClick={handleClose}>CSV</MenuItem>
-                        <MenuItem onClick={handleClose}>PDF</MenuItem>
-                        <MenuItem onClick={handleClose}>Copiar</MenuItem>
-                    </Menu>
-                    <TextField size="small" id="search-input" label="" variant="outlined" placeholder="Buscar" />
-                </Box>
                 <Box className="p-6">
-                    <Table>
-                        <TableHead>
-                            {table.getHeaderGroups().map((headerGroup) => (
-                                <TableRow key={headerGroup.id}>
-                                    {headerGroup.headers.map((header) => (
-                                        <TableCell key={header.id}>
-                                            {header.isPlaceholder
-                                                ? null
-                                                : flexRender(header.column.columnDef.header, header.getContext())}
-                                        </TableCell>
-                                    ))}
-                                </TableRow>
-                            ))}
-                        </TableHead>
-                        <TableBody>
-                            {table.getRowModel().rows.map((row) => (
-                                <TableRow key={row.id}>
-                                    {row.getVisibleCells().map((cell) => (
-                                        <TableCell key={cell.id}>
-                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                        </TableCell>
-                                    ))}
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                    <div>
-                        <Button>{'|<'}</Button>
-                        <Button>{'<'}</Button>
-                        <Button onClick={() => fetch()}>{'>'}</Button>
-                        <Button>{'>|'}</Button>
-                    </div>
+                    <TableSimple data={mainData || []} columns={columns} />
                 </Box>
             </Paper>
         </Box>
