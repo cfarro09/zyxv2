@@ -112,22 +112,13 @@ export const User: React.FC = () => {
     const mainResult = useSelector((state: IRootState) => state.main.mainData);
     const [mainData, setMainData] = useState<IUser[]>([]);
 
-    const fetchData = () => {
-        dispatch(getCollection(getUserSel({ orgid: 1 })));
-    };
-
     useEffect(() => {
-        fetch();
-    }, []);
-
-    const fetch = () => {
         console.log('fetch');
-
-        fetchData();
-    };
+        dispatch(getCollection(getUserSel({ orgid: 1 })));
+    }, [dispatch]);
 
     useEffect(() => {
-        if (!mainResult.loading && !mainResult.error) {
+        if (!mainResult.loading && !mainResult.error && mainResult.key === 'UFN_USERS_SEL') {
             setMainData((mainResult.data as IUser[]) || []);
         }
     }, [mainResult]);
