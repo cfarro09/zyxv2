@@ -1,6 +1,5 @@
 /* eslint-disable no-eval */
 /* eslint-disable no-useless-escape */
-import { Dictionary } from "@types";
 // import * as XLSX from 'xlsx';
 
 export const contactCalculateList = [
@@ -72,7 +71,7 @@ export const dataMonths = [
 
 export function datesInMonth(year?: number, month?: number) {
     if (!!year && !!month) {
-        let lastdate = new Date(year, month, 0).getDate()
+        const lastdate = new Date(year, month, 0).getDate()
         return Array.from(Array(lastdate).keys()).map(x => ({ val: `${x + 1}` }));
     } else {
         return []
@@ -229,8 +228,8 @@ export function formattimeMinutes(cc: any) {
 
     if (!seconds)
         return "0";
-    let hh = Math.floor(seconds / 3600) > 0 ? `${Math.floor(seconds / 3600)}h ` : ""
-    let mm = Math.floor((seconds % 3600) / 60) > 0 ? `${Math.floor((seconds % 3600) / 60)}m` : "0m"
+    const hh = Math.floor(seconds / 3600) > 0 ? `${Math.floor(seconds / 3600)}h ` : ""
+    const mm = Math.floor((seconds % 3600) / 60) > 0 ? `${Math.floor((seconds % 3600) / 60)}m` : "0m"
     return `${hh}${mm}`
 }
 
@@ -238,18 +237,18 @@ export function formattimeMinutes(cc: any) {
 export function formattime(cc: any) {
     if (!cc)
         return "0";
-    let hh = Math.floor(cc / 3600) > 0 ? `${Math.floor(cc / 3600)}h ` : ""
-    let mm = Math.floor((cc % 3600) / 60) > 0 ? `${Math.floor((cc % 3600) / 60)}m` : ""
-    let ss = `${cc % 60}s`
+    const hh = Math.floor(cc / 3600) > 0 ? `${Math.floor(cc / 3600)}h ` : ""
+    const mm = Math.floor((cc % 3600) / 60) > 0 ? `${Math.floor((cc % 3600) / 60)}m` : ""
+    const ss = `${cc % 60}s`
     return `${hh}${mm}${ss}`
 }
 
 export function validateNumbersEqualsConsecutive(text: string, limit: number) {
     let canxx = 1;
-    for (var i = 0; i < text.length; i++) {
+    for (let i = 0; i < text.length; i++) {
         if (/^\d+$/.test(text.charAt(i))) {
             canxx = 1;
-            for (var j = i + 1; j < text.length; j++) {
+            for (let j = i + 1; j < text.length; j++) {
                 if (text.charAt(i) === text.charAt(j)) {
                     canxx++;
                 }
@@ -306,19 +305,19 @@ export function validateDomainCharactersSpecials(text: string, option: string) {
 }
 
 export function addTimes(t1: string, t2: string) {
-    let t1seconds = timetoseconds(t1);
-    let t2seconds = timetoseconds(t2);
+    const t1seconds = timetoseconds(t1);
+    const t2seconds = timetoseconds(t2);
     return secondsToTime(t1seconds + t2seconds)
 }
 export function substractiontimesTimes(after: string, before: string) {
-    let bcseconds = timetoseconds(before);
-    let acseconds = timetoseconds(after);
+    const bcseconds = timetoseconds(before);
+    const acseconds = timetoseconds(after);
     return secondsToTime(acseconds - bcseconds)
 }
 export function varpercTime(newt: string, oldt: string, decimals: number) {
     if (!!newt && !!oldt) {
-        let newtseconds = timetoseconds(newt);
-        let oldtseconds = timetoseconds(oldt);
+        const newtseconds = timetoseconds(newt);
+        const oldtseconds = timetoseconds(oldt);
         return (((newtseconds - oldtseconds) / oldtseconds) * 100).toFixed(decimals)
     } else {
         return (0).toFixed(decimals)
@@ -333,9 +332,9 @@ export function varpercnumber(newn: number, oldn: number, decimals: number) {
 }
 
 export function divisionTimeNumber(tim: string, n: number) {
-    if (!!n) {
-        let timeseconds = timetoseconds(tim);
-        let divided = Math.floor(timeseconds / n)
+    if (n) {
+        const timeseconds = timetoseconds(tim);
+        const divided = Math.floor(timeseconds / n)
         return secondsToTime(divided)
     } else {
         return "00:00:00"
@@ -389,7 +388,7 @@ export function secondsToDayTime(sec_num: any) {
 
 export function secondsToHourTime(sec_num: any) {
     sec_num = parseInt(sec_num)
-    let days = Math.floor(sec_num / 86400);
+    const days = Math.floor(sec_num / 86400);
     let hours: any = Math.floor((sec_num - (days * 86400)) / 3600);
     let minutes: any = Math.floor((sec_num - (days * 86400) - (hours * 3600)) / 60);
     let seconds: any = sec_num - (days * 86400) - (hours * 3600) - (minutes * 60);
@@ -401,7 +400,7 @@ export function secondsToHourTime(sec_num: any) {
 
 export function uuidv4(): string {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-        var r = Math.random() * 16 | 0, v = c === 'x' ? r : ((r & 0x3) | 0x8);
+        const r = Math.random() * 16 | 0, v = c === 'x' ? r : ((r & 0x3) | 0x8);
         return v.toString(16);
     });
 }
@@ -427,17 +426,17 @@ export function extractVariablesFromArray(data: any[], key: string, array: strin
     }, []);
 }
 
-export function dictToArrayKV(dict: Dictionary, key: string = 'key', value: string = 'value') {
+export function dictToArrayKV(dict: object, key: string = 'key', value: string = 'value') {
     return Object.entries(dict).reduce((a: any[], [k, v]) => {
         a.push({ [key]: k, [value]: v });
         return a;
     }, []);
 }
 
-export function richTextToString(data: Dictionary[]) {
+export function richTextToString(data: object[]) {
     try {
-        return data.reduce((ac: Dictionary[], c: Dictionary) => (
-            [...ac, ...c?.children?.map((m: Dictionary) => (
+        return data.reduce((ac: object[], c: object) => (
+            [...ac, ...c?.children?.map((m: object) => (
                 m?.children ? `- ${m?.children[0]?.text}` : m?.text
             ))]
         ), []).join('\n')
@@ -446,7 +445,7 @@ export function richTextToString(data: Dictionary[]) {
     }
 }
 
-export function filterPipe(items: Dictionary[], field: string, value: any, inv?: string) {
+export function filterPipe(items: object[], field: string, value: any, inv?: string) {
     // If there are not items return empty//
     if (!items) return [];
     // If '%' contains wildcard and value is empty return items//
@@ -473,7 +472,7 @@ export function filterPipe(items: Dictionary[], field: string, value: any, inv?:
     }
 }
 
-export function filterIf(data: Dictionary[], rif?: string, rifvalue?: string) {
+export function filterIf(data: object[], rif?: string, rifvalue?: string) {
     return data.filter(d => [null, undefined].includes(d.rif) || (d.rif === rif && d.rifvalue === rifvalue));
 }
 
@@ -481,7 +480,7 @@ interface DownloadCSVOptions {
     headers?: string[] | ((header: string, index: number) => string);
 }
 
-export function downloadCSV(filename: string, data: Dictionary[], options: DownloadCSVOptions = {}) {
+export function downloadCSV(filename: string, data: object[], options: DownloadCSVOptions = {}) {
     const columns = Object.keys(data[0]);
     let headers = "";
     if (options.headers) {
@@ -516,11 +515,11 @@ export function downloadCSV(filename: string, data: Dictionary[], options: Downl
         csv += '\r\n';
         csv += Object.values(dt).join(';');
     });
-    let BOM = "\uFEFF";
-    var blob = new Blob([BOM + csv], { type: 'text/csv;charset=utf-8;' });
-    var link = document.createElement('a');
+    const BOM = "\uFEFF";
+    const blob = new Blob([BOM + csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
     if (link.download !== undefined) {
-        var url = URL.createObjectURL(blob);
+        const url = URL.createObjectURL(blob);
         link.setAttribute('href', url);
         link.setAttribute('download', filename);
         document.body.appendChild(link);
@@ -533,7 +532,7 @@ export const downloadJson = (filename: string, data: any) => {
     const blob = new Blob([JSON.stringify(data, null, 4)], { type: 'application/json;charset=utf-8;' });
     const link = document.createElement('a');
     if (link.download !== undefined) {
-        var url = URL.createObjectURL(blob);
+        const url = URL.createObjectURL(blob);
         link.setAttribute('href', url);
         link.setAttribute('download', filename);
         document.body.appendChild(link);
@@ -542,16 +541,16 @@ export const downloadJson = (filename: string, data: any) => {
     }
 }
 
-export function uploadCSV(file: any, owner: any = {}): Promise<Dictionary[]> {
+export function uploadCSV(file: any, owner: any = {}): Promise<object[]> {
     const reader = new FileReader();
     reader.readAsText(file);
     return new Promise((res, rej) => {
         reader.onload = (event: any) => {
-            let csv = event.target.result.toString();
+            const csv = event.target.result.toString();
             if (csv !== null) {
-                let allTextLines = csv.split(/\r\n|\n/);
-                let headers = allTextLines[0].split(';');
-                let lines = [];
+                const allTextLines = csv.split(/\r\n|\n/);
+                const headers = allTextLines[0].split(';');
+                const lines = [];
                 for (let i = 1; i < allTextLines.length; i++) {
                     if (allTextLines[i].split(';').length === headers.length) {
                         const line = allTextLines[i].split(';')
@@ -575,15 +574,15 @@ export function uploadCSV(file: any, owner: any = {}): Promise<Dictionary[]> {
 export function uploadExcel(file: any, owner: any = {}) {
     return new Promise((res, rej) => {
         import('xlsx').then(XLSX => {
-            var reader = new FileReader();
+            const reader = new FileReader();
             reader.readAsBinaryString(file);
             reader.onload = (event: any) => {
-                var data = event.target.result;
-                let workbook = XLSX.read(data, { type: 'binary' });
+                const data = event.target.result;
+                const workbook = XLSX.read(data, { type: 'binary' });
                 const wsname = workbook.SheetNames[0];
                 // const ws = workbook.Sheets[wsname];
                 // sheet_to_row_object_array
-                let rowsx = XLSX.utils.sheet_to_json(workbook.Sheets[wsname])
+                const rowsx = XLSX.utils.sheet_to_json(workbook.Sheets[wsname])
                     .map((row: any) =>
                         Object.keys(row).reduce((obj: any, key: any) => {
                             obj[key.trim()] = row[key];
@@ -610,10 +609,9 @@ export const todayDate = (): Date => {
     return new Date(new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60 * 1000).toISOString().substring(0, 10) + "T00:00:00");
 }
 
-export const convertLocalDate = (date: string | null | undefined, validateWithToday: boolean = false, subtractHours: boolean = true): Date => {
+export const convertLocalDate = (date: string | null | undefined, validateWithToday: boolean = false): Date => {
     if (!date) return new Date()
     const dateCleaned = new Date(date)
-    // const dateCleaned = new Date(nn.getTime() + (subtractHours ? (nn.getTimezoneOffset() * 60 * 1000 * -1) : 0));
     return validateWithToday ? (dateCleaned > new Date() ? new Date() : dateCleaned) : dateCleaned;
 }
 

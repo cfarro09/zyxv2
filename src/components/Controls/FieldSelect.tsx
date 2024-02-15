@@ -1,19 +1,22 @@
 import { InfoRounded } from "@mui/icons-material";
-import { Autocomplete, Box, CircularProgress, FormControlProps, TextField, Tooltip } from "@mui/material";
-import { Dictionary } from "@types";
+import { Autocomplete, Box, CircularProgress, TextField, Tooltip } from "@mui/material";
+import type { FormControlProps } from "@mui/material";
 import React, { useEffect, useState } from "react";
 
+interface ObjectZyx {
+    [key: string]: string | number | boolean | null;
+}
 type TemplateAutocompleteProps = {
     label?: string;
     valueDefault?: unknown;
-    data: Dictionary[],
+    data: ObjectZyx[],
     optionValue: string;
     helperText?: string;
-    fregister?: Dictionary;
+    fregister?: ObjectZyx;
     optionDesc: string;
     loading?: boolean;
     triggerOnChangeOnFirst?: boolean;
-    onChange?: (_: any, _1?: any | null) => void;
+    onChange?: (_: ObjectZyx | null) => void;
     readOnly?: boolean;
     limitTags?: number;
     multiline?: boolean;
@@ -21,13 +24,13 @@ type TemplateAutocompleteProps = {
 } & FormControlProps
 
 export const FieldSelect: React.FC<TemplateAutocompleteProps> = ({ multiline = false, error, label, data = [], optionValue, optionDesc, valueDefault = "", onChange, disabled = false, triggerOnChangeOnFirst = false, loading = false, fregister = {}, variant = "standard", readOnly = false, orderbylabel = false, helperText = "" }) => {
-    const [value, setValue] = useState<Dictionary | null>(null);
-    const [dataG, setDataG] = useState<Dictionary[]>([])
+    const [value, setValue] = useState<ObjectZyx | null>(null);
+    const [dataG, setDataG] = useState<ObjectZyx[]>([])
 
     useEffect(() => {
         if (orderbylabel) {
             if (data.length > 0) {
-                const datatmp = data.sort((a, b) => (a[optionDesc] || '').localeCompare(b[optionDesc] || ''));
+                const datatmp = data.sort((a, b) => `${a[optionDesc]}`.localeCompare(`${b[optionDesc]}`));
                 setDataG(datatmp);
                 return;
             }
@@ -38,7 +41,7 @@ export const FieldSelect: React.FC<TemplateAutocompleteProps> = ({ multiline = f
 
     useEffect(() => {
         if (valueDefault && data.length > 0) {
-            const optionfound = data.find((o: Dictionary) => o[optionValue] === valueDefault);
+            const optionfound = data.find((o: ObjectZyx) => o[optionValue] === valueDefault);
             if (optionfound) {
                 setValue(optionfound);
                 if (triggerOnChangeOnFirst)
@@ -72,10 +75,10 @@ export const FieldSelect: React.FC<TemplateAutocompleteProps> = ({ multiline = f
                 value={data?.length > 0 ? value : null}
                 onChange={(_, newValue) => {
                     if (readOnly) return;
-                    setValue(newValue as (Dictionary | null));
-                    onChange && onChange(newValue);
+                    setValue(newValue as (ObjectZyx | null));
+                    onChange && onChange(newValue as (ObjectZyx | null));
                 }}
-                getOptionLabel={option => option ? (option[optionDesc] ?? '') : ''}
+                getOptionLabel={option => option ? `${option[optionDesc]}` : ''}
                 options={dataG}
                 loading={loading}
                 size="small"

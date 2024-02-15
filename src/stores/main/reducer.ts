@@ -1,10 +1,10 @@
-import { IListStatePaginated, MultiData, Dictionary, ITemplate } from "@types";
+import { IListStatePaginated, MultiData, ITemplate } from "@types";
 import { createReducer, initialListPaginatedState, initialCommon } from "common/helpers";
 import * as caseFunctions from './caseFunctions';
 import actionTypes from "./actionTypes";
 
 export interface itemMulti {
-    data: Dictionary[];
+    data: object[];
     success: boolean;
 }
 
@@ -31,21 +31,21 @@ export interface IUpload extends ITemplate {
 
 
 export interface IState {
-    mainData: IListStatePaginated<Dictionary> & { key?: string };
-    mainEventBooking: IListStatePaginated<Dictionary> & { key?: string };
-    mainDynamic: IListStatePaginated<Dictionary>;
+    mainData: IListStatePaginated<object> & { key?: string };
+    mainEventBooking: IListStatePaginated<object> & { key?: string };
+    mainDynamic: IListStatePaginated<object>;
     multiData: IListStatePaginated<MultiData>;
     multiDataAux: IListStatePaginated<itemMulti>;
     multiDataAux2: IListStatePaginated<itemMulti>;
-    execute: IListStatePaginated<Dictionary> & { success: boolean | undefined | null };
-    mainAux: IListStatePaginated<Dictionary> & { key?: string };
-    mainAux2: IListStatePaginated<Dictionary> & { key?: string };
-    mainPaginated: IListStatePaginated<Dictionary>;
-    mainPaginatedAux: IListStatePaginated<Dictionary>;
-    mainGraphic: IListStatePaginated<Dictionary> & { key?: string };
+    execute: IListStatePaginated<object> & { success: boolean | undefined | null };
+    mainAux: IListStatePaginated<object> & { key?: string };
+    mainAux2: IListStatePaginated<object> & { key?: string };
+    mainPaginated: IListStatePaginated<object>;
+    mainPaginatedAux: IListStatePaginated<object>;
+    mainGraphic: IListStatePaginated<object> & { key?: string };
     uploadFile: IUpload;
     exportData: IUpload;
-    testRequest: ITemplate & { data?: Dictionary };
+    testRequest: ITemplate & { data?: object };
     exportDynamicData: IUpload;
     memoryTable: IMemoryTable;
     viewChange: string;

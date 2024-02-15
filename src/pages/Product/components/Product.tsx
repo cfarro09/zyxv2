@@ -7,7 +7,7 @@ export const Product: React.FC = () => {
     return (
         <Box sx={{ flexGrow: 1 }} width={"100%"} margin={1}>
             <Grid container spacing={2}>
-                <Grid item xs={4}>
+                <Grid item xs={4} >
                     <FieldEdit
                         label={"Producto"}
                         valueDefault={"22"}

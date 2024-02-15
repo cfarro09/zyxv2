@@ -1,4 +1,4 @@
-import { IActionCall, IRequestBodyPaginated, IRequestBody, ITransaction, IRequestBodyDynamic, Dictionary } from "@types";
+import { IActionCall, IRequestBodyPaginated, IRequestBody, ITransaction, IRequestBodyDynamic } from "@types";
 import { CommonService } from "network";
 import actionTypes from "./actionTypes";
 
@@ -55,7 +55,7 @@ export const getCollectionDynamic = (requestBody: IRequestBodyDynamic): IActionC
 export const resetMainDynamic = (): IActionCall => ({ type: actionTypes.DATA_DYNAMIC_RESET });
 
 
-export const exportDynamic = (requestBody: IRequestBodyDynamic, reportName: string = "", formatToExport: "excel" | "csv" = "excel", headerClient: Dictionary[] | null = null): IActionCall => ({
+export const exportDynamic = (requestBody: IRequestBodyDynamic, reportName: string = "", formatToExport: "excel" | "csv" = "excel", headerClient: object[] | null = null): IActionCall => ({
     callAPI: () => CommonService.mainDynamicExport({
         ...requestBody,
         parameters: {
@@ -90,7 +90,7 @@ export const uploadFile = (data: FormData): IActionCall => ({
 
 export const resetUploadFile = (): IActionCall => ({ type: actionTypes.UPLOAD_FILE_RESET });
 
-export const exportData = (requestBody: IRequestBody, reportName: string = "", formatToExport: "excel" | "csv" = "excel", isNotPaginated: boolean = false, headerClient: Dictionary[] | null = null): IActionCall => ({
+export const exportData = (requestBody: IRequestBody, reportName: string = "", formatToExport: "excel" | "csv" = "excel", isNotPaginated: boolean = false, headerClient: object[] | null = null): IActionCall => ({
     callAPI: () => CommonService.exportData({
         ...requestBody,
         parameters: {
@@ -150,7 +150,7 @@ export const execute = (requestBody: IRequestBody | ITransaction, transaction: b
 type Url = string;
 /**Action type = EXECUTE_MAIN */
 export const executeWithFiles = (
-    build: (uploader: (file: File) => Promise<Url>) => Promise<IRequestBody | ITransaction>,
+    build: (_: (_1: File) => Promise<Url>) => Promise<IRequestBody | ITransaction>,
     transaction: boolean = false,
 ): IActionCall => {
     const uploadCb = async (mediaFile: File): Promise<Url> => {
@@ -227,11 +227,11 @@ export const resetCollectionPaginated = (): IActionCall => ({ type: actionTypes.
 
 // export const resetAllMain = (): IActionCall => ({ type: actionTypes.RESET_ALL });
 
-export const setMemoryTable = (payload: any): IActionCall => ({ type: actionTypes.SET_MEMORY_TABLE, payload });
+export const setMemoryTable = (payload: object): IActionCall => ({ type: actionTypes.SET_MEMORY_TABLE, payload });
 
 export const cleanMemoryTable = (): IActionCall => ({ type: actionTypes.CLEAN_MEMORY_TABLE });
 
-export const setViewChange = (payload: any): IActionCall => ({ type: actionTypes.VIEWCHANGE, payload });
+export const setViewChange = (payload: object): IActionCall => ({ type: actionTypes.VIEWCHANGE, payload });
 
 export const cleanViewChange = (): IActionCall => ({ type: actionTypes.CLEAN_VIEWCHANGE });
 

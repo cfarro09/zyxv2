@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { styled, useTheme, Theme, CSSObject } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
-import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
+import MuiAppBar from '@mui/material/AppBar';
+import type { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import CssBaseline from '@mui/material/CssBaseline';
 import Typography from '@mui/material/Typography';
@@ -10,7 +11,6 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Aside from './Aside';
 
 const drawerWidth = 240;
-
 
 const DrawerHeader = styled('div')(({ theme }) => ({
 	display: 'flex',
@@ -80,7 +80,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
 					</Typography>
 				</Toolbar>
 			</AppBar>
-			<Aside 
+			<Aside
 				open={open}
 				handleDrawerClose={handleDrawerClose}
 			/>

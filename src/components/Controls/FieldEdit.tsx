@@ -1,17 +1,17 @@
 import { FC, useEffect, useState } from 'react';
 import { InfoRounded } from '@mui/icons-material';
 import { Box, Tooltip } from '@mui/material';
-import TextField, { TextFieldProps } from '@mui/material/TextField';
-import { Dictionary } from '@types';
+import TextField from '@mui/material/TextField';
+import type { TextFieldProps } from '@mui/material/TextField';
 
 type InputProps = {
     label?: string;
     valueDefault?: unknown;
     maxLength?: number;
     helperText?: string;
-    fregister?: Dictionary;
-    onChange?: (_: any, _1?: any | null) => void;
-    onBlur?: (_: any, _1?: any | null) => void;
+    fregister?: object;
+    onChange?: (_?: string | null) => void;
+    onBlur?: (_?: string | null) => void;
 } & TextFieldProps;
 
 const FieldEdit: FC<InputProps> = ({ label, valueDefault = "", onChange, onBlur, error, fregister = {}, variant = "standard", maxLength = 0, helperText = "", ...rest }) => {
