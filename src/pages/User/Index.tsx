@@ -1,1 +1,1 @@
-export { User } from './components/User'
+export { User } from './components/User';
