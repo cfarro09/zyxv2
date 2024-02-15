@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { styled, useTheme } from '@mui/material/styles';
+import type { Theme, CSSObject } from '@mui/material/styles';
 import MuiDrawer from '@mui/material/Drawer';
 import { Divider, IconButton } from '@mui/material';
 import List from '@mui/material/List';
@@ -63,7 +64,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 }));
 
 const ElementMenu: React.FC<{ route: RouteConfig; open: boolean }> = ({ route, open }) => {
-    let navigate = useNavigate();
+    const navigate = useNavigate();
 
     return (
         <ListItem

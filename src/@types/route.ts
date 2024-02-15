@@ -22,7 +22,7 @@ export interface ViewsClassificationConfig {
     subroute?: boolean;
     /** used when subroute prop is true */
     initialSubroute?: string;
-    icon?: (className: string) => React.ReactNode;
+    icon?: (_: string) => React.ReactNode;
     show?: () => boolean;
-    options?: any;
+    options?: object;
 }

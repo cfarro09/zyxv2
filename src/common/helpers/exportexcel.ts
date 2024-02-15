@@ -1,6 +1,4 @@
-import FileSaver from 'file-saver';
-// import * as XLSX from 'xlsx';
-import { Dictionary } from "@types";
+import * as FileSaver from 'file-saver';
 
 type ColumnTmp = {
     Header: string;
@@ -8,20 +6,20 @@ type ColumnTmp = {
     prefixTranslation?: string;
     type?: string
 }
-
-export function exportExcel(filename: string, csvData: Dictionary[], columnsexport?: ColumnTmp[]): void {
+interface ObjectZyx {
+    [key: string]: string | number | boolean | null;
+}
+export function exportExcel(filename: string, csvData: ObjectZyx[], columnsexport?: ColumnTmp[]): void {
     import('xlsx').then(XLSX => {
         const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
         const fileExtension = '.xlsx';
         let datafromtable = csvData;
         if (columnsexport) {
-            datafromtable = csvData.map((x: Dictionary) => {
-                const newx: Dictionary = {};
-                // columnsexport.forEach((y: ColumnTmp) => {
-                //     newx[y.Header] = y.prefixTranslation !== undefined ? i18n.t(`${y.prefixTranslation}${x[y.accessor]?.toLowerCase()}`).toUpperCase() : (
-                //         y.type === "porcentage" ? `${(Number(x[y.accessor]) * 100).toFixed(0)}%` :
-                //             x[y.accessor])
-                // });
+            datafromtable = csvData.map((x: ObjectZyx) => {
+                const newx: ObjectZyx = {};
+                columnsexport.forEach((y: ColumnTmp) => {
+                    newx[y.Header] =  (y.type === "porcentage" ? `${(Number(x[y.accessor]) * 100).toFixed(0)}%` : x[y.accessor])
+                });
                 return newx;
             });
         }

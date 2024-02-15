@@ -1,18 +1,16 @@
-import { Dictionary } from '@types';
-
-export interface ParametersPaginated extends Dictionary {
+export type ParametersPaginated = {
     skip: number;
     take: number;
-    filters: Dictionary;
-    sorts: Dictionary;
+    filters: object;
+    sorts: object;
     origin: string;
     offset?: number;
-}
+} & object
 
 export interface IRequestBody<TService = object> {
     method: string,
     key?: string,
-    parameters: Dictionary,
+    parameters: object,
     type?: string;
     service?: TService;
 }
@@ -43,8 +41,8 @@ export interface ITransaction {
 // }
 
 export interface IRequestBodyDynamic {
-    columns: Dictionary[];
-    summaries: Dictionary[];
-    filters: Dictionary[];
-    parameters: Dictionary
+    columns: object[];
+    summaries: object[];
+    filters: object[];
+    parameters: object
 }
