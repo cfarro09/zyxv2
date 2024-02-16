@@ -1,6 +1,7 @@
 import callAPIMiddleware from 'middlewares/apiMiddleware';
 // import callWSMiddleware from 'middlewares/wsMiddleware';
-import { applyMiddleware, compose, createStore, combineReducers, Middleware } from 'redux';
+import { applyMiddleware, compose, createStore, combineReducers } from 'redux';
+import type { Middleware } from 'redux';
 import thunk from 'redux-thunk';
 import loginReducer, { IState as ILogin } from './login/reducer';
 import mainReducer, { IState as IMain } from './main/reducer';

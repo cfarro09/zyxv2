@@ -88,7 +88,6 @@ export default function SignIn() {
                                 label="Usuario"
                                 name="username"
                                 autoComplete="username"
-                                autoFocus
                             />
                             <TextField
                                 margin="normal"

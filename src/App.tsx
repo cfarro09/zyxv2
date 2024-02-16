@@ -1,8 +1,6 @@
 // src/App.tsx
 
-import React from 'react';
-import { ThemeProvider } from '@mui/material/styles'; // Importa ThemeProvider
-import { createTheme } from '@mui/material/styles';
+import { ThemeProvider, createTheme } from '@mui/material/styles'; // Importa ThemeProvider
 import RouterApp from './routes/AppRoutes'; // Ajusta la ruta según la ubicación de tu archivo de rutas
 import './App.css';
 
