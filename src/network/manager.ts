@@ -43,7 +43,7 @@ export const APIManager = {
         return axios.get<T>(url, { params, headers, responseType });
     },
 
-    async post<T = any>(url: string, config: IRequestConfig = {}, withToken = true) {
+    async post<T = any>(url: string, config: IRequestConfig = {}, withToken = true, headers1 = {}) {
         const { params, data, responseType } = config;
         const headers = await getHeaders(RequestType.POST, withToken);
         let rr = null;
@@ -51,7 +51,7 @@ export const APIManager = {
         retry = retry - 1;
         while (true) {
             try {
-                rr = await axios.post<T>(url, data, { params, headers, responseType });
+                rr = await axios.post<T>(url, data, { params, headers: { ...headers, ...headers1 }, responseType });
             } catch (error) {
                 if (error?.response) {
                     if (!statusAllowed.includes(error?.response?.status) && retry !== 0) {

@@ -18,7 +18,7 @@ export function validateToken(firstLoad: string) {
 }
 
 export function uploadFile(data: FormData) {
-    return APIManager.post(apiUrls.UPLOAD_FILE, { data }, true);
+    return APIManager.post(apiUrls.UPLOAD_FILE, { data }, true, {'Content-Type': 'multipart/form-data'});
 }
 
 export function exportData(requestBody: IRequestBody) {
