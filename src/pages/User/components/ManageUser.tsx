@@ -4,7 +4,7 @@ import { getRoles, getUserSel, getValuesFromDomain, userIns } from 'common/helpe
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from 'stores';
-import { execute, getMultiCollection } from 'stores/main/actions';
+import { execute, getMultiCollection, resetMultiMain } from 'stores/main/actions';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import FieldEdit from 'components/Controls/FieldEdit';
 import { FieldSelect } from 'components/Controls/FieldSelect';
@@ -12,6 +12,7 @@ import { useForm } from 'react-hook-form';
 import PasswordDialog from './PasswordDialog';
 import { IUser, ObjectZyx } from '@types';
 import paths from 'common/constants/paths';
+import { manageConfirmation, showBackdrop, showSnackbar } from 'stores/popus/actions';
 
 interface IDataAux {
     listDocumentType: ObjectZyx[];
@@ -43,6 +44,7 @@ export const ManageUser: React.FC = () => {
             status: "ACTIVO",
         }
     });
+
 
     const registerX = () => {
         register('userid');
@@ -99,7 +101,6 @@ export const ManageUser: React.FC = () => {
             if (rows.length > 0) {
                 reset(rows[0]);
             }
-            console.log("reset")
             registerX()
             const listDocumentType = multiResult.data.find(f => f.key === `UFN_DOMAIN_VALUES_SEL-TIPODOCUMENTO`)?.data ?? [];
             const listStatus = multiResult.data.find(f => f.key === `UFN_DOMAIN_VALUES_SEL-ESTADO`)?.data ?? [];
@@ -110,48 +111,46 @@ export const ManageUser: React.FC = () => {
     }, [multiResult]);
 
     useEffect(() => {
+        return () => {
+            dispatch(resetMultiMain())
+        }
+    }, []);
+
+    useEffect(() => {
         if (waitSave) {
             if (!executeResult.loading && !executeResult.error) {
-                alert("OK!!")
-                setTimeout(() => {
-                    navigate(paths.USERS)
-                }, 300);
+                dispatch(showBackdrop(false));
+                dispatch(showSnackbar({ show: true, severity: "success", message: `Guardado satisfactoriamente.` }));
+                navigate(paths.USERS)
             } else if (executeResult.error) {
-                alert("error " + executeResult.code)
-                // const errormessage = t(executeResult.code || "error_unexpected_error", {
-                //     module: t(langKeys.corporation_plural).toLocaleLowerCase(),
-                // });
-                // dispatch(showSnackbar({ show: true, success: false, message: errormessage }));
-                // dispatch(showBackdrop(false));
+                dispatch(showSnackbar({ show: true, severity: "error", message: `${executeResult.code}` }));
+                dispatch(showBackdrop(false));
                 setWaitSave(false);
             }
         }
     }, [navigate, executeResult, waitSave]);
 
     const onSubmit = handleSubmit((data) => {
-        dispatch(execute(userIns({
-            ...data,
-            password: data.password ?? "",
-            operation: data.userid > 0 ? "UPDATE" : "INSERT"
-        })));
-        setWaitSave(true);
-        // const callback = () => {
-        //     dispatch(showBackdrop(true));
-        //     dispatch(execute({
-        //         header: insUser({ ...data, operation: data.userid ? "UPDATE" : "INSERT" }),
-        //         detail: data.shops.map(x => shopUserIns({
-        //             ...x,
-        //             operation: x.shopuserid > 0 ? (x.status === "ELIMINADO" ? "DELETE" : "UPDATE") : "INSERT"
-        //         }))
-        //     }, true));
-        //     setWaitSave(true)
-        // }
-
-        // dispatch(manageConfirmation({
-        //     visible: true,
-        //     question: t(langKeys.confirmation_save),
-        //     callback
-        // }))
+        if (data.userid === 0 && !data.password) {
+            dispatch(showSnackbar({ show: true, severity: "warning", message: `Debe ingresar contraseña` }));
+        } else {
+            const callback = () => {
+                dispatch(showBackdrop(true));
+                dispatch(execute(userIns({
+                    ...data,
+                    password: data.password ?? "",
+                    operation: data.userid > 0 ? "UPDATE" : "INSERT"
+                })));
+                setWaitSave(true);
+                setWaitSave(true)
+            }
+    
+            dispatch(manageConfirmation({
+                visible: true,
+                question: "¿Está seguro de continuar?",
+                callback
+            }))
+        }
     });
 
     return (
@@ -175,12 +174,14 @@ export const ManageUser: React.FC = () => {
                                 color='info'
                                 onClick={() => setOpenPasswordDialog(true)}
                                 type='button'
+                                disabled={multiResult.loading}
                                 variant="contained">
                                 {id !== "new" ? "Cambiar contraseña" : "Ingresar contraseña"}
                             </Button>
                             <Button
                                 color='primary'
                                 type='submit'
+                                disabled={multiResult.loading}
                                 variant="contained">Guardar
                             </Button>
                         </Grid>

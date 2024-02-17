@@ -29,7 +29,7 @@ const PasswordDialog: React.FC<PasswordDialogProps> = ({ openModal, setOpenModal
         setValue('password', "");
         setValue('confirmpassword', "");
     }, [openModal, setValue]);
-    console.log("errors", errors)
+    
     useEffect(() => {
         register('password', { validate: (value) => Boolean(value?.length) || "El campo es requerido" });
         register('confirmpassword', {
@@ -70,10 +70,7 @@ const PasswordDialog: React.FC<PasswordDialogProps> = ({ openModal, setOpenModal
                             variant="outlined"
                             valueDefault={getValues('password')}
                             type={showPassword ? 'text' : 'password'}
-                            onChange={(value) => {
-                                console.log("password", value)
-                                setValue('password', `${value}`)
-                            }}
+                            onChange={(value) => setValue('password', `${value}`)}
                             error={errors?.password?.message}
                             InputProps={{
                                 endAdornment: (

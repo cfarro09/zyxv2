@@ -173,7 +173,7 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
                                     key={cell.id}
                                     onClick={() => {
                                         if (cell.column.id !== "selection" && redirectOnSelect && columnKey) {
-                                            navigate(`${normalizePathname(location.pathname)}/${(row.original as ObjectZyx)[columnKey]}`)
+                                            navigate(`${normalizePathname(location.pathname)}/${(row.original as ObjectZyx)[columnKey]}`, { replace: true })
                                         }
                                     }}
                                 >

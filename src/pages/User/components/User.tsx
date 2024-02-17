@@ -4,7 +4,7 @@ import { getUserSel, toTitleCase } from 'common/helpers';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from 'stores';
-import { getCollection } from 'stores/main/actions';
+import { getCollection, resetMultiMain } from 'stores/main/actions';
 import dayjs from 'dayjs';
 import clsx from 'clsx';
 import TableSimple from 'components/Controls/TableSimple';
@@ -103,7 +103,7 @@ export const User: React.FC = () => {
 
     useEffect(() => {
         dispatch(getCollection(getUserSel(1, 0)));
-    }, [dispatch]);
+    }, []);
 
     useEffect(() => {
         if (!mainResult.loading && !mainResult.error && mainResult.key === 'UFN_USERS_SEL') {

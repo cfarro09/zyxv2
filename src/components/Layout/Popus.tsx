@@ -1,4 +1,4 @@
-import { Backdrop, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Snackbar } from '@mui/material';
+import { Alert, Backdrop, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Snackbar } from '@mui/material';
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from 'stores';
@@ -14,7 +14,7 @@ import { manageConfirmation, showSnackbar } from 'stores/popus/actions';
 // });
 
 const Popus: React.FC = () => {
-    const classes = useStyles();
+    // const classes = useStyles();
     const dispatch = useDispatch();
 
     const popus = useSelector((state: IRootState) => state.popus);
@@ -37,8 +37,8 @@ const Popus: React.FC = () => {
                 onClose={handleCloseSnackbar}
                 key={'topright'}
             >
-                <MuiAlert
-                    className={classes.cookieAlert}
+                <Alert
+                    // className={classes.cookieAlert}
                     elevation={6}
                     variant="filled"
                     onClose={handleCloseSnackbar}
@@ -47,7 +47,7 @@ const Popus: React.FC = () => {
                     <div style={{ whiteSpace: 'pre-wrap' }}>
                         {snackbar.message}
                     </div>
-                </MuiAlert>
+                </Alert>
             </Snackbar>
 
             <Backdrop style={{ zIndex: 999999999, color: '#fff', }} open={popus.showBackDrop}>
