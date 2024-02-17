@@ -83,7 +83,7 @@ export const ManageUser: React.FC = () => {
             if (rows.length > 0) {
                 reset(rows[0]);
             }
-            // registerX()
+            registerX()
             const listDocumentType = multiResult.data.find(f => f.key === `UFN_DOMAIN_VALUES_SEL-TIPODOCUMENTO`)?.data ?? [];
             const listStatus = multiResult.data.find(f => f.key === `UFN_DOMAIN_VALUES_SEL-ESTADO`)?.data ?? [];
             const listRoles = multiResult.data.find(f => f.key === `UFN_ROLE_LIST`)?.data ?? [];
