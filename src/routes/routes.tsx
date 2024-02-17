@@ -2,6 +2,7 @@ import { RouteConfig } from "@types";
 import paths from "common/constants/paths";
 import { Dashboard, Person, ShoppingCart, Inventory, FormatListNumberedRtlSharp, Receipt, Assignment } from '@mui/icons-material';
 import { User, ManageUser } from 'pages/User/Index';
+import { Product } from "pages/Product/Index";
 
 export const routes: RouteConfig[] = [
     {
@@ -34,7 +35,7 @@ export const routes: RouteConfig[] = [
         description: "products",
         tooltip: "products",
         path: paths.PRODUCTS,
-        mainView: <User />,
+        mainView: <Product />,
         icon: () => <ShoppingCart style={{ width: 22, height: 22 }}  />,
     },
     {

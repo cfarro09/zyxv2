@@ -27,16 +27,12 @@ import { FieldSelect } from './FieldSelect';
 import { useState } from 'react';
 import { rankItem } from '@tanstack/match-sorter-utils';
 import { ObjectZyx } from '@types';
+import { normalizePathname } from 'common/helpers';
 
 interface IPageSizes {
     label: string;
     value: number;
 }
-
-const normalizePathname = (pathname: string) => {
-    // Asegura que el pathname siempre termine sin slash "/", excepto si es solo "/"
-    return pathname === '/' ? pathname : pathname.replace(/\/+$/, '');
-};
 
 const pagesSizes: IPageSizes[] = [
     { label: 'Mostrando 2', value: 2 },
@@ -60,7 +56,6 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
     const [globalFilter, setGlobalFilter] = useState('');
     const navigate = useNavigate();
     const location = useLocation();
-
 
     const handleClose = () => {
         setAnchorEl(null);
@@ -117,16 +112,13 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
                         id="basic-buttons"
                         variant="contained"
                         onClick={() => {
-                            navigate(`${normalizePathname(location.pathname)}/new`)
+                            navigate(`${normalizePathname(location.pathname)}/new`);
                         }}
                     >
-                        <Add />Nuevo
+                        <Add />
+                        Nuevo
                     </Button>
-                    <Button
-                        id="basic-button"
-                        aria-haspopup="true"
-                        className="px-4 bg-light-grey text-grey"
-                    >
+                    <Button id="basic-button" aria-haspopup="true" className="px-4 bg-light-grey text-grey">
                         Exportar
                     </Button>
                     <Menu
@@ -159,7 +151,9 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
                         <TableRow key={headerGroup.id}>
                             {headerGroup.headers.map((header) => (
                                 <TableCell key={header.id}>
-                                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                                    {header.isPlaceholder
+                                        ? null
+                                        : flexRender(header.column.columnDef.header, header.getContext())}
                                 </TableCell>
                             ))}
                         </TableRow>
@@ -167,13 +161,13 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
                 </TableHead>
                 <TableBody>
                     {table.getRowModel().rows.map((row) => (
-                        <TableRow key={row.id} sx={{ cursor: "pointer" }} hover>
+                        <TableRow key={row.id} sx={{ cursor: 'pointer' }} hover>
                             {row.getVisibleCells().map((cell) => (
                                 <TableCell
                                     key={cell.id}
                                     onClick={() => {
-                                        if (cell.column.id !== "selection" && redirectOnSelect && columnKey) {
-                                            navigate(`${normalizePathname(location.pathname)}/${(row.original as ObjectZyx)[columnKey]}`, { replace: true })
+                                        if (cell.column.id !== 'selection' && redirectOnSelect && columnKey) {
+                                            navigate(`${normalizePathname(location.pathname)}/${(row.original as ObjectZyx)[columnKey]}`);
                                         }
                                     }}
                                 >
