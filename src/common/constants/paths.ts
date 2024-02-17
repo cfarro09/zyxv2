@@ -6,7 +6,7 @@ const paths = {
     DOMAINS: '/domains',
     PURCHASE_ORDERS: '/purchase_orders',
     SALE_ORDERS: '/sale_orders',
-    USERS: '/user',
+    USERS: '/users',
 };
 
 export default paths;
