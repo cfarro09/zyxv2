@@ -1,41 +1,114 @@
-import { Box, Grid } from '@mui/material';
-import FieldEdit from 'components/Controls/FieldEdit';
-import { FieldSelect } from 'components/Controls/FieldSelect';
-import React from 'react';
+import { Box, Chip, Grid, Paper, Typography } from '@mui/material';
+import type { ColumnDef } from '@tanstack/react-table';
+import clsx from 'clsx';
+import { getProductSel } from 'common/helpers';
+import TableSimple from 'components/Controls/TableSimple';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { IRootState } from 'stores';
+import { getCollection } from 'stores/main/actions';
+import { IProduct } from '../models';
+
+const classes = {
+    successLabel: 'bg-[#dff7e9] text-[#28c76f]',
+    pendingLabel: 'bg-[#fff1e3] text-[#ff9f43]',
+    inactiveLabel: 'bg-[#f2f2f3] text-[#a8aaae]',
+    suspendLabel: 'bg-[#eae8fd] text-[#7367f0]',
+    iconBadge: 'w-6 h-6 rounded-full flex items-center justify-center p-5',
+};
+
+const columns: ColumnDef<IProduct>[] = [
+    {
+        header: 'ProductID',
+        accessorKey: 'productid',
+    },
+    {
+        header: 'Producto',
+        enableResizing: true,
+        cell: (info) => {
+            const { title, image, description } = info.row.original;
+            return (
+                <Grid container sx={{ gap: '1rem' }}>
+                    <Grid item>
+                        <Box className="flex items-center">
+                            <img
+                                src={image || 'https://i.postimg.cc/yYzF74qD/download.jpg'}
+                                alt="product"
+                                className="w-16 h-16"
+                            />
+                        </Box>
+                    </Grid>
+                    <Grid item>
+                        <Box>
+                            <Typography variant="subtitle1">{title}</Typography>
+                            <Typography variant="body2">{description}</Typography>
+                        </Box>
+                    </Grid>
+                </Grid>
+            );
+        },
+    },
+    {
+        header: 'Categoria',
+        accessorKey: 'category',
+    },
+    {
+        header: 'Código',
+        accessorKey: 'code',
+    },
+    {
+        header: 'Cantidad',
+        accessorKey: 'quantity',
+    },
+    {
+        id: 'estado',
+        accessorKey: 'status',
+        header: () => <Box className="text-center">ESTADO</Box>,
+        cell: (info) => {
+            const status = info.row.original.status;
+            return (
+                <Box className="flex justify-center">
+                    <Chip
+                        className={clsx(
+                            status === 'ACTIVO' && classes.successLabel,
+                            status === 'INACTIVO' && classes.inactiveLabel,
+                            status === 'PENDIENTE' && classes.pendingLabel,
+                            'w-24',
+                            'font-medium',
+                        )}
+                        label={info.row.original.status}
+                    />
+                </Box>
+            );
+        },
+    },
+];
 
 export const Product: React.FC = () => {
+    const dispatch = useDispatch();
+    const mainResult = useSelector((state: IRootState) => state.main.mainData);
+    const [mainData, setMainData] = useState<IProduct[]>([]);
+
+    useEffect(() => {
+        dispatch(getCollection(getProductSel(0)));
+    }, [dispatch]);
+
+    useEffect(() => {
+        if (!mainResult.loading && !mainResult.error && mainResult.key === 'UFN_PRODUCT_SEL') {
+            setMainData((mainResult.data as IProduct[]) || []);
+        }
+    }, [mainResult]);
+
     return (
-        <Box sx={{ flexGrow: 1 }} width={"100%"} margin={1}>
-            <Grid container spacing={2}>
-                <Grid item xs={4} >
-                    <FieldEdit
-                        label={"Producto"}
-                        valueDefault={"22"}
-                        variant="outlined"
-                        // error={errors?.firstname?.message}
-                        onChange={(value?) => console.log(value)}
-                    />
-                </Grid>
-                <Grid item xs={4}>
-                    <FieldEdit
-                        label={"Descripcion"}
-                        valueDefault={"22"}
-                        variant="outlined"
-                        // error={errors?.firstname?.message}
-                        onChange={(value?) => console.log(value)}
-                    />
-                </Grid>
-                <Grid item xs={4}>
-                    <FieldSelect
-                        label={"Producto"}
-                        variant="outlined"
-                        valueDefault={"a"}
-                        data={[{ option: "a" }, { option: "b" }]}
-                        optionDesc="option"
-                        optionValue="option"
-                    />
-                </Grid>
-            </Grid>
+        <Box className="flex max-w-screen-xl mr-auto ml-auto flex-col">
+            <Paper className="w-full mt-6">
+                <Box className="px-6 py-3 border-b">
+                    <Typography variant="h5">Productos</Typography>
+                </Box>
+                <Box className="p-6">
+                    <TableSimple data={mainData} columns={columns} redirectOnSelect={true} columnKey={'productid'} />
+                </Box>
+            </Paper>
         </Box>
     );
 };

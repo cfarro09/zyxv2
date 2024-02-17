@@ -33,7 +33,15 @@ export const getUserSel = (orgid: number, userid: number): IRequestBody => ({
     key: 'UFN_USERS_SEL',
     parameters: {
         orgid,
-        userid
+        userid,
+    },
+});
+
+export const getProductSel = (productid: number): IRequestBody => ({
+    method: 'UFN_PRODUCT_SEL',
+    key: 'UFN_PRODUCT_SEL',
+    parameters: {
+        productid,
     },
 });
 
@@ -49,10 +57,10 @@ export const userIns = (parameters: { operation: string } & IUser): IRequestBody
     key: 'UFN_USER_INS',
     parameters: {
         ...parameters,
-        address: "",
-        phone: "",
-        type: "NINGUNO"
-    }
+        address: '',
+        phone: '',
+        type: 'NINGUNO',
+    },
 });
 
 export const getRoles = (): IRequestBody => ({
@@ -65,6 +73,6 @@ export const getValuesFromDomain = (domainname: string): IRequestBody => ({
     method: 'UFN_DOMAIN_VALUES_SEL',
     key: `UFN_DOMAIN_VALUES_SEL-${domainname}`,
     parameters: {
-        domainname
+        domainname,
     },
 });

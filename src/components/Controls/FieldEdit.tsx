@@ -24,7 +24,7 @@ const FieldEdit: FC<InputProps> = ({ label, valueDefault = "", onChange, onBlur,
 
     return (
         <div>
-            {(variant === "standard" && !!label) &&
+            {/* {(variant === "standard" && !!label) &&
                 <Box fontWeight={500} lineHeight="18px" fontSize={14} mb={.5} color="textPrimary" style={{ display: "flex" }}>
                     {label}
                     {!!helperText &&
@@ -35,12 +35,12 @@ const FieldEdit: FC<InputProps> = ({ label, valueDefault = "", onChange, onBlur,
                         </div>
                     }
                 </Box>
-            }
+            } */}
             <TextField
                 {...fregister}
                 color="primary"
                 fullWidth
-                label={variant !== "standard" && label}
+                label={label}
                 value={value}
                 style={{ marginTop: 0 }}
                 variant={variant}

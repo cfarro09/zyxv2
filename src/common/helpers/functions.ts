@@ -884,3 +884,8 @@ export const normalizePathname = (pathname: string) => {
     // Asegura que el pathname siempre termine sin slash "/", excepto si es solo "/"
     return pathname === '/' ? pathname : pathname.replace(/\/+$/, '');
 };
+
+export const getFileSizeInKb = (size: number | string ) => {
+    const fileSize = typeof size === 'string' ? parseInt(size) : size;
+    return (fileSize / 1024).toFixed(2);
+}
