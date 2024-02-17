@@ -879,3 +879,8 @@ export function decrypt(ciphertext:string, key:string) {
 export const toTitleCase = (str: string) => {
     return str.replace(/\w\S*/g, (txt: string) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
 }
+
+export const normalizePathname = (pathname: string) => {
+    // Asegura que el pathname siempre termine sin slash "/", excepto si es solo "/"
+    return pathname === '/' ? pathname : pathname.replace(/\/+$/, '');
+};
