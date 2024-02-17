@@ -52,7 +52,6 @@ export const ManageUser: React.FC = () => {
         },
     });
 
-
     const registerX = () => {
         register('userid');
         register('username', { validate: (value) => Boolean(value?.length) || 'El campo es requerido' });
@@ -67,19 +66,6 @@ export const ManageUser: React.FC = () => {
     };
 
     useEffect(() => {
-        reset({
-            userid: 0,
-            username: '',
-            roleid: 0,
-            rolename: '',
-            firstname: '',
-            password: '',
-            lastname: '',
-            document: '',
-            document_type: '',
-            email: '',
-            status: 'ACTIVO',
-        });
         registerX();
         dispatch(
             getMultiCollection([
@@ -93,24 +79,11 @@ export const ManageUser: React.FC = () => {
 
     useEffect(() => {
         if (!multiResult.loading && !multiResult.error) {
-            reset({
-                userid: 0,
-                username: '',
-                roleid: 0,
-                rolename: '',
-                firstname: '',
-                password: '',
-                lastname: '',
-                document: '',
-                document_type: '',
-                email: '',
-                status: 'ACTIVO',
-            });
             const rows = multiResult.data.find((f) => f.key === `UFN_USERS_SEL`)?.data ?? [];
             if (rows.length > 0) {
                 reset(rows[0]);
             }
-            registerX()
+            // registerX()
             const listDocumentType = multiResult.data.find(f => f.key === `UFN_DOMAIN_VALUES_SEL-TIPODOCUMENTO`)?.data ?? [];
             const listStatus = multiResult.data.find(f => f.key === `UFN_DOMAIN_VALUES_SEL-ESTADO`)?.data ?? [];
             const listRoles = multiResult.data.find(f => f.key === `UFN_ROLE_LIST`)?.data ?? [];
@@ -152,7 +125,7 @@ export const ManageUser: React.FC = () => {
                 })));
                 setWaitSave(true);
             }
-    
+
             dispatch(manageConfirmation({
                 visible: true,
                 question: "¿Está seguro de continuar?",

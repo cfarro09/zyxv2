@@ -71,7 +71,6 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
                         aria-haspopup="true"
                         size="small"
                         onClick={(e) => {
-                            console.log("e.currentTarget", e.target)
                             e.stopPropagation();
                             setAnchorEl(e.currentTarget);
                             setRowSelected(info.row.original)

@@ -101,7 +101,8 @@ export const User: React.FC = () => {
     const mainResult = useSelector((state: IRootState) => state.main.mainData);
     const [mainData, setMainData] = useState<IUser[]>([]);
     const [waitDelete, setWaitDelete] = useState(false);
-    
+    const executeResult = useSelector((state: IRootState) => state.main.execute);
+
     useEffect(() => {
         dispatch(getCollection(getUserSel(1, 0)));
     }, []);
@@ -112,21 +113,30 @@ export const User: React.FC = () => {
         }
     }, [mainResult]);
 
+    useEffect(() => {
+        if (waitDelete) {
+            if (!executeResult.loading && !executeResult.error) {
+                dispatch(showBackdrop(false));
+                dispatch(showSnackbar({ show: true, severity: "success", message: `Eliminado satisfactoriamente.` }));
+                dispatch(getCollection(getUserSel(1, 0)));
+            } else if (executeResult.error) {
+                dispatch(showSnackbar({ show: true, severity: "error", message: `${executeResult.code}` }));
+                dispatch(showBackdrop(false));
+                setWaitDelete(false);
+            }
+        }
+    }, [dispatch, executeResult, waitDelete]);
+
     const deleteRow = (user: IUser) => {
         const callback = () => {
             dispatch(showBackdrop(true));
-            dispatch(execute(userIns({
-                ...user,
-                password: "",
-                operation: "DELETE"
-            })));
+            dispatch(execute(userIns({ ...user, password: "", operation: "DELETE" })));
             setWaitDelete(true);
-            
         }
 
         dispatch(manageConfirmation({
             visible: true,
-            question: "¿Está seguro de continuar?",
+            question: `¿Está seguro de eliminar el usuario ${user.username}?`,
             callback
         }))
     }
