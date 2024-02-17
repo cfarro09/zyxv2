@@ -5,6 +5,7 @@ import {
     IconButton,
     Menu,
     MenuItem,
+    Skeleton,
     Table,
     TableBody,
     TableCell,
@@ -45,12 +46,22 @@ const pagesSizes: IPageSizes[] = [
 
 interface ReactTableProps<T extends object> {
     data: T[];
+    loading?: boolean;
     columns: ColumnDef<T>[];
     redirectOnSelect?: boolean;
     columnKey?: string;
 }
 
-const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSelect }: ReactTableProps<T>) => {
+const LoadingSkeleton: React.FC<{ columns: number }> = ({ columns }) => {
+    const items: React.ReactNode[] = [];
+    for (let i = 0; i < columns; i++) {
+        items.push(<TableCell key={`table-simple-skeleton-${i}`}><Skeleton /></TableCell>);
+    }
+    return new Array(3).fill(0).map((_, index) => (<TableRow key={index}>{items}</TableRow>))
+};
+
+
+const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSelect, loading }: ReactTableProps<T>) => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
     const [globalFilter, setGlobalFilter] = useState('');
@@ -101,6 +112,7 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
                         variant="outlined"
                         valueDefault={table.getState().pagination.pageSize}
                         data={pagesSizes}
+                        disabled={loading}
                         onChange={(e) => handlePageSizeChange(e as IPageSizes)}
                         optionDesc="label"
                         optionValue="value"
@@ -111,9 +123,8 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
                         className="flex gap-1"
                         id="basic-buttons"
                         variant="contained"
-                        onClick={() => {
-                            navigate(`${normalizePathname(location.pathname)}/new`);
-                        }}
+                        disabled={loading}
+                        onClick={() => navigate(`${normalizePathname(location.pathname)}/new`)}
                     >
                         <Add />
                         Nuevo
@@ -160,7 +171,8 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
                     ))}
                 </TableHead>
                 <TableBody>
-                    {table.getRowModel().rows.map((row) => (
+                    {loading && <LoadingSkeleton columns={table.getHeaderGroups()[0].headers.length} />}
+                    {!loading && table.getRowModel().rows.map((row) => (
                         <TableRow key={row.id} sx={{ cursor: 'pointer' }} hover>
                             {row.getVisibleCells().map((cell) => (
                                 <TableCell
@@ -185,18 +197,24 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
                     </Typography>
                 </Box>
                 <Box className="flex">
-                    <IconButton onClick={() => table.setPageIndex(0)} disabled={!table.getCanPreviousPage()}>
+                    <IconButton
+                        onClick={() => table.setPageIndex(0)}
+                        disabled={loading || !table.getCanPreviousPage()}>
                         <FirstPage />
                     </IconButton>
-                    <IconButton onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
+                    <IconButton
+                        onClick={() => table.previousPage()}
+                        disabled={loading || !table.getCanPreviousPage()}>
                         <NavigateBefore />
                     </IconButton>
-                    <IconButton onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
+                    <IconButton
+                        onClick={() => table.nextPage()}
+                        disabled={loading || !table.getCanNextPage()}>
                         <NavigateNext />
                     </IconButton>
                     <IconButton
                         onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-                        disabled={!table.getCanNextPage()}
+                        disabled={loading || !table.getCanNextPage()}
                     >
                         <LastPage />
                     </IconButton>

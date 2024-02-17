@@ -4,7 +4,7 @@ import { getUserSel, toTitleCase } from 'common/helpers';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from 'stores';
-import { getCollection, resetMultiMain } from 'stores/main/actions';
+import { getCollection } from 'stores/main/actions';
 import dayjs from 'dayjs';
 import clsx from 'clsx';
 import TableSimple from 'components/Controls/TableSimple';
@@ -21,17 +21,20 @@ const classes = {
 
 const columns: ColumnDef<IUser>[] = [
     {
-        header: 'USERID',
-        accessorKey: 'userid',
-    },
-    {
         header: 'USUARIO',
         accessorKey: 'username',
     },
     {
-        id: 'rol',
+        header: 'NOMBRE',
+        accessorKey: 'firstname',
+    },
+    {
+        header: 'APELLIDO',
+        accessorKey: 'lastname',
+    },
+    {
         accessorKey: 'rolename',
-        header: () => <Box className="pl-11">Rol</Box>,
+        header: 'ROL',
         cell: (info) => {
             const rolename = info.row.original.rolename;
             const roleid = info.row.original.roleid;
@@ -63,10 +66,6 @@ const columns: ColumnDef<IUser>[] = [
     {
         header: 'DOCUMENTO',
         accessorKey: 'document',
-    },
-    {
-        header: 'CORREO',
-        accessorKey: 'email',
     },
     {
         id: 'estado',
@@ -119,6 +118,7 @@ export const User: React.FC = () => {
                 </Box>
                 <Box className="p-6">
                     <TableSimple
+                        loading={mainResult.loading}
                         data={mainData}
                         columns={columns}
                         redirectOnSelect={true}
