@@ -24,9 +24,10 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({
     const existToken = getAccessToken();
 
     React.useEffect(() => {
-        if (existToken)
+        if (existToken) {
             dispatch(validateToken(localStorage.getItem("firstLoad") ?? ""));
-    }, [dispatch, existToken])
+        }
+    }, [])
 
     if (!existToken) {
         return <Navigate to={redirectTo} replace />;

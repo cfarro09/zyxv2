@@ -9,6 +9,8 @@ export interface RouteConfig {
     subroute?: boolean;
     /** used when subroute prop is true */
     initialSubroute?: string;
+    mainView: JSX.Element;
+    manageView?: JSX.Element;
     icon: () => React.ReactNode;
     show?: () => boolean;
 }

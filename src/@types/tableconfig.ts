@@ -1,25 +1,27 @@
+import { ObjectZyx } from "./entities/common";
+
 export interface MultiData {
-  data: object[];
+  data: ObjectZyx[];
   success: boolean;
   key?: string;
 }
 export interface Pagination {
-  sorts: object;
-  filters: object;
+  sorts: ObjectZyx;
+  filters: ObjectZyx;
   pageIndex: number;
   trigger?: boolean;
 }
 
 export interface IFetchData {
-  sorts: object;
-  filters: object;
+  sorts: ObjectZyx;
+  filters: ObjectZyx;
   pageIndex: number;
   pageSize: number;
-  daterange: object;
+  daterange: ObjectZyx;
 }
 
 interface IFilters {
-  value: object;
+  value: ObjectZyx;
   operator: string;
   type?: string | null;
 }

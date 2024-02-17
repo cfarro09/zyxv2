@@ -5,10 +5,12 @@ import type { Middleware } from 'redux';
 import thunk from 'redux-thunk';
 import loginReducer, { IState as ILogin } from './login/reducer';
 import mainReducer, { IState as IMain } from './main/reducer';
+import popusReducer, { IState as IPopus } from './popus/reducer';
 
 export interface IRootState {
     login: ILogin,
     main: IMain;
+    popus: IPopus;
 }
 
 declare global {
@@ -20,6 +22,7 @@ declare global {
 const rootReducer = combineReducers<IRootState>({
     login: loginReducer,
     main: mainReducer,
+    popus: popusReducer,
     
 });
 

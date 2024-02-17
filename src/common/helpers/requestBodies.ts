@@ -1,4 +1,4 @@
-import { IRequestBody, IRequestBodyPaginated } from '@types';
+import { IRequestBody, IRequestBodyPaginated, IUser } from '@types';
 
 type IPaginated = {
     skip: number;
@@ -28,8 +28,36 @@ export const paginatedPersonWithoutDateSel = ({ skip, take, filters, sorts }: IP
     },
 });
 
-export const getUserSel = (parameters: any): IRequestBody => ({
+export const getUserSel = (orgid: number, userid: number): IRequestBody => ({
     method: 'UFN_USERS_SEL',
     key: 'UFN_USERS_SEL',
-    parameters,
+    parameters: {
+        orgid,
+        userid
+    },
+});
+
+export const userIns = (parameters: { operation: string } & IUser): IRequestBody => ({
+    method: 'UFN_USER_INS',
+    key: 'UFN_USER_INS',
+    parameters: {
+        ...parameters,
+        address: "",
+        phone: "",
+        type: "NINGUNO"
+    }
+});
+
+export const getRoles = (): IRequestBody => ({
+    method: 'UFN_ROLE_LIST',
+    key: 'UFN_ROLE_LIST',
+    parameters: {},
+});
+
+export const getValuesFromDomain = (domainname: string): IRequestBody => ({
+    method: 'UFN_DOMAIN_VALUES_SEL',
+    key: `UFN_DOMAIN_VALUES_SEL-${domainname}`,
+    parameters: {
+        domainname
+    },
 });

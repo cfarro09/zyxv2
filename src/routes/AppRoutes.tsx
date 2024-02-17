@@ -4,11 +4,8 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import PrivateRoute from './PrivateRoute'; // Si deseas rutas privadas
 import Login from '../pages/Login/Index';
-import { User } from 'pages/User/Index';
 import MainLayout from 'components/Layout/MainLayout';
-import { Product } from 'pages/Product/Index';
-// import User from '../pages/User/Index';
-// import User from '../pages/User/Index';
+import { routes } from './routes';
 
 const AppRoutes: React.FC = () => {
     return (
@@ -18,24 +15,26 @@ const AppRoutes: React.FC = () => {
             )}>
                 <Routes>
                     <Route index path={"login"} element={<Login />} />
-                    <Route path={"users"} element={
-                        <PrivateRoute
-                            redirectTo="/login"
-                        >   
-                            <MainLayout>
-                                <User/>
-                            </MainLayout>
-                        </PrivateRoute>
-                    } />
-                    <Route path={"products"} element={
-                        <PrivateRoute
-                            redirectTo="/login"
-                        >   
-                            <MainLayout>
-                                <Product/>
-                            </MainLayout>
-                        </PrivateRoute>
-                    } />
+                    {routes.map(route => (
+                        <React.Fragment key={route.path}>
+                            <Route  path={route.path} element={
+                                <PrivateRoute redirectTo="/login">
+                                    <MainLayout>
+                                        {route.mainView}
+                                    </MainLayout>
+                                </PrivateRoute>
+                            } />
+                            {route.manageView && (
+                                <Route path={`${route.path}/:id`} element={
+                                    <PrivateRoute redirectTo="/login">
+                                        <MainLayout>
+                                            {route.manageView}
+                                        </MainLayout>
+                                    </PrivateRoute>
+                                } />
+                            )}
+                        </ React.Fragment>
+                    ))}
 
                 </Routes >
             </React.Suspense>

@@ -1,6 +1,7 @@
 import { RouteConfig } from "@types";
 import paths from "common/constants/paths";
 import { Dashboard, Person, ShoppingCart, Inventory, FormatListNumberedRtlSharp, Receipt, Assignment } from '@mui/icons-material';
+import { User, ManageUser } from 'pages/User/Index';
 
 export const routes: RouteConfig[] = [
     {
@@ -8,6 +9,7 @@ export const routes: RouteConfig[] = [
         description: "dashboard",
         tooltip: "dashboard",
         path: paths.DASHBOARD,
+        mainView: <User />,
         icon: () => <Dashboard style={{ width: 22, height: 22 }}  />,
     },
     {
@@ -15,6 +17,16 @@ export const routes: RouteConfig[] = [
         description: "clients",
         tooltip: "clients",
         path: paths.CLIENTS,
+        mainView: <User />,
+        icon: () => <Person style={{ width: 22, height: 22 }}  />,
+    },
+    {
+        key: "users",
+        description: "users",
+        tooltip: "users",
+        path: paths.USERS,
+        mainView: <User />,
+        manageView: <ManageUser />,
         icon: () => <Person style={{ width: 22, height: 22 }}  />,
     },
     {
@@ -22,6 +34,7 @@ export const routes: RouteConfig[] = [
         description: "products",
         tooltip: "products",
         path: paths.PRODUCTS,
+        mainView: <User />,
         icon: () => <ShoppingCart style={{ width: 22, height: 22 }}  />,
     },
     {
@@ -29,6 +42,7 @@ export const routes: RouteConfig[] = [
         description: "inventory",
         tooltip: "inventory",
         path: paths.INVENTORY,
+        mainView: <User />,
         icon: () => <Inventory style={{ width: 22, height: 22 }}  />,
     },
     {
@@ -36,6 +50,7 @@ export const routes: RouteConfig[] = [
         description: "domains",
         tooltip: "domains",
         path: paths.DOMAINS,
+        mainView: <User />,
         icon: () => <FormatListNumberedRtlSharp style={{ width: 22, height: 22 }}  />,
     },
     {
@@ -43,6 +58,7 @@ export const routes: RouteConfig[] = [
         description: "purchase_orders",
         tooltip: "purchase_orders",
         path: paths.PURCHASE_ORDERS,
+        mainView: <User />,
         icon: () => <Assignment style={{ width: 22, height: 22 }}  />,
     },
     {
@@ -50,6 +66,7 @@ export const routes: RouteConfig[] = [
         description: "sale_orders",
         tooltip: "sale_orders",
         path: paths.SALE_ORDERS,
+        mainView: <User />,
         icon: () => <Receipt style={{ width: 22, height: 22 }}  />,
     },
 ];

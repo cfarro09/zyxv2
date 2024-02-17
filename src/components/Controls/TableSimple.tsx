@@ -21,18 +21,25 @@ import {
     getPaginationRowModel,
     useReactTable,
 } from '@tanstack/react-table';
+import { useLocation, useNavigate } from 'react-router-dom';
 import type { ColumnDef, FilterFn } from '@tanstack/react-table';
 import { FieldSelect } from './FieldSelect';
 import { useState } from 'react';
 import { rankItem } from '@tanstack/match-sorter-utils';
+import { ObjectZyx } from '@types';
 
 interface IPageSizes {
     label: string;
     value: number;
 }
 
+const normalizePathname = (pathname: string) => {
+    // Asegura que el pathname siempre termine sin slash "/", excepto si es solo "/"
+    return pathname === '/' ? pathname : pathname.replace(/\/+$/, '');
+};
+
 const pagesSizes: IPageSizes[] = [
-    // { label: 'Mostrando 2', value: 2 },
+    { label: 'Mostrando 2', value: 2 },
     { label: 'Mostrando 10', value: 10 },
     { label: 'Mostrando 20', value: 20 },
     { label: 'Mostrando 30', value: 30 },
@@ -43,12 +50,17 @@ const pagesSizes: IPageSizes[] = [
 interface ReactTableProps<T extends object> {
     data: T[];
     columns: ColumnDef<T>[];
+    redirectOnSelect?: boolean;
+    columnKey?: string;
 }
 
-const TableSimple = <T extends object>({ data, columns }: ReactTableProps<T>) => {
+const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSelect }: ReactTableProps<T>) => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
     const [globalFilter, setGlobalFilter] = useState('');
+    const navigate = useNavigate();
+    const location = useLocation();
+
 
     const handleClose = () => {
         setAnchorEl(null);
@@ -94,21 +106,25 @@ const TableSimple = <T extends object>({ data, columns }: ReactTableProps<T>) =>
                         variant="outlined"
                         valueDefault={table.getState().pagination.pageSize}
                         data={pagesSizes}
-                        onChange={(e) => handlePageSizeChange(e)}
+                        onChange={(e) => handlePageSizeChange(e as IPageSizes)}
                         optionDesc="label"
                         optionValue="value"
                     />
                 </Grid>
                 <Grid className="flex flex-row-reverse gap-4">
-                    <Button className="flex gap-1" id="basic-buttons" variant="contained">
-                        <Add /> Nuevo usuario
+                    <Button
+                        className="flex gap-1"
+                        id="basic-buttons"
+                        variant="contained"
+                        onClick={() => {
+                            navigate(`${normalizePathname(location.pathname)}/new`)
+                        }}
+                    >
+                        <Add />Nuevo
                     </Button>
                     <Button
                         id="basic-button"
-                        // aria-controls={open ? 'basic-menu' : undefined}
                         aria-haspopup="true"
-                        // aria-expanded={open ? 'true' : undefined}
-                        // onClick={handleClick}
                         className="px-4 bg-light-grey text-grey"
                     >
                         Exportar
@@ -128,7 +144,7 @@ const TableSimple = <T extends object>({ data, columns }: ReactTableProps<T>) =>
                     </Menu>
                     <TextField
                         defaultValue={globalFilter || ''}
-                        onChange={(e) => setGlobalFilter(String(e.target.value))}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setGlobalFilter(String(e.target.value))}
                         size="small"
                         id="search-input"
                         label=""
@@ -143,9 +159,7 @@ const TableSimple = <T extends object>({ data, columns }: ReactTableProps<T>) =>
                         <TableRow key={headerGroup.id}>
                             {headerGroup.headers.map((header) => (
                                 <TableCell key={header.id}>
-                                    {header.isPlaceholder
-                                        ? null
-                                        : flexRender(header.column.columnDef.header, header.getContext())}
+                                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                                 </TableCell>
                             ))}
                         </TableRow>
@@ -153,9 +167,16 @@ const TableSimple = <T extends object>({ data, columns }: ReactTableProps<T>) =>
                 </TableHead>
                 <TableBody>
                     {table.getRowModel().rows.map((row) => (
-                        <TableRow key={row.id}>
+                        <TableRow key={row.id} sx={{ cursor: "pointer" }} hover>
                             {row.getVisibleCells().map((cell) => (
-                                <TableCell key={cell.id}>
+                                <TableCell
+                                    key={cell.id}
+                                    onClick={() => {
+                                        if (cell.column.id !== "selection" && redirectOnSelect && columnKey) {
+                                            navigate(`${normalizePathname(location.pathname)}/${(row.original as ObjectZyx)[columnKey]}`)
+                                        }
+                                    }}
+                                >
                                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                 </TableCell>
                             ))}

@@ -9,6 +9,7 @@ import dayjs from 'dayjs';
 import clsx from 'clsx';
 import TableSimple from 'components/Controls/TableSimple';
 import type { ColumnDef } from '@tanstack/react-table';
+import { IUser } from '@types';
 
 const classes = {
     successLabel: 'bg-[#dff7e9] text-[#28c76f]',
@@ -17,18 +18,6 @@ const classes = {
     suspendLabel: 'bg-[#eae8fd] text-[#7367f0]',
     iconBadge: 'w-6 h-6 rounded-full flex items-center justify-center p-5',
 };
-
-interface IUser {
-    userid: number;
-    username: string;
-    roleid: number;
-    rolename: string;
-    document: string;
-    document_type: string;
-    email?: string;
-    status: string;
-    createdate: string;
-}
 
 const columns: ColumnDef<IUser>[] = [
     {
@@ -113,8 +102,7 @@ export const User: React.FC = () => {
     const [mainData, setMainData] = useState<IUser[]>([]);
 
     useEffect(() => {
-        console.log('fetch');
-        dispatch(getCollection(getUserSel({ orgid: 1 })));
+        dispatch(getCollection(getUserSel(1, 0)));
     }, [dispatch]);
 
     useEffect(() => {
@@ -130,7 +118,12 @@ export const User: React.FC = () => {
                     <Typography variant="h5">Usuarios</Typography>
                 </Box>
                 <Box className="p-6">
-                    <TableSimple data={mainData || []} columns={columns} />
+                    <TableSimple
+                        data={mainData}
+                        columns={columns}
+                        redirectOnSelect={true}
+                        columnKey={"userid"}
+                    />
                 </Box>
             </Paper>
         </Box>

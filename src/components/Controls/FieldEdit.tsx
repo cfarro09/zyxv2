@@ -10,9 +10,10 @@ type InputProps = {
     maxLength?: number;
     helperText?: string;
     fregister?: object;
+    error?: string;
     onChange?: (_?: string | null) => void;
     onBlur?: (_?: string | null) => void;
-} & TextFieldProps;
+} & Omit<TextFieldProps, 'error'>;
 
 const FieldEdit: FC<InputProps> = ({ label, valueDefault = "", onChange, onBlur, error, fregister = {}, variant = "standard", maxLength = 0, helperText = "", ...rest }) => {
     const [value, setvalue] = useState("");
@@ -41,17 +42,18 @@ const FieldEdit: FC<InputProps> = ({ label, valueDefault = "", onChange, onBlur,
                 fullWidth
                 label={variant !== "standard" && label}
                 value={value}
+                style={{ marginTop: 0 }}
                 variant={variant}
-                error={!!error}
                 size="small"
                 helperText={error || null}
-                onChange={(e) => {
+                error={Boolean(error)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     if (maxLength === 0 || e.target.value.length <= maxLength) {
                         setvalue(e.target.value);
                         onChange && onChange(e.target.value);
                     }
                 }}
-                onBlur={(e) => {
+                onBlur={(e: React.FocusEvent<HTMLInputElement>) => {
                     onBlur && onBlur(e.target.value);
                 }}
                 {...rest}

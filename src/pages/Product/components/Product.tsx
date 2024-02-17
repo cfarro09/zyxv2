@@ -13,7 +13,7 @@ export const Product: React.FC = () => {
                         valueDefault={"22"}
                         variant="outlined"
                         // error={errors?.firstname?.message}
-                        onChange={(value) => console.log(value)}
+                        onChange={(value?) => console.log(value)}
                     />
                 </Grid>
                 <Grid item xs={4}>
@@ -22,7 +22,7 @@ export const Product: React.FC = () => {
                         valueDefault={"22"}
                         variant="outlined"
                         // error={errors?.firstname?.message}
-                        onChange={(value) => console.log(value)}
+                        onChange={(value?) => console.log(value)}
                     />
                 </Grid>
                 <Grid item xs={4}>
