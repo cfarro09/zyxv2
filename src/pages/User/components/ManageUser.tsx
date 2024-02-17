@@ -151,7 +151,6 @@ export const ManageUser: React.FC = () => {
                     operation: data.userid > 0 ? "UPDATE" : "INSERT"
                 })));
                 setWaitSave(true);
-                setWaitSave(true)
             }
     
             dispatch(manageConfirmation({

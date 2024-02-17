@@ -1,31 +1,12 @@
-import { Add, FirstPage, LastPage, NavigateBefore, NavigateNext } from '@mui/icons-material';
-import {
-    Button,
-    Grid,
-    IconButton,
-    Menu,
-    MenuItem,
-    Skeleton,
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableRow,
-    TextField,
-    Typography,
-} from '@mui/material';
+import { Add, FirstPage, LastPage, MoreVert, NavigateBefore, NavigateNext } from '@mui/icons-material';
+import type { SvgIconComponent } from '@mui/icons-material';
+import { Button, Grid, IconButton, ListItemIcon, Menu, MenuItem, Skeleton, Table, TableBody, TableCell, TableHead, TableRow, TextField, Typography } from '@mui/material';
 import { Box } from '@mui/system';
-import {
-    flexRender,
-    getCoreRowModel,
-    getFilteredRowModel,
-    getPaginationRowModel,
-    useReactTable,
-} from '@tanstack/react-table';
+import { flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, useReactTable } from '@tanstack/react-table';
 import { useLocation, useNavigate } from 'react-router-dom';
 import type { ColumnDef, FilterFn } from '@tanstack/react-table';
 import { FieldSelect } from './FieldSelect';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { rankItem } from '@tanstack/match-sorter-utils';
 import { ObjectZyx } from '@types';
 import { normalizePathname } from 'common/helpers';
@@ -44,8 +25,16 @@ const pagesSizes: IPageSizes[] = [
     { label: 'Mostrando 50', value: 50 },
 ];
 
+interface ArrayOptionMenu<T> {
+    description: string;
+    Icon: SvgIconComponent;
+    onClick: (_: T | null) => void;
+}
+
 interface ReactTableProps<T extends object> {
     data: T[];
+    showOptions?: boolean;
+    optionsMenu?: ArrayOptionMenu<T>[];
     loading?: boolean;
     columns: ColumnDef<T>[];
     redirectOnSelect?: boolean;
@@ -61,12 +50,42 @@ const LoadingSkeleton: React.FC<{ columns: number }> = ({ columns }) => {
 };
 
 
-const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSelect, loading }: ReactTableProps<T>) => {
+const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSelect, loading, showOptions, optionsMenu }: ReactTableProps<T>) => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const open = Boolean(anchorEl);
     const [globalFilter, setGlobalFilter] = useState('');
+    const [rowSelected, setRowSelected] = useState<T | null>(null)
     const navigate = useNavigate();
     const location = useLocation();
+
+    const columns1 = useMemo(() => [
+        ...((showOptions && columnKey) ? [{
+            accessorKey: columnKey,
+            header: "",
+            cell: (info) => {
+                return (
+                    // <div style={{ whiteSpace: 'nowrap', display: 'flex' }}>
+                    <IconButton
+                        id={`bott-${info.row.original.userid}`}
+                        aria-label="more"
+                        aria-controls="long-menu"
+                        aria-haspopup="true"
+                        size="small"
+                        onClick={(e) => {
+                            console.log("e.currentTarget", e.target)
+                            e.stopPropagation();
+                            setAnchorEl(e.currentTarget);
+                            setRowSelected(info.row.original)
+                        }}
+                    >
+                        <MoreVert style={{ color: '#B6B4BA' }} />
+                    </IconButton>
+                    // </div>
+                );
+            },
+        }] : []),
+        ...columns
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    ], [])
 
     const handleClose = () => {
         setAnchorEl(null);
@@ -80,7 +99,7 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
 
     const table = useReactTable({
         data,
-        columns: columns,
+        columns: columns1,
         filterFns: {
             fuzzy: fuzzyFilter,
         },
@@ -132,19 +151,6 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
                     <Button id="basic-button" aria-haspopup="true" className="px-4 bg-light-grey text-grey">
                         Exportar
                     </Button>
-                    <Menu
-                        id="basic-menu"
-                        anchorEl={anchorEl}
-                        open={open}
-                        onClose={handleClose}
-                        MenuListProps={{
-                            'aria-labelledby': 'basic-button',
-                        }}
-                    >
-                        <MenuItem onClick={handleClose}>CSV</MenuItem>
-                        <MenuItem onClick={handleClose}>PDF</MenuItem>
-                        <MenuItem onClick={handleClose}>Copiar</MenuItem>
-                    </Menu>
                     <TextField
                         defaultValue={globalFilter || ''}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setGlobalFilter(String(e.target.value))}
@@ -156,15 +162,13 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
                     />
                 </Grid>
             </Grid>
-            <Table>
+            <Table size='small'>
                 <TableHead>
                     {table.getHeaderGroups().map((headerGroup) => (
                         <TableRow key={headerGroup.id}>
                             {headerGroup.headers.map((header) => (
                                 <TableCell key={header.id}>
-                                    {header.isPlaceholder
-                                        ? null
-                                        : flexRender(header.column.columnDef.header, header.getContext())}
+                                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                                 </TableCell>
                             ))}
                         </TableRow>
@@ -183,6 +187,7 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
                                         }
                                     }}
                                 >
+
                                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                 </TableCell>
                             ))}
@@ -220,6 +225,29 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
                     </IconButton>
                 </Box>
             </Box>
+            <Menu
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={handleClose}
+                MenuListProps={{
+                    'aria-labelledby': 'basic-button',
+                }}
+            >
+                {optionsMenu?.map(({ description, Icon, onClick }, index) => (
+                    <MenuItem
+                        key={index}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setAnchorEl(null);
+                            onClick(rowSelected);
+                        }}>
+                        <ListItemIcon color="inherit">
+                            <Icon width={18} />
+                        </ListItemIcon>
+                        {description}
+                    </MenuItem>
+                ))}
+            </Menu>
         </>
     );
 };
