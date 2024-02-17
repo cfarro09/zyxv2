@@ -13,7 +13,8 @@ import PasswordDialog from './PasswordDialog';
 import { IUser, ObjectZyx } from '@types';
 import paths from 'common/constants/paths';
 import { manageConfirmation, showBackdrop, showSnackbar } from 'stores/popus/actions';
-
+import SaveIcon from '@mui/icons-material/Save';
+import HttpsIcon from '@mui/icons-material/Https';
 interface IDataAux {
     listDocumentType: ObjectZyx[];
     listStatus: ObjectZyx[];
@@ -160,12 +161,14 @@ export const ManageUser: React.FC = () => {
                                 onClick={() => setOpenPasswordDialog(true)}
                                 type='button'
                                 disabled={multiResult.loading}
+                                startIcon={<HttpsIcon />}
                                 variant="contained">
                                 {id !== "new" ? "Cambiar contraseña" : "Ingresar contraseña"}
                             </Button>
                             <Button
                                 color='primary'
                                 type='submit'
+                                startIcon={<SaveIcon />}
                                 disabled={multiResult.loading}
                                 variant="contained">Guardar
                             </Button>

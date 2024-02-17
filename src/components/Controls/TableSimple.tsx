@@ -36,6 +36,7 @@ interface ReactTableProps<T extends object> {
     showOptions?: boolean;
     optionsMenu?: ArrayOptionMenu<T>[];
     loading?: boolean;
+    addButton?: boolean;
     columns: ColumnDef<T>[];
     redirectOnSelect?: boolean;
     columnKey?: string;
@@ -50,7 +51,7 @@ const LoadingSkeleton: React.FC<{ columns: number }> = ({ columns }) => {
 };
 
 
-const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSelect, loading, showOptions, optionsMenu }: ReactTableProps<T>) => {
+const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSelect, loading, showOptions, optionsMenu, addButton }: ReactTableProps<T>) => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [globalFilter, setGlobalFilter] = useState('');
     const [rowSelected, setRowSelected] = useState<T | null>(null)
@@ -137,19 +138,21 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
                     />
                 </Grid>
                 <Grid className="flex flex-row-reverse gap-4">
-                    <Button
-                        className="flex gap-1"
-                        id="basic-buttons"
-                        variant="contained"
-                        disabled={loading}
-                        onClick={() => navigate(`${normalizePathname(location.pathname)}/new`)}
-                    >
-                        <Add />
-                        Nuevo
-                    </Button>
-                    <Button id="basic-button" aria-haspopup="true" className="px-4 bg-light-grey text-grey">
+                    {addButton && 
+                        <Button
+                            className="flex gap-1"
+                            id="basic-buttons"
+                            variant="contained"
+                            disabled={loading}
+                            onClick={() => navigate(`${normalizePathname(location.pathname)}/new`)}
+                        >
+                            <Add />
+                            Nuevo
+                        </Button>
+                    }
+                    {/* <Button id="basic-button" aria-haspopup="true" className="px-4 bg-light-grey text-grey">
                         Exportar
-                    </Button>
+                    </Button> */}
                     <TextField
                         defaultValue={globalFilter || ''}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setGlobalFilter(String(e.target.value))}

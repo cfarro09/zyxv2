@@ -1,4 +1,4 @@
-import { DesktopMac, Edit, Person, VerifiedUser, Visibility } from '@mui/icons-material';
+import { DesktopMac, Person, VerifiedUser, Visibility } from '@mui/icons-material';
 import { Box, Chip, Paper, Typography } from '@mui/material';
 import { getUserSel, toTitleCase, userIns } from 'common/helpers';
 import React, { useEffect, useState } from 'react';
@@ -12,6 +12,7 @@ import type { ColumnDef } from '@tanstack/react-table';
 import { IUser } from '@types';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { manageConfirmation, showBackdrop, showSnackbar } from 'stores/popus/actions';
+
 const classes = {
     successLabel: 'bg-[#dff7e9] text-[#28c76f]',
     pendingLabel: 'bg-[#fff1e3] text-[#ff9f43]',
@@ -105,7 +106,7 @@ export const User: React.FC = () => {
 
     useEffect(() => {
         dispatch(getCollection(getUserSel(1, 0)));
-    }, []);
+    }, [dispatch]);
 
     useEffect(() => {
         if (!mainResult.loading && !mainResult.error && mainResult.key === 'UFN_USERS_SEL') {
@@ -152,6 +153,7 @@ export const User: React.FC = () => {
                         loading={mainResult.loading}
                         data={mainData}
                         showOptions={true}
+                        addButton={true}
                         optionsMenu={[{
                             description: "Eliminar",
                             Icon: DeleteIcon,

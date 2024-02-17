@@ -3,6 +3,7 @@ import paths from "common/constants/paths";
 import { Dashboard, Person, ShoppingCart, Inventory, FormatListNumberedRtlSharp, Receipt, Assignment } from '@mui/icons-material';
 import { User, ManageUser } from 'pages/User/Index';
 import { Product } from "pages/Product/Index";
+import { Domain, ManageDomain } from "pages/Domain/Index";
 
 export const routes: RouteConfig[] = [
     {
@@ -51,7 +52,8 @@ export const routes: RouteConfig[] = [
         description: "domains",
         tooltip: "domains",
         path: paths.DOMAINS,
-        mainView: <User />,
+        mainView: <Domain />,
+        manageView: <ManageDomain />,
         icon: () => <FormatListNumberedRtlSharp style={{ width: 22, height: 22 }}  />,
     },
     {

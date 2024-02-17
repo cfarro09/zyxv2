@@ -37,6 +37,13 @@ export const getUserSel = (orgid: number, userid: number): IRequestBody => ({
     },
 });
 
+
+export const getDomainSel = (): IRequestBody => ({
+    method: 'UFN_DOMAIN_SEL',
+    key: 'UFN_DOMAIN_SEL',
+    parameters: {},
+});
+
 export const userIns = (parameters: { operation: string } & IUser): IRequestBody => ({
     method: 'UFN_USER_INS',
     key: 'UFN_USER_INS',
