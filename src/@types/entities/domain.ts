@@ -9,7 +9,4 @@ export interface IDomainValue {
     domainname: string;
     domaindesc: string;
     domainvalue: string;
-    type: string;
-    count: number;
-    status: string;
 }

@@ -4,7 +4,7 @@ import { getRoles, getUserSel, getValuesFromDomain, userIns } from 'common/helpe
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from 'stores';
-import { execute, getMultiCollection, resetMultiMain } from 'stores/main/actions';
+import { getMultiCollection, resetMultiMain } from 'stores/main/actions';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import FieldEdit from 'components/Controls/FieldEdit';
 import { FieldSelect } from 'components/Controls/FieldSelect';
@@ -12,9 +12,10 @@ import { useForm } from 'react-hook-form';
 import PasswordDialog from './PasswordDialog';
 import { IUser, ObjectZyx } from '@types';
 import paths from 'common/constants/paths';
-import { manageConfirmation, showBackdrop, showSnackbar } from 'stores/popus/actions';
+import { showSnackbar } from 'stores/popus/actions';
 import SaveIcon from '@mui/icons-material/Save';
 import HttpsIcon from '@mui/icons-material/Https';
+import { useSendFormApi } from 'hooks/useSendFormApi';
 interface IDataAux {
     listDocumentType: ObjectZyx[];
     listStatus: ObjectZyx[];
@@ -27,9 +28,11 @@ export const ManageUser: React.FC = () => {
     const { id } = useParams<{ id?: string }>();
     const [openPasswordDialog, setOpenPasswordDialog] = useState(false);
     const multiResult = useSelector((state: IRootState) => state.main.multiData);
-    const executeResult = useSelector((state: IRootState) => state.main.execute);
     const [dataAux, setDataAux] = useState<IDataAux>({ listDocumentType: [], listStatus: [], listRoles: [] });
-    const [waitSave, setWaitSave] = useState(false);
+    const { onSubmitData } = useSendFormApi({
+        operation: "INSERT",
+        onSave: () => navigate(paths.USERS),
+    });
     const {
         register,
         handleSubmit,
@@ -99,39 +102,15 @@ export const ManageUser: React.FC = () => {
         }
     }, []);
 
-    useEffect(() => {
-        if (waitSave) {
-            if (!executeResult.loading && !executeResult.error) {
-                dispatch(showBackdrop(false));
-                dispatch(showSnackbar({ show: true, severity: "success", message: `Guardado satisfactoriamente.` }));
-                navigate(paths.USERS)
-            } else if (executeResult.error) {
-                dispatch(showSnackbar({ show: true, severity: "error", message: `${executeResult.code}` }));
-                dispatch(showBackdrop(false));
-                setWaitSave(false);
-            }
-        }
-    }, [navigate, executeResult, waitSave]);
-
     const onSubmit = handleSubmit((data) => {
         if (data.userid === 0 && !data.password) {
             dispatch(showSnackbar({ show: true, severity: "warning", message: `Debe ingresar contraseña` }));
         } else {
-            const callback = () => {
-                dispatch(showBackdrop(true));
-                dispatch(execute(userIns({
-                    ...data,
-                    password: data.password ?? "",
-                    operation: data.userid > 0 ? "UPDATE" : "INSERT"
-                })));
-                setWaitSave(true);
-            }
-
-            dispatch(manageConfirmation({
-                visible: true,
-                question: "¿Está seguro de continuar?",
-                callback
-            }))
+            onSubmitData(userIns({
+                ...data,
+                password: data.password ?? "",
+                operation: data.userid > 0 ? "UPDATE" : "INSERT"
+            }));
         }
     });
 
@@ -205,7 +184,7 @@ export const ManageUser: React.FC = () => {
                                     valueDefault={getValues('email')}
                                     onChange={(value) => setValue('email', `${value}`)}
                                     error={errors.email?.message}
-                                    // type='email'
+                                    type='email'
                                     variant="outlined"
                                 />
                             </Grid>

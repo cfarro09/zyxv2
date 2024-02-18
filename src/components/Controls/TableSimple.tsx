@@ -39,6 +39,7 @@ interface ReactTableProps<T extends object> {
     addButton?: boolean;
     columns: ColumnDef<T>[];
     redirectOnSelect?: boolean;
+    onClickOnRow?: ((_: T | null) => void);
     columnKey?: string;
 }
 
@@ -51,7 +52,7 @@ const LoadingSkeleton: React.FC<{ columns: number }> = ({ columns }) => {
 };
 
 
-const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSelect, loading, showOptions, optionsMenu, addButton }: ReactTableProps<T>) => {
+const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSelect, loading, showOptions, optionsMenu, addButton, onClickOnRow }: ReactTableProps<T>) => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [globalFilter, setGlobalFilter] = useState('');
     const [rowSelected, setRowSelected] = useState<T | null>(null)
@@ -62,6 +63,13 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
         ...((showOptions && columnKey) ? [{
             accessorKey: columnKey,
             header: "",
+            enableResizing: false,
+            size: 10,
+            minSize: 10,
+            maxSize: 10,
+            maxWidth: 10,
+            minWidth: 10,
+            width: 10,
             cell: (info) => {
                 return (
                     // <div style={{ whiteSpace: 'nowrap', display: 'flex' }}>
@@ -138,13 +146,19 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
                     />
                 </Grid>
                 <Grid className="flex flex-row-reverse gap-4">
-                    {addButton && 
+                    {addButton &&
                         <Button
                             className="flex gap-1"
                             id="basic-buttons"
                             variant="contained"
                             disabled={loading}
-                            onClick={() => navigate(`${normalizePathname(location.pathname)}/new`)}
+                            onClick={() => {
+                                if (onClickOnRow) {
+                                    onClickOnRow(null)
+                                } else {
+                                    navigate(`${normalizePathname(location.pathname)}/new`)
+                                }
+                            }}
                         >
                             <Add />
                             Nuevo
@@ -184,12 +198,12 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
                                 <TableCell
                                     key={cell.id}
                                     onClick={() => {
-                                        if (cell.column.id !== 'selection' && redirectOnSelect && columnKey) {
-                                            navigate(`${normalizePathname(location.pathname)}/${(row.original as ObjectZyx)[columnKey]}`);
+                                        if (cell.column.id !== 'selection') {
+                                            (redirectOnSelect && columnKey) && navigate(`${normalizePathname(location.pathname)}/${(row.original as ObjectZyx)[columnKey]}`);
+                                            onClickOnRow && onClickOnRow(row.original);
                                         }
                                     }}
                                 >
-
                                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                 </TableCell>
                             ))}

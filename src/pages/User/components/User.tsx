@@ -4,14 +4,14 @@ import { getUserSel, toTitleCase, userIns } from 'common/helpers';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from 'stores';
-import { execute, getCollection } from 'stores/main/actions';
+import { getCollection } from 'stores/main/actions';
 import dayjs from 'dayjs';
 import clsx from 'clsx';
 import TableSimple from 'components/Controls/TableSimple';
 import type { ColumnDef } from '@tanstack/react-table';
 import { IUser } from '@types';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { manageConfirmation, showBackdrop, showSnackbar } from 'stores/popus/actions';
+import { useSendFormApi } from 'hooks/useSendFormApi';
 
 const classes = {
     successLabel: 'bg-[#dff7e9] text-[#28c76f]',
@@ -101,8 +101,10 @@ export const User: React.FC = () => {
     const dispatch = useDispatch();
     const mainResult = useSelector((state: IRootState) => state.main.mainData);
     const [mainData, setMainData] = useState<IUser[]>([]);
-    const [waitDelete, setWaitDelete] = useState(false);
-    const executeResult = useSelector((state: IRootState) => state.main.execute);
+    const { onSubmitData } = useSendFormApi({
+        operation: "DELETE",
+        onSave: () => dispatch(getCollection(getUserSel(1, 0))),
+    });
 
     useEffect(() => {
         dispatch(getCollection(getUserSel(1, 0)));
@@ -114,32 +116,8 @@ export const User: React.FC = () => {
         }
     }, [mainResult]);
 
-    useEffect(() => {
-        if (waitDelete) {
-            if (!executeResult.loading && !executeResult.error) {
-                dispatch(showBackdrop(false));
-                dispatch(showSnackbar({ show: true, severity: "success", message: `Eliminado satisfactoriamente.` }));
-                dispatch(getCollection(getUserSel(1, 0)));
-            } else if (executeResult.error) {
-                dispatch(showSnackbar({ show: true, severity: "error", message: `${executeResult.code}` }));
-                dispatch(showBackdrop(false));
-                setWaitDelete(false);
-            }
-        }
-    }, [dispatch, executeResult, waitDelete]);
-
     const deleteRow = (user: IUser) => {
-        const callback = () => {
-            dispatch(showBackdrop(true));
-            dispatch(execute(userIns({ ...user, password: "", operation: "DELETE" })));
-            setWaitDelete(true);
-        }
-
-        dispatch(manageConfirmation({
-            visible: true,
-            question: `¿Está seguro de eliminar el usuario ${user.username}?`,
-            callback
-        }))
+        onSubmitData(userIns({ ...user, password: "", operation: "DELETE" }));
     }
 
     return (
