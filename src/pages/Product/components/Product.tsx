@@ -1,7 +1,7 @@
 import { Box, Chip, Grid, Paper, Typography } from '@mui/material';
 import type { ColumnDef } from '@tanstack/react-table';
 import clsx from 'clsx';
-import { getProductSel, prod, productIns, productInsuctIns } from 'common/helpers';
+import { getProductSel, productIns } from 'common/helpers';
 import TableSimple from 'components/Controls/TableSimple';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
