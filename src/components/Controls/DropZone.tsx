@@ -1,21 +1,23 @@
 import { Button, Grid, Typography } from '@mui/material';
 import type { SxProps } from '@mui/system';
 import { getFileSizeInKb } from 'common/helpers';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import type { FileRejection } from 'react-dropzone';
-import { useDispatch } from 'react-redux';
-// import { IRootState } from 'stores';
+import { set } from 'react-hook-form';
+import { useDispatch, useSelector } from 'react-redux';
+import { IRootState } from 'stores';
 import { uploadFile } from 'stores/main/actions';
+import { showBackdrop, showSnackbar } from 'stores/popus/actions';
 
 // interface FileWithPreview extends File {
 //     preview: string;
 // }
 
 interface IFile {
-    name: string;
-    size: number;
-    preview: string;
+    name?: string;
+    size?: number;
+    preview?: string;
 }
 
 interface IClasses {
@@ -61,16 +63,20 @@ const classes: IClasses = {
     },
 };
 
-
 interface DropZoneProps {
     url: string;
-    // onFileUpload: (fileUrl: string) => void;
+    onFileUpload: (fileUrl: string) => void;
 }
 
-const DropZone: React.FC<DropZoneProps> = () => {
+const DropZone: React.FC<DropZoneProps> = ({ url, onFileUpload }) => {
     const dispatch = useDispatch();
-    // const uploadResult = useSelector((state: IRootState) => state.main.uploadFile);
+    const [waitUpload, setWaitUpload] = useState(false)
+    const uploadResult = useSelector((state: IRootState) => state.main.uploadFile);
     const [files, setFiles] = useState<IFile[]>([]);
+
+    useEffect(() => {
+        if (url) setFiles([{ name: url.split('/').pop(), preview: url }])
+    }, [url])
 
     const handleFileUpload = useCallback((file: File) => {
         const formdata = new FormData();
@@ -83,6 +89,8 @@ const DropZone: React.FC<DropZoneProps> = () => {
         if (acceptedFiles.length > 0) {
             const file = acceptedFiles[0];
             handleFileUpload(file)
+            setWaitUpload(true)
+            dispatch(showBackdrop(true));
         }
 
         // Handle rejected files if needed
@@ -90,6 +98,26 @@ const DropZone: React.FC<DropZoneProps> = () => {
             console.log('Rejected files:', rejectedFiles);
         }
     }, [handleFileUpload]);
+
+    useEffect(() => {
+        if (waitUpload) {
+            if (!uploadResult.loading && !uploadResult.error) {
+                dispatch(showBackdrop(false));
+                dispatch(showSnackbar({ show: true, severity: "success", message: `Tu archivo se ha subido exitosamente.` }));
+                setFiles([
+                    {
+                        name: uploadResult?.url?.split('/').pop(),
+                        preview: uploadResult?.url,
+                    }
+                ]);
+                onFileUpload(uploadResult?.url || '');
+            } else if (uploadResult.error) {
+                dispatch(showSnackbar({ show: true, severity: "error", message: `${uploadResult.code}` }));
+                dispatch(showBackdrop(false));
+                setWaitUpload(false);
+            }
+        }
+    }, [uploadResult, waitUpload, dispatch]);
 
     const { getRootProps, getInputProps } = useDropzone({
         onDrop,
@@ -123,12 +151,7 @@ const DropZone: React.FC<DropZoneProps> = () => {
                                     />
                                 </Grid>
                                 <Grid item sx={{ padding: '0 1rem', color: '#6f6b7d' }}>
-                                    <Typography sx={{ fontSize: '16px' }}>{file.name}</Typography>
-                                </Grid>
-                                <Grid item sx={{ padding: '0.25rem 1rem', color: '#a5a3ae' }}>
-                                    <Typography sx={{ fontSize: '14px', fontWeight: 'bold' }}>
-                                        {getFileSizeInKb(file.size)} KB
-                                    </Typography>
+                                    <Typography sx={{ fontSize: '13px' }}>{file.name}</Typography>
                                 </Grid>
                             </Grid>
                             <Grid item>

@@ -1,13 +1,15 @@
 import { Box, Chip, Grid, Paper, Typography } from '@mui/material';
 import type { ColumnDef } from '@tanstack/react-table';
 import clsx from 'clsx';
-import { getProductSel } from 'common/helpers';
+import { getProductSel, productIns } from 'common/helpers';
 import TableSimple from 'components/Controls/TableSimple';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from 'stores';
-import { getCollection } from 'stores/main/actions';
+import { execute, getCollection } from 'stores/main/actions';
 import { IProduct } from '../models';
+import { manageConfirmation, showBackdrop, showSnackbar } from 'stores/popus/actions';
+import { Delete } from '@mui/icons-material';
 
 const classes = {
     successLabel: 'bg-[#dff7e9] text-[#28c76f]',
@@ -19,11 +21,8 @@ const classes = {
 
 const columns: ColumnDef<IProduct>[] = [
     {
-        header: 'ProductID',
-        accessorKey: 'productid',
-    },
-    {
         header: 'Producto',
+        accessorKey: 'title',
         enableResizing: true,
         cell: (info) => {
             const { title, image, description } = info.row.original;
@@ -88,16 +87,46 @@ export const Product: React.FC = () => {
     const dispatch = useDispatch();
     const mainResult = useSelector((state: IRootState) => state.main.mainData);
     const [mainData, setMainData] = useState<IProduct[]>([]);
+    const [waitDelete, setWaitDelete] = useState(false)
+    const executeResult = useSelector((state: IRootState) => state.main.execute);
 
     useEffect(() => {
         dispatch(getCollection(getProductSel(0)));
     }, [dispatch]);
 
     useEffect(() => {
+        if (waitDelete) {
+            if (!executeResult.loading && !executeResult.error) {
+                dispatch(showBackdrop(false));
+                dispatch(showSnackbar({ show: true, severity: "success", message: `Eliminado satisfactoriamente.` }));
+                dispatch(getCollection(getProductSel(0)));
+            } else if (executeResult.error) {
+                dispatch(showSnackbar({ show: true, severity: "error", message: `${executeResult.code}` }));
+                dispatch(showBackdrop(false));
+                setWaitDelete(false);
+            }
+        }
+    }, [dispatch, executeResult, waitDelete]);
+
+    useEffect(() => {
         if (!mainResult.loading && !mainResult.error && mainResult.key === 'UFN_PRODUCT_SEL') {
             setMainData((mainResult.data as IProduct[]) || []);
         }
     }, [mainResult]);
+
+    const deleteRow = (product: IProduct) => {
+        const callback = () => {
+            dispatch(showBackdrop(true));
+            dispatch(execute(productIns({ ...product, operation: "DELETE" })));
+            setWaitDelete(true);
+        }
+
+        dispatch(manageConfirmation({
+            visible: true,
+            question: `¿Está seguro de eliminar el producto ${product.title}?`,
+            callback
+        }))
+    }
 
     return (
         <Box className="flex max-w-screen-xl mr-auto ml-auto flex-col">
@@ -106,7 +135,11 @@ export const Product: React.FC = () => {
                     <Typography variant="h5">Productos</Typography>
                 </Box>
                 <Box className="p-6">
-                    <TableSimple data={mainData} columns={columns} redirectOnSelect={true} columnKey={'productid'} />
+                    <TableSimple data={mainData} columns={columns} redirectOnSelect={true} addButton={true} columnKey={'productid'} showOptions={true} optionsMenu={[{
+                        description: "Eliminar",
+                        Icon: Delete,
+                        onClick: (product) => product && deleteRow(product)
+                    }]} />
                 </Box>
             </Paper>
         </Box>

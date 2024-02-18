@@ -10,7 +10,7 @@
     ],
     "settings": {
         "react": {
-            "version": "detect",
+            "version": "detect"
         },
         "import/resolver": {
             "node": {
@@ -30,6 +30,7 @@
             },
         ],
         "react/react-in-jsx-scope": "off",
-        "react/prop-types": "off"
+        "react/prop-types": "off",
+        "reacthooks/exhaustive-deps": "off",
     },
 }
