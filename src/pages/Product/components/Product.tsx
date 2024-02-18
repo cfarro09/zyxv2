@@ -3,13 +3,13 @@ import type { ColumnDef } from '@tanstack/react-table';
 import clsx from 'clsx';
 import { getProductSel, productIns } from 'common/helpers';
 import TableSimple from 'components/Controls/TableSimple';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from 'stores';
-import { execute, getCollection } from 'stores/main/actions';
+import { getCollection } from 'stores/main/actions';
 import { IProduct } from '../models';
-import { manageConfirmation, showBackdrop, showSnackbar } from 'stores/popus/actions';
 import { Delete } from '@mui/icons-material';
+import { useSendFormApi } from 'hooks/useSendFormApi';
 
 const classes = {
     successLabel: 'bg-[#dff7e9] text-[#28c76f]',
@@ -87,26 +87,17 @@ export const Product: React.FC = () => {
     const dispatch = useDispatch();
     const mainResult = useSelector((state: IRootState) => state.main.mainData);
     const [mainData, setMainData] = useState<IProduct[]>([]);
-    const [waitDelete, setWaitDelete] = useState(false)
-    const executeResult = useSelector((state: IRootState) => state.main.execute);
+
+    const fetchData = useCallback(() => dispatch(getCollection(getProductSel(0))), [dispatch])
+
+    const { onSubmitData } = useSendFormApi({
+        operation: "DELETE",
+        onSave: fetchData
+    });
 
     useEffect(() => {
-        dispatch(getCollection(getProductSel(0)));
-    }, [dispatch]);
-
-    useEffect(() => {
-        if (waitDelete) {
-            if (!executeResult.loading && !executeResult.error) {
-                dispatch(showBackdrop(false));
-                dispatch(showSnackbar({ show: true, severity: "success", message: `Eliminado satisfactoriamente.` }));
-                dispatch(getCollection(getProductSel(0)));
-            } else if (executeResult.error) {
-                dispatch(showSnackbar({ show: true, severity: "error", message: `${executeResult.code}` }));
-                dispatch(showBackdrop(false));
-                setWaitDelete(false);
-            }
-        }
-    }, [dispatch, executeResult, waitDelete]);
+        fetchData();
+    }, [dispatch, fetchData]);
 
     useEffect(() => {
         if (!mainResult.loading && !mainResult.error && mainResult.key === 'UFN_PRODUCT_SEL') {
@@ -114,19 +105,7 @@ export const Product: React.FC = () => {
         }
     }, [mainResult]);
 
-    const deleteRow = (product: IProduct) => {
-        const callback = () => {
-            dispatch(showBackdrop(true));
-            dispatch(execute(productIns({ ...product, operation: "DELETE" })));
-            setWaitDelete(true);
-        }
-
-        dispatch(manageConfirmation({
-            visible: true,
-            question: `¿Está seguro de eliminar el producto ${product.title}?`,
-            callback
-        }))
-    }
+    const deleteRow = (product: IProduct) => onSubmitData(productIns({ ...product, operation: "DELETE" }))
 
     return (
         <Box className="flex max-w-screen-xl mr-auto ml-auto flex-col">

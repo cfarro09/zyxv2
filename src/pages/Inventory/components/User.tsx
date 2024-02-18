@@ -1,7 +1,7 @@
 import { DesktopMac, Person, VerifiedUser, Visibility } from '@mui/icons-material';
 import { Box, Chip, Paper, Typography } from '@mui/material';
 import { getUserSel, toTitleCase, userIns } from 'common/helpers';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from 'stores';
 import { getCollection } from 'stores/main/actions';
@@ -101,17 +101,14 @@ export const User: React.FC = () => {
     const dispatch = useDispatch();
     const mainResult = useSelector((state: IRootState) => state.main.mainData);
     const [mainData, setMainData] = useState<IUser[]>([]);
-
-    const fetchData = useCallback(() => dispatch(getCollection(getUserSel(0))), [dispatch])
-
     const { onSubmitData } = useSendFormApi({
         operation: "DELETE",
-        onSave: fetchData
+        onSave: () => dispatch(getCollection(getUserSel(1, 0))),
     });
 
     useEffect(() => {
-        fetchData()
-    }, [fetchData]);
+        dispatch(getCollection(getUserSel(1, 0)));
+    }, [dispatch]);
 
     useEffect(() => {
         if (!mainResult.loading && !mainResult.error && mainResult.key === 'UFN_USERS_SEL') {

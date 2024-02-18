@@ -5,16 +5,14 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from 'stores';
 import { getMultiCollection, resetMultiMain } from 'stores/main/actions';
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import DeleteIcon from '@mui/icons-material/Delete';
-import paths from 'common/constants/paths';
-import { showBackdrop, showSnackbar } from 'stores/popus/actions';
 import TableSimple from 'components/Controls/TableSimple';
 import type { ColumnDef } from '@tanstack/react-table';
 import SaveIcon from '@mui/icons-material/Save';
 import DomainValueDialog from './DomainValueDialog';
 import { useSendFormApi } from 'hooks/useSendFormApi';
-import { IDomainValue, ObjectZyx } from '@types';
+import { IDomainValue, IMainProps, ObjectZyx } from '@types';
 
 interface IDataAux {
     listStatus: ObjectZyx[];
@@ -38,31 +36,20 @@ const columns: ColumnDef<IDomainValue>[] = [
     }
 ];
 
-export const ManageDomain: React.FC = () => {
-    const navigate = useNavigate();
+export const ManageDomain: React.FC<IMainProps> = ({ baseUrl }) => {
     const dispatch = useDispatch();
     const { id: domainname } = useParams<{ id?: string }>();
     const [openDomainValueDialog, setOpenDomainValueDialog] = useState(false);
     const multiResult = useSelector((state: IRootState) => state.main.multiData);
-    const executeResult = useSelector((state: IRootState) => state.main.execute);
     const [domainValueSelected, setDomainValueSelected] = useState<IDomainValue>({ domainname: `${domainname}`, domainid: 0, domaindesc: '', domainvalue: '' })
     const [dataAux, setDataAux] = useState<IDataAux>({ listStatus: [], domainValues: [] });
-    const [waitSave, setWaitSave] = useState(false);
+
+    const fetchData = () => dispatch(getMultiCollection([getValuesFromDomain(`${domainname}`)]))
 
     const { onSubmitData } = useSendFormApi({
         operation: "DELETE",
-        onSave: () => {
-            fetchData();
-        },
+        onSave: fetchData
     });
-
-    const fetchData = () => {
-        dispatch(
-            getMultiCollection([
-                getValuesFromDomain(`${domainname}`)
-            ]),
-        )
-    }
 
     useEffect(() => {
         dispatch(
@@ -77,7 +64,6 @@ export const ManageDomain: React.FC = () => {
         if (!multiResult.loading && !multiResult.error) {
             const domainValues = (multiResult.data.find((f) => f.key === `UFN_DOMAIN_VALUES_SEL-${domainname}`)?.data ?? []) as unknown as IDomainValue[];
             const listStatus = multiResult.data.find(f => f.key === `UFN_DOMAIN_VALUES_SEL-ESTADO`)?.data ?? [];
-
             setDataAux({ listStatus, domainValues });
         }
     }, [multiResult]);
@@ -88,32 +74,17 @@ export const ManageDomain: React.FC = () => {
         }
     }, []);
 
-    useEffect(() => {
-        if (waitSave) {
-            if (!executeResult.loading && !executeResult.error) {
-                dispatch(showBackdrop(false));
-                dispatch(showSnackbar({ show: true, severity: "success", message: `Guardado satisfactoriamente.` }));
-                navigate(paths.USERS)
-            } else if (executeResult.error) {
-                dispatch(showSnackbar({ show: true, severity: "error", message: `${executeResult.code}` }));
-                dispatch(showBackdrop(false));
-                setWaitSave(false);
-            }
-        }
-    }, [navigate, executeResult, waitSave]);
-
     const selectDomainValue = (row: IDomainValue | null) => {
         setOpenDomainValueDialog(true);
         setDomainValueSelected(row ?? { domainname: `${domainname}`, domainid: 0, domaindesc: '', domainvalue: '' })
     }
-
 
     return (
         <>
             <Box className="flex max-w-screen-xl mr-auto ml-auto flex-col">
                 <div className="my-3">
                     <Breadcrumbs aria-label="breadcrumb">
-                        <Link color="textPrimary" to={paths.DOMAINS}>
+                        <Link color="textPrimary" to={baseUrl}>
                             Dominios
                         </Link>
                         <Typography color="textSecondary">Detalle</Typography>

@@ -10,7 +10,8 @@ import FieldEdit from 'components/Controls/FieldEdit';
 import { FieldSelect } from 'components/Controls/FieldSelect';
 import { useForm } from 'react-hook-form';
 import PasswordDialog from './PasswordDialog';
-import { IMainProps, IUser, ObjectZyx } from '@types';
+import { IUser, ObjectZyx } from '@types';
+import paths from 'common/constants/paths';
 import { showSnackbar } from 'stores/popus/actions';
 import SaveIcon from '@mui/icons-material/Save';
 import HttpsIcon from '@mui/icons-material/Https';
@@ -21,7 +22,7 @@ interface IDataAux {
     listRoles: ObjectZyx[];
 }
 
-export const ManageUser: React.FC<IMainProps> = ({ baseUrl }) => {
+export const ManageUser: React.FC = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { id } = useParams<{ id?: string }>();
@@ -30,7 +31,7 @@ export const ManageUser: React.FC<IMainProps> = ({ baseUrl }) => {
     const [dataAux, setDataAux] = useState<IDataAux>({ listDocumentType: [], listStatus: [], listRoles: [] });
     const { onSubmitData } = useSendFormApi({
         operation: "INSERT",
-        onSave: () => navigate(baseUrl),
+        onSave: () => navigate(paths.USERS),
     });
     const {
         register,
@@ -72,7 +73,7 @@ export const ManageUser: React.FC<IMainProps> = ({ baseUrl }) => {
         registerX();
         dispatch(
             getMultiCollection([
-                ...(id !== 'new' ? [getUserSel(parseInt(`${id}`))] : []),
+                ...(id !== 'new' ? [getUserSel(1, parseInt(`${id}`))] : []),
                 getValuesFromDomain('TIPODOCUMENTO'),
                 getValuesFromDomain('ESTADO'),
                 getRoles(),
@@ -118,7 +119,7 @@ export const ManageUser: React.FC<IMainProps> = ({ baseUrl }) => {
             <Box className="flex max-w-screen-xl mr-auto ml-auto flex-col">
                 <div className="my-3">
                     <Breadcrumbs aria-label="breadcrumb">
-                        <Link color="textPrimary" to={baseUrl}>
+                        <Link color="textPrimary" to="/users/">
                             Usuarios
                         </Link>
                         <Typography color="textSecondary">Detalle</Typography>

@@ -9,7 +9,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import FieldEdit from 'components/Controls/FieldEdit';
 import { FieldSelect } from 'components/Controls/FieldSelect';
 import { useForm } from 'react-hook-form';
-import PasswordDialog from './PasswordDialog';
+// import PasswordDialog from './PasswordDialog';
 import { IMainProps, IUser, ObjectZyx } from '@types';
 import { showSnackbar } from 'stores/popus/actions';
 import SaveIcon from '@mui/icons-material/Save';
@@ -21,9 +21,10 @@ interface IDataAux {
     listRoles: ObjectZyx[];
 }
 
-export const ManageUser: React.FC<IMainProps> = ({ baseUrl }) => {
+export const ManageCustomer: React.FC<IMainProps> = ({ baseUrl }) => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    
     const { id } = useParams<{ id?: string }>();
     const [openPasswordDialog, setOpenPasswordDialog] = useState(false);
     const multiResult = useSelector((state: IRootState) => state.main.multiData);
@@ -248,13 +249,8 @@ export const ManageUser: React.FC<IMainProps> = ({ baseUrl }) => {
                     </Box>
                 </Paper>
             </Box>
-            <PasswordDialog
-                openModal={openPasswordDialog}
-                setOpenModal={setOpenPasswordDialog}
-                parentSetValue={setValue}
-            />
         </>
     );
 };
 
-export default ManageUser;
+export default ManageCustomer;

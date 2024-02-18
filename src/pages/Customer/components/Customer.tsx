@@ -1,7 +1,7 @@
 import { DesktopMac, Person, VerifiedUser, Visibility } from '@mui/icons-material';
 import { Box, Chip, Paper, Typography } from '@mui/material';
 import { getUserSel, toTitleCase, userIns } from 'common/helpers';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from 'stores';
 import { getCollection } from 'stores/main/actions';
@@ -9,9 +9,10 @@ import dayjs from 'dayjs';
 import clsx from 'clsx';
 import TableSimple from 'components/Controls/TableSimple';
 import type { ColumnDef } from '@tanstack/react-table';
-import { IUser } from '@types';
+import { ICustomer } from '@types';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useSendFormApi } from 'hooks/useSendFormApi';
+import { ICustomer } from '@types/entities/customer';
 
 const classes = {
     successLabel: 'bg-[#dff7e9] text-[#28c76f]',
@@ -21,11 +22,7 @@ const classes = {
     iconBadge: 'w-6 h-6 rounded-full flex items-center justify-center p-5',
 };
 
-const columns: ColumnDef<IUser>[] = [
-    {
-        header: 'USUARIO',
-        accessorKey: 'username',
-    },
+const columns: ColumnDef<ICustomer>[] = [
     {
         header: 'NOMBRE',
         accessorKey: 'firstname',
@@ -93,39 +90,36 @@ const columns: ColumnDef<IUser>[] = [
     },
     {
         header: 'FECHA CREACION',
-        accessorFn: (row: IUser) => dayjs(row.createdate).format('DD/MM/YYYY'),
+        accessorFn: (row: ICustomer) => dayjs(row.createdate).format('DD/MM/YYYY'),
     },
 ];
 
-export const User: React.FC = () => {
+export const Customer: React.FC = () => {
     const dispatch = useDispatch();
     const mainResult = useSelector((state: IRootState) => state.main.mainData);
-    const [mainData, setMainData] = useState<IUser[]>([]);
-
-    const fetchData = useCallback(() => dispatch(getCollection(getUserSel(0))), [dispatch])
-
+    const [mainData, setMainData] = useState<ICustomer[]>([]);
     const { onSubmitData } = useSendFormApi({
         operation: "DELETE",
-        onSave: fetchData
+        onSave: () => dispatch(getCollection(getUserSel(0))),
     });
 
     useEffect(() => {
-        fetchData()
-    }, [fetchData]);
+        dispatch(getCollection(getUserSel(0)));
+    }, [dispatch]);
 
     useEffect(() => {
         if (!mainResult.loading && !mainResult.error && mainResult.key === 'UFN_USERS_SEL') {
-            setMainData((mainResult.data as IUser[]) || []);
+            setMainData((mainResult.data as ICustomer[]) || []);
         }
     }, [mainResult]);
 
-    const deleteRow = (user: IUser) => onSubmitData(userIns({ ...user, password: "", operation: "DELETE" }))
+    const deleteRow = (user: ICustomer) => onSubmitData(userIns({ ...user, password: "", operation: "DELETE" }))
 
     return (
         <Box className="flex max-w-screen-xl mr-auto ml-auto flex-col">
             <Paper className="w-full mt-6">
                 <Box className="px-6 py-3 border-b">
-                    <Typography variant="h5">Usuarios</Typography>
+                    <Typography variant="h5">Clientes</Typography>
                 </Box>
                 <Box className="p-6">
                     <TableSimple
@@ -148,4 +142,4 @@ export const User: React.FC = () => {
     );
 };
 
-export default User;
+export default Customer;

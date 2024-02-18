@@ -1,6 +1,6 @@
 const paths = {
     DASHBOARD: '/dashboard',
-    CLIENTS: '/clients',
+    CUSTOMERS: '/customers',
     PRODUCTS: '/products',
     INVENTORY: '/inventory',
     DOMAINS: '/domains',

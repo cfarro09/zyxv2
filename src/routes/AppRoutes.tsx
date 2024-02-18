@@ -28,7 +28,7 @@ const AppRoutes: React.FC = () => {
                                 <Route path={`${route.path}/:id`} element={
                                     <PrivateRoute redirectTo="/login">
                                         <MainLayout>
-                                            {route.manageView}
+                                            {route.manageView(route.path)}
                                         </MainLayout>
                                     </PrivateRoute>
                                 } />

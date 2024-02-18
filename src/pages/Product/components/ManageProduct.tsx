@@ -1,5 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Box, Breadcrumbs, Button, Grid, Paper, Rating, Typography } from '@mui/material';
-import { ObjectZyx } from '@types';
+import { IMainProps, ObjectZyx } from '@types';
 import { getProductSel, getValuesFromDomain, productIns } from 'common/helpers';
 import DropZone from 'components/Controls/DropZone';
 import FieldEdit from 'components/Controls/FieldEdit';
@@ -9,25 +10,25 @@ import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { IRootState } from 'stores';
-import { execute, getMultiCollection, resetMultiMain } from 'stores/main/actions';
+import { getMultiCollection, resetMultiMain } from 'stores/main/actions';
 import { IProduct } from '../models';
-import { manageConfirmation, showBackdrop, showSnackbar } from 'stores/popus/actions';
-import paths from 'common/constants/paths';
+import { useSendFormApi } from 'hooks/useSendFormApi';
 
 interface IDataAux {
     listStatus: ObjectZyx[];
     listCategory: ObjectZyx[];
 }
 
-const ManageProduct: React.FC<unknown> = () => {
+const ManageProduct: React.FC<IMainProps> = ({ baseUrl }) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const multiResult = useSelector((state: IRootState) => state.main.multiData);
     const [dataAux, setDataAux] = useState<IDataAux>({ listStatus: [], listCategory: [] });
-    const executeResult = useSelector((state: IRootState) => state.main.execute);
     const { id } = useParams<{ id?: string }>();
-    const [waitSave, setWaitSave] = useState(false);
-
+    const { onSubmitData } = useSendFormApi({
+        operation: "INSERT",
+        onSave: () => navigate(baseUrl),
+    });
     const {
         register,
         handleSubmit,
@@ -56,7 +57,6 @@ const ManageProduct: React.FC<unknown> = () => {
         register('productid');
         register('title', { validate: (value) => Boolean(value?.length) || 'El campo es requerido' });
     };
-
 
     useEffect(() => {
         registerX();
@@ -89,34 +89,11 @@ const ManageProduct: React.FC<unknown> = () => {
         }
     }, []);
 
-    useEffect(() => {
-        if (waitSave) {
-            if (!executeResult.loading && !executeResult.error) {
-                dispatch(showBackdrop(false));
-                dispatch(showSnackbar({ show: true, severity: "success", message: `Guardado satisfactoriamente.` }));
-                navigate(paths.PRODUCTS)
-            } else if (executeResult.error) {
-                dispatch(showSnackbar({ show: true, severity: "error", message: `${executeResult.code}` }));
-                dispatch(showBackdrop(false));
-                setWaitSave(false);
-            }
-        }
-    }, [navigate, executeResult, waitSave]);
 
     const onSubmit = handleSubmit((data) => {
-        const callback = () => {
-            dispatch(showBackdrop(true));
-            dispatch(execute(productIns({
-                ...data,
-                operation: data.productid > 0 ? "UPDATE" : "INSERT"
-            })));
-            setWaitSave(true);
-        }
-
-        dispatch(manageConfirmation({
-            visible: true,
-            question: "¿Está seguro de continuar?",
-            callback
+        onSubmitData(productIns({
+            ...data,
+            operation: data.productid > 0 ? "UPDATE" : "INSERT"
         }))
     });
 
@@ -130,7 +107,7 @@ const ManageProduct: React.FC<unknown> = () => {
             <Box className="flex max-w-screen-xl mr-auto ml-auto flex-col">
                 <div className="my-3">
                     <Breadcrumbs aria-label="breadcrumb">
-                        <Link color="textPrimary" to="/products/">
+                        <Link color="textPrimary" to={baseUrl}>
                             Productos
                         </Link>
                         <Typography color="textSecondary">Detalle</Typography>

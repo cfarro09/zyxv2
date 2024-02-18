@@ -29,12 +29,27 @@ export const paginatedPersonWithoutDateSel = ({ skip, take, filters, sorts }: IP
     },
 });
 
-export const getUserSel = (orgid: number, userid: number): IRequestBody => ({
+export const getUserSel = (userid: number): IRequestBody => ({
     method: 'UFN_USERS_SEL',
     key: 'UFN_USERS_SEL',
     parameters: {
-        orgid,
         userid,
+    },
+});
+
+export const getCustomerSel = (clientid: number): IRequestBody => ({
+    method: 'UFN_CLIENT_SEL',
+    key: 'UFN_CLIENT_SEL',
+    parameters: {
+        clientid
+    },
+});
+
+export const customerIns = (clientid: number): IRequestBody => ({
+    method: 'UFN_CLIENT_SEL',
+    key: 'UFN_CLIENT_SEL',
+    parameters: {
+        clientid
     },
 });
 

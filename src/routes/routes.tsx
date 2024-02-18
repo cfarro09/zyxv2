@@ -13,6 +13,7 @@ import { User, ManageUser } from 'pages/User/Index';
 import { Product } from 'pages/Product/Index';
 import ManageProduct from 'pages/Product/components/ManageProduct';
 import { Domain, ManageDomain } from "pages/Domain/Index";
+import { Customer, ManageCustomer } from 'pages/Customer/Index';
 
 export const routes: RouteConfig[] = [
     {
@@ -27,8 +28,9 @@ export const routes: RouteConfig[] = [
         key: 'clients',
         description: 'clients',
         tooltip: 'clients',
-        path: paths.CLIENTS,
-        mainView: <User />,
+        path: paths.CUSTOMERS,
+        mainView: <Customer />,
+        manageView: (baseUrl) => <ManageCustomer baseUrl={baseUrl} />,
         icon: () => <Person style={{ width: 22, height: 22 }} />,
     },
     {
@@ -37,7 +39,7 @@ export const routes: RouteConfig[] = [
         tooltip: 'users',
         path: paths.USERS,
         mainView: <User />,
-        manageView: <ManageUser />,
+        manageView: (baseUrl) => <ManageUser baseUrl={baseUrl} />,
         icon: () => <Person style={{ width: 22, height: 22 }} />,
     },
     {
@@ -46,7 +48,7 @@ export const routes: RouteConfig[] = [
         tooltip: 'products',
         path: paths.PRODUCTS,
         mainView: <Product />,
-        manageView: <ManageProduct />,
+        manageView: (baseUrl) => <ManageProduct baseUrl={baseUrl} />,
         icon: () => <ShoppingCart style={{ width: 22, height: 22 }} />,
     },
     {
@@ -63,7 +65,7 @@ export const routes: RouteConfig[] = [
         tooltip: 'domains',
         path: paths.DOMAINS,
         mainView: <Domain />,
-        manageView: <ManageDomain />,
+        manageView: (baseUrl) => <ManageDomain baseUrl={baseUrl} />,
         icon: () => <FormatListNumberedRtlSharp style={{ width: 22, height: 22 }}  />,
     },
     {
