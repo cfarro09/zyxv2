@@ -11,7 +11,8 @@ const APIS_URL: Record<string, Record<string, string | boolean>> = {
         WS: 'https://testsocket.laraigo.com',
     },
     LOCAL: {
-        API: 'http://localhost:6065/api',
+        // API: 'http://localhost:6065/api',
+        API: 'http://38.242.249.178:6014/api',
         //API: 'https://apix.laraigo.com/api',
         //WS: 'http://localhost:7070',
     }

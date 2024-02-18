@@ -58,7 +58,7 @@ export const ManageUser: React.FC<IMainProps> = ({ baseUrl }) => {
     const registerX = () => {
         register('userid');
         register('username', { validate: (value) => Boolean(value?.length) || 'El campo es requerido' });
-        register('password');
+        register('password', id === 'new' ? { validate: (value) => Boolean(value?.length) || '**Debe ingresar una contraseña' } : undefined);
         register('firstname', { validate: (value) => Boolean(value?.length) || 'El campo es requerido' });
         register('status', { validate: (value) => Boolean(value?.length) || 'El campo es requerido' });
         register('lastname', { validate: (value) => Boolean(value?.length) || 'El campo es requerido' });
@@ -129,7 +129,7 @@ export const ManageUser: React.FC<IMainProps> = ({ baseUrl }) => {
                         <Grid item xs={12} sm={6}>
                             <Box>
                                 <Typography variant="h5">
-                                    {id === '0' ? 'Nuevo usuario' : 'Modificar Usuario'}
+                                    {id === 'new' ? 'Nuevo usuario' : 'Modificar Usuario'}
                                 </Typography>
                             </Box>
                         </Grid>

@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Box, Breadcrumbs, Button, Grid, Paper, Typography } from '@mui/material';
-import { getRoles, getUserSel, getValuesFromDomain, userIns } from 'common/helpers';
+import { customerIns, getCustomerSel, getValuesFromDomain } from 'common/helpers';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from 'stores';
@@ -9,26 +9,21 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import FieldEdit from 'components/Controls/FieldEdit';
 import { FieldSelect } from 'components/Controls/FieldSelect';
 import { useForm } from 'react-hook-form';
-// import PasswordDialog from './PasswordDialog';
-import { IMainProps, IUser, ObjectZyx } from '@types';
-import { showSnackbar } from 'stores/popus/actions';
+import { IMainProps, ICustomer, ObjectZyx } from '@types';
 import SaveIcon from '@mui/icons-material/Save';
-import HttpsIcon from '@mui/icons-material/Https';
 import { useSendFormApi } from 'hooks/useSendFormApi';
 interface IDataAux {
     listDocumentType: ObjectZyx[];
     listStatus: ObjectZyx[];
-    listRoles: ObjectZyx[];
 }
 
 export const ManageCustomer: React.FC<IMainProps> = ({ baseUrl }) => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    
+
     const { id } = useParams<{ id?: string }>();
-    const [openPasswordDialog, setOpenPasswordDialog] = useState(false);
     const multiResult = useSelector((state: IRootState) => state.main.multiData);
-    const [dataAux, setDataAux] = useState<IDataAux>({ listDocumentType: [], listStatus: [], listRoles: [] });
+    const [dataAux, setDataAux] = useState<IDataAux>({ listDocumentType: [], listStatus: [] });
     const { onSubmitData } = useSendFormApi({
         operation: "INSERT",
         onSave: () => navigate(baseUrl),
@@ -40,59 +35,51 @@ export const ManageCustomer: React.FC<IMainProps> = ({ baseUrl }) => {
         getValues,
         reset,
         formState: { errors },
-    } = useForm<IUser>({
+    } = useForm<ICustomer>({
         defaultValues: {
-            userid: 0,
-            username: '',
-            roleid: 0,
-            rolename: '',
-            firstname: '',
-            password: '',
-            lastname: '',
+            clientid: 0,
+            name: '',
+            address: '',
+            phone: '',
             document: '',
-            document_type: '',
+            document_type: 'DNI',
             email: '',
             status: 'ACTIVO',
         },
     });
 
     const registerX = () => {
-        register('userid');
-        register('username', { validate: (value) => Boolean(value?.length) || 'El campo es requerido' });
-        register('password');
-        register('firstname', { validate: (value) => Boolean(value?.length) || 'El campo es requerido' });
+        register('clientid');
+        register('name', { validate: (value) => Boolean(value?.length) || 'El campo es requerido' });
         register('status', { validate: (value) => Boolean(value?.length) || 'El campo es requerido' });
-        register('lastname', { validate: (value) => Boolean(value?.length) || 'El campo es requerido' });
-        register('document', { validate: (value) => Boolean(value?.length) || 'El campo es requerido' });
-        register('document_type', { validate: (value) => Boolean(value?.length) || 'El campo es requerido' });
+        register('address');
+        register('phone');
+        register('document');
         register('email');
-        register('roleid', { validate: (value) => Boolean(value) || 'El campo es requerido' });
     };
 
     useEffect(() => {
         registerX();
         dispatch(
             getMultiCollection([
-                ...(id !== 'new' ? [getUserSel(parseInt(`${id}`))] : []),
+                ...(id !== 'new' ? [getCustomerSel(parseInt(`${id}`))] : []),
                 getValuesFromDomain('TIPODOCUMENTO'),
                 getValuesFromDomain('ESTADO'),
-                getRoles(),
             ]),
         );
     }, [dispatch, register, id]);
 
     useEffect(() => {
         if (!multiResult.loading && !multiResult.error) {
-            const rows = multiResult.data.find((f) => f.key === `UFN_USERS_SEL`)?.data ?? [];
+            const rows = multiResult.data.find((f) => f.key === `UFN_CLIENT_SEL`)?.data ?? [];
             if (rows.length > 0) {
                 reset(rows[0]);
             }
             registerX()
             const listDocumentType = multiResult.data.find(f => f.key === `UFN_DOMAIN_VALUES_SEL-TIPODOCUMENTO`)?.data ?? [];
             const listStatus = multiResult.data.find(f => f.key === `UFN_DOMAIN_VALUES_SEL-ESTADO`)?.data ?? [];
-            const listRoles = multiResult.data.find(f => f.key === `UFN_ROLE_LIST`)?.data ?? [];
 
-            setDataAux({ listDocumentType, listStatus, listRoles });
+            setDataAux({ listDocumentType, listStatus });
         }
     }, [multiResult]);
 
@@ -102,17 +89,7 @@ export const ManageCustomer: React.FC<IMainProps> = ({ baseUrl }) => {
         }
     }, []);
 
-    const onSubmit = handleSubmit((data) => {
-        if (data.userid === 0 && !data.password) {
-            dispatch(showSnackbar({ show: true, severity: "warning", message: `Debe ingresar contraseña` }));
-        } else {
-            onSubmitData(userIns({
-                ...data,
-                password: data.password ?? "",
-                operation: data.userid > 0 ? "UPDATE" : "INSERT"
-            }));
-        }
-    });
+    const onSubmit = handleSubmit((data) => onSubmitData(customerIns(data, data.clientid > 0 ? "UPDATE" : "INSERT")));
 
     return (
         <>
@@ -120,7 +97,7 @@ export const ManageCustomer: React.FC<IMainProps> = ({ baseUrl }) => {
                 <div className="my-3">
                     <Breadcrumbs aria-label="breadcrumb">
                         <Link color="textPrimary" to={baseUrl}>
-                            Usuarios
+                            Cliente
                         </Link>
                         <Typography color="textSecondary">Detalle</Typography>
                     </Breadcrumbs>
@@ -130,20 +107,11 @@ export const ManageCustomer: React.FC<IMainProps> = ({ baseUrl }) => {
                         <Grid item xs={12} sm={6}>
                             <Box>
                                 <Typography variant="h5">
-                                    {id === '0' ? 'Nuevo usuario' : 'Modificar Usuario'}
+                                    {id === 'new' ? 'Nuevo Cliente' : 'Modificar Cliente'}
                                 </Typography>
                             </Box>
                         </Grid>
                         <Grid item xs={12} sm={6} container justifyContent={'flex-end'} gap={2}>
-                            <Button
-                                color="info"
-                                onClick={() => setOpenPasswordDialog(true)}
-                                type='button'
-                                disabled={multiResult.loading}
-                                startIcon={<HttpsIcon />}
-                                variant="contained">
-                                {id !== "new" ? "Cambiar contraseña" : "Ingresar contraseña"}
-                            </Button>
                             <Button
                                 color='primary'
                                 type='submit'
@@ -155,45 +123,43 @@ export const ManageCustomer: React.FC<IMainProps> = ({ baseUrl }) => {
                     </Grid>
                     <Box className="p-6">
                         <Grid container spacing={2}>
-                            {errors.password?.message && (
-                                <Grid item xs={12} sx={{ color: '#d32f2f' }}>
-                                    {errors.password?.message}
-                                </Grid>
-                            )}
-                            <Grid item xs={12} sm={4}>
+                            <Grid item xs={12} sm={8}>
                                 <FieldEdit
-                                    label={'Nombre'}
-                                    valueDefault={getValues('firstname')}
-                                    onChange={(value) => setValue('firstname', `${value}`)}
-                                    error={errors.firstname?.message}
+                                    label={'Nombre Completo'}
+                                    valueDefault={getValues('name')}
+                                    onChange={(value) => setValue('name', `${value}`)}
+                                    error={errors.name?.message}
                                     variant="outlined"
                                 />
                             </Grid>
                             <Grid item xs={12} sm={4}>
                                 <FieldEdit
-                                    label={'Apellido'}
-                                    valueDefault={getValues('lastname')}
-                                    onChange={(value) => setValue('lastname', `${value}`)}
-                                    error={errors.lastname?.message}
+                                    label={'Teléfono'}
+                                    valueDefault={getValues('phone')}
+                                    onChange={(value) => setValue('phone', `${value}`)}
+                                    error={errors.phone?.message}
+                                    type='phone'
                                     variant="outlined"
                                 />
                             </Grid>
+                            <Grid item xs={12} sm={8}>
+                                <FieldEdit
+                                    label={'Dirección'}
+                                    valueDefault={getValues('address')}
+                                    onChange={(value) => setValue('address', `${value}`)}
+                                    error={errors.address?.message}
+                                    type='address'
+                                    variant="outlined"
+                                />
+                            </Grid>
+
                             <Grid item xs={12} sm={4}>
                                 <FieldEdit
-                                    label={'Email'}
+                                    label={'Correo'}
                                     valueDefault={getValues('email')}
                                     onChange={(value) => setValue('email', `${value}`)}
                                     error={errors.email?.message}
                                     type='email'
-                                    variant="outlined"
-                                />
-                            </Grid>
-                            <Grid item xs={12} sm={4}>
-                                <FieldEdit
-                                    label={'Usuario'}
-                                    valueDefault={getValues('username')}
-                                    onChange={(value) => setValue('username', `${value}`)}
-                                    error={errors.username?.message}
                                     variant="outlined"
                                 />
                             </Grid>
@@ -217,19 +183,6 @@ export const ManageCustomer: React.FC<IMainProps> = ({ baseUrl }) => {
                                     onChange={(value) => setValue('document', `${value}`)}
                                     error={errors.document?.message}
                                     variant="outlined"
-                                />
-                            </Grid>
-                            <Grid item xs={12} sm={4}>
-                                <FieldSelect
-                                    label={'Role'}
-                                    variant="outlined"
-                                    valueDefault={getValues('roleid')}
-                                    onChange={(value) => setValue('roleid', (value?.roleid as number) || 0)}
-                                    error={errors.roleid?.message}
-                                    loading={multiResult.loading}
-                                    data={dataAux.listRoles}
-                                    optionDesc="rolename"
-                                    optionValue="roleid"
                                 />
                             </Grid>
                             <Grid item xs={12} sm={4}>

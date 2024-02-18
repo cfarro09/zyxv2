@@ -1,62 +1,21 @@
-import { DesktopMac, Person, VerifiedUser, Visibility } from '@mui/icons-material';
 import { Box, Chip, Paper, Typography } from '@mui/material';
-import { getUserSel, toTitleCase, userIns } from 'common/helpers';
-import React, { useEffect, useState } from 'react';
+import { customerIns, getCustomerSel } from 'common/helpers';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from 'stores';
 import { getCollection } from 'stores/main/actions';
-import dayjs from 'dayjs';
 import clsx from 'clsx';
 import TableSimple from 'components/Controls/TableSimple';
 import type { ColumnDef } from '@tanstack/react-table';
 import { ICustomer } from '@types';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useSendFormApi } from 'hooks/useSendFormApi';
-import { ICustomer } from '@types/entities/customer';
-
-const classes = {
-    successLabel: 'bg-[#dff7e9] text-[#28c76f]',
-    pendingLabel: 'bg-[#fff1e3] text-[#ff9f43]',
-    inactiveLabel: 'bg-[#f2f2f3] text-[#a8aaae]',
-    suspendLabel: 'bg-[#eae8fd] text-[#7367f0]',
-    iconBadge: 'w-6 h-6 rounded-full flex items-center justify-center p-5',
-};
+import classes from 'common/constants/classes';
 
 const columns: ColumnDef<ICustomer>[] = [
     {
-        header: 'NOMBRE',
-        accessorKey: 'firstname',
-    },
-    {
-        header: 'APELLIDO',
-        accessorKey: 'lastname',
-    },
-    {
-        accessorKey: 'rolename',
-        header: 'ROL',
-        cell: (info) => {
-            const rolename = info.row.original.rolename;
-            const roleid = info.row.original.roleid;
-            return (
-                <Box className="flex items-center">
-                    <Box
-                        className={clsx(
-                            classes.iconBadge,
-                            roleid === 1 && classes.successLabel,
-                            roleid === 2 && classes.inactiveLabel,
-                            roleid === 3 && classes.pendingLabel,
-                            ![1, 2, 3].includes(roleid) && classes.suspendLabel,
-                        )}
-                    >
-                        {roleid === 1 && <VerifiedUser className="w-5 h-5" />}
-                        {roleid === 2 && <DesktopMac className="w-5 h-5" />}
-                        {roleid === 3 && <Person className="w-5 h-5" />}
-                        {roleid === 4 && <Visibility className="w-5 h-5" />}
-                    </Box>
-                    <Box className="ml-2">{toTitleCase(rolename)}</Box>
-                </Box>
-            );
-        },
+        header: 'NOMBRE COMPLETO',
+        accessorKey: 'name',
     },
     {
         header: 'TIPO DOC.',
@@ -87,33 +46,32 @@ const columns: ColumnDef<ICustomer>[] = [
                 </Box>
             );
         },
-    },
-    {
-        header: 'FECHA CREACION',
-        accessorFn: (row: ICustomer) => dayjs(row.createdate).format('DD/MM/YYYY'),
-    },
+    }
 ];
 
 export const Customer: React.FC = () => {
     const dispatch = useDispatch();
     const mainResult = useSelector((state: IRootState) => state.main.mainData);
     const [mainData, setMainData] = useState<ICustomer[]>([]);
+
+    const fetchData = useCallback(() => dispatch(getCollection(getCustomerSel(0))), [dispatch])
+
     const { onSubmitData } = useSendFormApi({
         operation: "DELETE",
-        onSave: () => dispatch(getCollection(getUserSel(0))),
+        onSave: fetchData,
     });
 
     useEffect(() => {
-        dispatch(getCollection(getUserSel(0)));
-    }, [dispatch]);
+        fetchData();
+    }, [dispatch, fetchData]);
 
     useEffect(() => {
-        if (!mainResult.loading && !mainResult.error && mainResult.key === 'UFN_USERS_SEL') {
+        if (!mainResult.loading && !mainResult.error && mainResult.key === 'UFN_CLIENT_SEL') {
             setMainData((mainResult.data as ICustomer[]) || []);
         }
     }, [mainResult]);
 
-    const deleteRow = (user: ICustomer) => onSubmitData(userIns({ ...user, password: "", operation: "DELETE" }))
+    const deleteRow = (customer: ICustomer) => onSubmitData(customerIns(customer, "DELETE"))
 
     return (
         <Box className="flex max-w-screen-xl mr-auto ml-auto flex-col">
@@ -134,7 +92,7 @@ export const Customer: React.FC = () => {
                         }]}
                         columns={columns}
                         redirectOnSelect={true}
-                        columnKey={"userid"}
+                        columnKey={"clientid"}
                     />
                 </Box>
             </Paper>

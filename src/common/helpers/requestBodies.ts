@@ -1,4 +1,4 @@
-import { IDomainValue, IRequestBody, IRequestBodyPaginated, IUser } from '@types';
+import { ICustomer, IDomainValue, IRequestBody, IRequestBodyPaginated, IUser } from '@types';
 import { IProduct } from 'pages/Product/models';
 
 type IPaginated = {
@@ -45,11 +45,12 @@ export const getCustomerSel = (clientid: number): IRequestBody => ({
     },
 });
 
-export const customerIns = (clientid: number): IRequestBody => ({
-    method: 'UFN_CLIENT_SEL',
-    key: 'UFN_CLIENT_SEL',
+export const customerIns = (customer: ICustomer, operation: string): IRequestBody => ({
+    method: 'UFN_CLIENT_INS',
+    key: 'UFN_CLIENT_INS',
     parameters: {
-        clientid
+        ...customer,
+        operation
     },
 });
 

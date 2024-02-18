@@ -90,12 +90,10 @@ const ManageProduct: React.FC<IMainProps> = ({ baseUrl }) => {
     }, []);
 
 
-    const onSubmit = handleSubmit((data) => {
-        onSubmitData(productIns({
-            ...data,
-            operation: data.productid > 0 ? "UPDATE" : "INSERT"
-        }))
-    });
+    const onSubmit = handleSubmit((data) => onSubmitData(productIns({
+        ...data,
+        operation: data.productid > 0 ? "UPDATE" : "INSERT"
+    })));
 
     const handleFileUpload = (fileUrl: string) => {
         console.log({ fileUrl })
@@ -116,7 +114,7 @@ const ManageProduct: React.FC<IMainProps> = ({ baseUrl }) => {
                 <Paper className="w-full" sx={{ marginTop: 0, marginBottom: 2 }}>
                     <Grid container className="px-6 py-3 border-b">
                         <Grid item xs={12} sm={6}>
-                            <Typography variant="h5">{id === '0' ? 'Nuevo Producto' : 'Modificar Producto'}</Typography>
+                            <Typography variant="h5">{id === 'new' ? 'Nuevo Producto' : 'Modificar Producto'}</Typography>
                         </Grid>
                         <Grid item xs={12} sm={6} container justifyContent={'flex-end'} gap={2}>
                             <Button color="primary" type="submit" variant="contained" onClick={onSubmit}>

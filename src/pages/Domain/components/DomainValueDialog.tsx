@@ -57,9 +57,7 @@ const DomainValueDialog: React.FC<DomainValueDialogProps> = ({ openModal, setOpe
         clearErrors();
     }
 
-    const onSubmitDomain = handleSubmit((data: IDomainValue) => {
-        onSubmitData(domainIns(data, data.domainid > 0 ? "UPDATE" : "INSERT"))
-    });
+    const onSubmitDomain = handleSubmit((data: IDomainValue) => onSubmitData(domainIns(data, data.domainid > 0 ? "UPDATE" : "INSERT")));
 
     return (
         <Dialog
