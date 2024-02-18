@@ -1,4 +1,4 @@
-import { Button, Grid, Typography } from '@mui/material';
+import { Box, Button, Grid, Typography } from '@mui/material';
 import type { SxProps } from '@mui/system';
 import { getFileSizeInKb } from 'common/helpers';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -42,6 +42,7 @@ const classes: IClasses = {
         boxSizing: 'content-box',
         cursor: 'default',
         flex: 1,
+        maxWidth: '220px'
     },
     imageRemoveButtonStyles: {
         textTransform: 'none',
@@ -131,7 +132,7 @@ const DropZone: React.FC<DropZoneProps> = ({ url, onFileUpload }) => {
     };
 
     return (
-        <Grid container sx={classes.dropzoneStyles} padding={4}>
+        <Grid container sx={classes.dropzoneStyles} padding={2}>
             {!files.length && (
                 <Grid item {...getRootProps()}>
                     <input {...getInputProps()} />
@@ -141,8 +142,8 @@ const DropZone: React.FC<DropZoneProps> = ({ url, onFileUpload }) => {
             {files.length > 0 && (
                 <Grid item container flexDirection={'column'} sx={classes.imaginePreviewStyles}>
                     {files.map((file, index) => (
-                        <>
-                            <Grid item container flexGrow={1} flexDirection={'column'} key={file.name}>
+                        <Grid item container key={file.name} flexGrow={1} flexDirection={'column'}>
+                            <Grid item container flexGrow={1} flexDirection={'column'}>
                                 <Grid item flexGrow={1} sx={classes.imageContainerStyles}>
                                     <img
                                         src={file.preview}
@@ -150,9 +151,9 @@ const DropZone: React.FC<DropZoneProps> = ({ url, onFileUpload }) => {
                                         style={{ width: '100%', height: '100%', objectFit: 'contain' }}
                                     />
                                 </Grid>
-                                <Grid item sx={{ padding: '0 1rem', color: '#6f6b7d' }}>
-                                    <Typography sx={{ fontSize: '13px' }}>{file.name}</Typography>
-                                </Grid>
+                                <Box style={{ padding: '0 1rem', color: '#6f6b7d', textOverflow: 'ellipsis', overflow: 'hidden', width: '100%' }}>
+                                    <Typography noWrap style={{ fontSize: '13px', whiteSpace: 'normal' }}>{file.name}</Typography>
+                                </Box>
                             </Grid>
                             <Grid item>
                                 <Button
@@ -163,7 +164,7 @@ const DropZone: React.FC<DropZoneProps> = ({ url, onFileUpload }) => {
                                     <Typography>{'Remover archivo'}</Typography>
                                 </Button>
                             </Grid>
-                        </>
+                        </Grid>
                     ))}
                 </Grid>
             )}

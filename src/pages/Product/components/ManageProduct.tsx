@@ -260,8 +260,8 @@ const ManageProduct: React.FC<unknown> = () => {
                                 </Grid>
                             </Grid>
                         </Grid>
-                        <Grid item xs sx={{ display: { xs: 'none', md: 'none', lg: 'flex' } }}>
-                            <Box className="px-6 py-6 mb-4 flex border-l">
+                        <Grid item xs sx={{ display: { xs: 'none', md: 'none', lg: 'flex' }, justifyContent: 'center' }}>
+                            <Box className="px-6 py-6 mb-4 flex">
                                 <DropZone url={getValues('image')} onFileUpload={handleFileUpload} />
                             </Box>
                         </Grid>
