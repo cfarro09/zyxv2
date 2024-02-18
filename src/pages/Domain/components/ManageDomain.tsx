@@ -1,22 +1,20 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Box, Breadcrumbs, Button, Grid, Paper, Typography } from '@mui/material';
-import { getRoles, getUserSel, getValuesFromDomain, userIns } from 'common/helpers';
+import { domainIns, getValuesFromDomain } from 'common/helpers';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from 'stores';
-import { execute, getMultiCollection, resetMultiMain } from 'stores/main/actions';
+import { getMultiCollection, resetMultiMain } from 'stores/main/actions';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import FieldEdit from 'components/Controls/FieldEdit';
-import { FieldSelect } from 'components/Controls/FieldSelect';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useForm } from 'react-hook-form';
-import PasswordDialog from './PasswordDialog';
-import { IDomainValue, ObjectZyx } from '@types';
 import paths from 'common/constants/paths';
-import { manageConfirmation, showBackdrop, showSnackbar } from 'stores/popus/actions';
+import { showBackdrop, showSnackbar } from 'stores/popus/actions';
 import TableSimple from 'components/Controls/TableSimple';
 import type { ColumnDef } from '@tanstack/react-table';
 import SaveIcon from '@mui/icons-material/Save';
+import DomainValueDialog from './DomainValueDialog';
+import { useSendFormApi } from 'hooks/useSendFormApi';
+import { IDomainValue, ObjectZyx } from '@types';
 
 interface IDataAux {
     listStatus: ObjectZyx[];
@@ -27,6 +25,8 @@ const columns: ColumnDef<IDomainValue>[] = [
     {
         header: 'DOMINIO',
         accessorKey: 'domainname',
+        enableResizing: false,
+        size: 10,
     },
     {
         header: 'DESCRIPCION',
@@ -42,66 +42,40 @@ export const ManageDomain: React.FC = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { id: domainname } = useParams<{ id?: string }>();
-
-    console.log("domainname", domainname)
-    const [openPasswordDialog, setOpenPasswordDialog] = useState(false);
+    const [openDomainValueDialog, setOpenDomainValueDialog] = useState(false);
     const multiResult = useSelector((state: IRootState) => state.main.multiData);
     const executeResult = useSelector((state: IRootState) => state.main.execute);
+    const [domainValueSelected, setDomainValueSelected] = useState<IDomainValue>({ domainname: `${domainname}`, domainid: 0, domaindesc: '', domainvalue: '' })
     const [dataAux, setDataAux] = useState<IDataAux>({ listStatus: [], domainValues: [] });
     const [waitSave, setWaitSave] = useState(false);
-    const {
-        register,
-        handleSubmit,
-        setValue,
-        getValues,
-        reset,
-        formState: { errors },
-    } = useForm<IDomainValue>({
-        defaultValues: {
-            // userid: 0,
-            // username: '',
-            // roleid: 0,
-            // rolename: '',
-            // firstname: '',
-            // password: '',
-            // lastname: '',
-            // document: '',
-            // document_type: '',
-            // email: '',
-            // status: 'ACTIVO',
+
+    const { onSubmitData } = useSendFormApi({
+        operation: "DELETE",
+        onSave: () => {
+            fetchData();
         },
     });
 
-    const registerX = () => {
-        // register('userid');
-        // register('username', { validate: (value) => Boolean(value?.length) || 'El campo es requerido' });
-        // register('password');
-        // register('firstname', { validate: (value) => Boolean(value?.length) || 'El campo es requerido' });
-        // register('status', { validate: (value) => Boolean(value?.length) || 'El campo es requerido' });
-        // register('lastname', { validate: (value) => Boolean(value?.length) || 'El campo es requerido' });
-        // register('document', { validate: (value) => Boolean(value?.length) || 'El campo es requerido' });
-        // register('document_type', { validate: (value) => Boolean(value?.length) || 'El campo es requerido' });
-        // register('email');
-        // register('roleid', { validate: (value) => Boolean(value) || 'El campo es requerido' });
-    };
+    const fetchData = () => {
+        dispatch(
+            getMultiCollection([
+                getValuesFromDomain(`${domainname}`)
+            ]),
+        )
+    }
 
     useEffect(() => {
-        registerX();
         dispatch(
             getMultiCollection([
                 getValuesFromDomain(`${domainname}`),
                 getValuesFromDomain('ESTADO'),
             ]),
         );
-    }, [dispatch, register]);
+    }, [dispatch]);
 
     useEffect(() => {
         if (!multiResult.loading && !multiResult.error) {
             const domainValues = (multiResult.data.find((f) => f.key === `UFN_DOMAIN_VALUES_SEL-${domainname}`)?.data ?? []) as unknown as IDomainValue[];
-            // if (rows.length > 0) {
-            //     // reset(rows[0]);
-            // }
-            // registerX()
             const listStatus = multiResult.data.find(f => f.key === `UFN_DOMAIN_VALUES_SEL-ESTADO`)?.data ?? [];
 
             setDataAux({ listStatus, domainValues });
@@ -128,27 +102,11 @@ export const ManageDomain: React.FC = () => {
         }
     }, [navigate, executeResult, waitSave]);
 
-    const onSubmit = handleSubmit((data) => {
-        // if (data.userid === 0 && !data.password) {
-        //     dispatch(showSnackbar({ show: true, severity: "warning", message: `Debe ingresar contraseña` }));
-        // } else {
-        //     const callback = () => {
-        //         dispatch(showBackdrop(true));
-        //         dispatch(execute(userIns({
-        //             ...data,
-        //             password: data.password ?? "",
-        //             operation: data.userid > 0 ? "UPDATE" : "INSERT"
-        //         })));
-        //         setWaitSave(true);
-        //     }
+    const selectDomainValue = (row: IDomainValue | null) => {
+        setOpenDomainValueDialog(true);
+        setDomainValueSelected(row ?? { domainname: `${domainname}`, domainid: 0, domaindesc: '', domainvalue: '' })
+    }
 
-        //     dispatch(manageConfirmation({
-        //         visible: true,
-        //         question: "¿Está seguro de continuar?",
-        //         callback
-        //     }))
-        // }
-    });
 
     return (
         <>
@@ -161,7 +119,7 @@ export const ManageDomain: React.FC = () => {
                         <Typography color="textSecondary">Detalle</Typography>
                     </Breadcrumbs>
                 </div>
-                <Paper className="w-full mt-6" component={'form'} onSubmit={onSubmit} sx={{ marginTop: 0 }}>
+                <Paper className="w-full mt-6" sx={{ marginTop: 0 }}>
                     <Grid container className="px-6 py-3 border-b">
                         <Grid item xs={12} sm={6}>
                             <Box>
@@ -188,24 +146,27 @@ export const ManageDomain: React.FC = () => {
                                     data={dataAux.domainValues}
                                     addButton={true}
                                     showOptions={true}
+                                    columnKey={"domainnamex"}
                                     optionsMenu={[{
                                         description: "Eliminar",
                                         Icon: DeleteIcon,
-                                        onClick: (user) => null
+                                        onClick: (domainValue) => {
+                                            domainValue && onSubmitData(domainIns(domainValue, "DELETE"))
+                                        }
                                     }]}
                                     columns={columns}
-                                    redirectOnSelect={true}
-                                    columnKey={"domainid"}
+                                    onClickOnRow={selectDomainValue}
                                 />
                             </Grid>
                         </Grid>
                     </Box>
                 </Paper>
             </Box>
-            <PasswordDialog
-                openModal={openPasswordDialog}
-                setOpenModal={setOpenPasswordDialog}
-                parentSetValue={setValue}
+            <DomainValueDialog
+                openModal={openDomainValueDialog}
+                setOpenModal={setOpenDomainValueDialog}
+                domainValue={domainValueSelected}
+                onSave={fetchData}
             />
         </>
     );

@@ -135,11 +135,19 @@ export const Product: React.FC = () => {
                     <Typography variant="h5">Productos</Typography>
                 </Box>
                 <Box className="p-6">
-                    <TableSimple data={mainData} columns={columns} redirectOnSelect={true} addButton={true} columnKey={'productid'} showOptions={true} optionsMenu={[{
-                        description: "Eliminar",
-                        Icon: Delete,
-                        onClick: (product) => product && deleteRow(product)
-                    }]} />
+                    <TableSimple
+                        data={mainData}
+                        loading={mainResult.loading}
+                        columns={columns}
+                        redirectOnSelect={true}
+                        addButton={true}
+                        columnKey={'productid'}
+                        showOptions={true}
+                        optionsMenu={[{
+                            description: "Eliminar",
+                            Icon: Delete,
+                            onClick: (product) => product && deleteRow(product)
+                        }]} />
                 </Box>
             </Paper>
         </Box>

@@ -1,4 +1,4 @@
-import { IRequestBody, IRequestBodyPaginated, IUser } from '@types';
+import { IDomainValue, IRequestBody, IRequestBodyPaginated, IUser } from '@types';
 import { IProduct } from 'pages/Product/models';
 
 type IPaginated = {
@@ -50,6 +50,18 @@ export const getDomainSel = (): IRequestBody => ({
     method: 'UFN_DOMAIN_SEL',
     key: 'UFN_DOMAIN_SEL',
     parameters: {},
+});
+
+export const domainIns = (domainValue: IDomainValue, operation: string): IRequestBody => ({
+    method: 'UFN_DOMAIN_INS',
+    key: 'UFN_DOMAIN_INS',
+    parameters: {
+        ...domainValue,
+        type: 'NINGUNO',
+        status: 'ACTIVO',
+        operation
+
+    },
 });
 
 export const userIns = (parameters: { operation: string } & IUser): IRequestBody => ({
