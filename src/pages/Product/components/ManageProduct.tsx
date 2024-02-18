@@ -1,7 +1,6 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { Box, Breadcrumbs, Button, Grid, Paper, Rating, Typography } from '@mui/material';
 import { ObjectZyx } from '@types';
-import { getProductSel, getValuesFromDomain } from 'common/helpers';
+import { getProductSel, getValuesFromDomain, productIns } from 'common/helpers';
 import DropZone from 'components/Controls/DropZone';
 import FieldEdit from 'components/Controls/FieldEdit';
 import { FieldSelect } from 'components/Controls/FieldSelect';
@@ -10,9 +9,9 @@ import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { IRootState } from 'stores';
-import { getMultiCollection, resetMultiMain } from 'stores/main/actions';
+import { execute, getMultiCollection, resetMultiMain } from 'stores/main/actions';
 import { IProduct } from '../models';
-import { showBackdrop, showSnackbar } from 'stores/popus/actions';
+import { manageConfirmation, showBackdrop, showSnackbar } from 'stores/popus/actions';
 import paths from 'common/constants/paths';
 
 interface IDataAux {
@@ -31,7 +30,7 @@ const ManageProduct: React.FC<unknown> = () => {
 
     const {
         register,
-        // handleSubmit,
+        handleSubmit,
         setValue,
         getValues,
         reset,
@@ -104,6 +103,28 @@ const ManageProduct: React.FC<unknown> = () => {
         }
     }, [navigate, executeResult, waitSave]);
 
+    const onSubmit = handleSubmit((data) => {
+        const callback = () => {
+            dispatch(showBackdrop(true));
+            dispatch(execute(productIns({
+                ...data,
+                operation: data.productid > 0 ? "UPDATE" : "INSERT"
+            })));
+            setWaitSave(true);
+        }
+
+        dispatch(manageConfirmation({
+            visible: true,
+            question: "¿Está seguro de continuar?",
+            callback
+        }))
+    });
+
+    const handleFileUpload = (fileUrl: string) => {
+        console.log({ fileUrl })
+        setValue('image', fileUrl);
+    };
+
     return (
         <>
             <Box className="flex max-w-screen-xl mr-auto ml-auto flex-col">
@@ -121,12 +142,12 @@ const ManageProduct: React.FC<unknown> = () => {
                             <Typography variant="h5">{id === '0' ? 'Nuevo Producto' : 'Modificar Producto'}</Typography>
                         </Grid>
                         <Grid item xs={12} sm={6} container justifyContent={'flex-end'} gap={2}>
-                            <Button color="primary" type="submit" variant="contained">
+                            <Button color="primary" type="submit" variant="contained" onClick={onSubmit}>
                                 Guardar
                             </Button>
                         </Grid>
                     </Grid>
-                    <Grid container component={'form'} spacing={2} padding={2} sx={{ pb: 4, pl: 4 }}>
+                    <Grid container component={'form'} spacing={2} padding={2} sx={{ pb: 4, pl: 4 }} wrap='nowrap'>
                         <Grid item sm={12} md={12} lg={8}>
                             <Grid container gap={2}>
                                 <Grid item xs={12} display={'flex'} alignItems={'end'} gap={2}>
@@ -240,8 +261,8 @@ const ManageProduct: React.FC<unknown> = () => {
                             </Grid>
                         </Grid>
                         <Grid item xs sx={{ display: { xs: 'none', md: 'none', lg: 'flex' } }}>
-                            <Box className="w-full px-6 py-6 mb-4 flex border-l">
-                                <DropZone url = {getValues('image')} />
+                            <Box className="px-6 py-6 mb-4 flex border-l">
+                                <DropZone url={getValues('image')} onFileUpload={handleFileUpload} />
                             </Box>
                         </Grid>
                     </Grid>

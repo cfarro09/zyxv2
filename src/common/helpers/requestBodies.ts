@@ -63,6 +63,12 @@ export const userIns = (parameters: { operation: string } & IUser): IRequestBody
     },
 });
 
+export const productIns = (parameters: any): IRequestBody => ({
+    method: 'UFN_PRODUCT_INS',
+    key: 'UFN_PRODUCT_INS',
+    parameters
+});
+
 export const getRoles = (): IRequestBody => ({
     method: 'UFN_ROLE_LIST',
     key: 'UFN_ROLE_LIST',
