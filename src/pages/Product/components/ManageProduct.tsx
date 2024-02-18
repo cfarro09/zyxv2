@@ -101,149 +101,147 @@ const ManageProduct: React.FC<IMainProps> = ({ baseUrl }) => {
     };
 
     return (
-        <>
-            <Box className="flex max-w-screen-xl mr-auto ml-auto flex-col">
-                <div className="my-3">
-                    <Breadcrumbs aria-label="breadcrumb">
-                        <Link color="textPrimary" to={baseUrl}>
-                            Productos
-                        </Link>
-                        <Typography color="textSecondary">Detalle</Typography>
-                    </Breadcrumbs>
-                </div>
-                <Paper className="w-full" sx={{ marginTop: 0, marginBottom: 2 }}>
-                    <Grid container className="px-6 py-3 border-b">
-                        <Grid item xs={12} sm={6}>
-                            <Typography variant="h5">{id === 'new' ? 'Nuevo Producto' : 'Modificar Producto'}</Typography>
-                        </Grid>
-                        <Grid item xs={12} sm={6} container justifyContent={'flex-end'} gap={2}>
-                            <Button color="primary" type="submit" variant="contained" onClick={onSubmit}>
-                                Guardar
-                            </Button>
-                        </Grid>
+        <Box className="flex max-w-screen-xl mr-auto ml-auto flex-col">
+            <div className="my-3">
+                <Breadcrumbs aria-label="breadcrumb">
+                    <Link color="textPrimary" to={baseUrl}>
+                        Productos
+                    </Link>
+                    <Typography color="textSecondary">Detalle</Typography>
+                </Breadcrumbs>
+            </div>
+            <Paper className="w-full" sx={{ marginTop: 0, marginBottom: 2 }}>
+                <Grid container className="px-6 py-3 border-b">
+                    <Grid item xs={12} sm={6}>
+                        <Typography variant="h5">{id === 'new' ? 'Nuevo Producto' : 'Modificar Producto'}</Typography>
                     </Grid>
-                    <Grid container component={'form'} spacing={2} padding={2} sx={{ pb: 4, pl: 4 }} wrap='nowrap'>
-                        <Grid item sm={12} md={12} lg={8}>
-                            <Grid container gap={2}>
-                                <Grid item xs={12} display={'flex'} alignItems={'end'} gap={2}>
-                                    <Rating name="customized-10" defaultValue={1} max={1} size="large" />
-                                    <Grid item sx={{ width: '100%' }}>
-                                        <FieldEdit
-                                            label={'Nombre del producto'}
-                                            valueDefault={getValues('title')}
-                                            onChange={(value) => setValue('title', `${value}`)}
-                                            error={errors.title?.message}
-                                            variant="standard"
-                                        />
-                                    </Grid>
+                    <Grid item xs={12} sm={6} container justifyContent={'flex-end'} gap={2}>
+                        <Button color="primary" type="submit" variant="contained" onClick={onSubmit}>
+                            Guardar
+                        </Button>
+                    </Grid>
+                </Grid>
+                <Grid container component={'form'} spacing={2} padding={2} sx={{ pb: 4, pl: 4 }} wrap='nowrap'>
+                    <Grid item sm={12} md={12} lg={8}>
+                        <Grid container gap={2}>
+                            <Grid item xs={12} display={'flex'} alignItems={'end'} gap={2}>
+                                <Rating name="customized-10" defaultValue={1} max={1} size="large" />
+                                <Grid item sx={{ width: '100%' }}>
+                                    <FieldEdit
+                                        label={'Nombre del producto'}
+                                        valueDefault={getValues('title')}
+                                        onChange={(value) => setValue('title', `${value}`)}
+                                        error={errors.title?.message}
+                                        variant="standard"
+                                    />
                                 </Grid>
-                                <Grid item xs={12} sx={{ marginTop: 3 }}>
-                                    <Typography fontSize={16} variant="h5">
-                                        Informacion del producto
-                                    </Typography>
+                            </Grid>
+                            <Grid item xs={12} sx={{ marginTop: 3 }}>
+                                <Typography fontSize={16} variant="h5">
+                                    Informacion del producto
+                                </Typography>
+                            </Grid>
+                            <Grid container xs={12} spacing={2}>
+                                <Grid item xs={12}>
+                                    <FieldEdit
+                                        label={'Descripcion'}
+                                        valueDefault={getValues('description')}
+                                        onChange={(value) => setValue('description', `${value}`)}
+                                        error={errors.description?.message}
+                                        variant="outlined"
+                                    />
                                 </Grid>
-                                <Grid container xs={12} spacing={2}>
-                                    <Grid item xs={12}>
-                                        <FieldEdit
-                                            label={'Descripcion'}
-                                            valueDefault={getValues('description')}
-                                            onChange={(value) => setValue('description', `${value}`)}
-                                            error={errors.description?.message}
-                                            variant="outlined"
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12} sm={6}>
-                                        <FieldEdit
-                                            label={'Código'}
-                                            valueDefault={getValues('code')}
-                                            onChange={(value) => setValue('code', `${value}`)}
-                                            error={errors.code?.message}
-                                            variant="outlined"
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12} sm={6}>
-                                        <FieldEdit
-                                            label={'Cod. Barra'}
-                                            valueDefault={getValues('barcode')}
-                                            onChange={(value) => setValue('barcode', `${value}`)}
-                                            error={errors.barcode?.message}
-                                            variant="outlined"
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12} sm={6}>
-                                        <FieldEdit
-                                            label={'Precio compra'}
-                                            valueDefault={getValues('purchase_price')}
-                                            onChange={() => setValue('purchase_price', 0)}
-                                            error={errors.purchase_price?.message}
-                                            variant="outlined"
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12} sm={6}>
-                                        <FieldEdit
-                                            label={'Precio venta'}
-                                            valueDefault={getValues('selling_price')}
-                                            onChange={() => setValue('selling_price', 0)}
-                                            error={errors.selling_price?.message}
-                                            variant="outlined"
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12} sm={6}>
-                                        <FieldEdit
-                                            label={'Unidad'}
-                                            valueDefault={getValues('unit')}
-                                            onChange={(value) => setValue('unit', `${value}`)}
-                                            error={errors.unit?.message}
-                                            variant="outlined"
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12} sm={6}>
-                                        <FieldEdit
-                                            label={'Color'}
-                                            valueDefault={getValues('color')}
-                                            onChange={(value) => setValue('color', `${value}`)}
-                                            error={errors.color?.message}
-                                            variant="outlined"
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12} sm={6}>
-                                        <FieldSelect
-                                            label={'Estado'}
-                                            variant="outlined"
-                                            valueDefault={getValues('status')}
-                                            onChange={(value) => setValue('status', `${value?.domainvalue}`)}
-                                            error={errors.status?.message}
-                                            loading={multiResult.loading}
-                                            data={dataAux.listStatus}
-                                            optionDesc="domainvalue"
-                                            optionValue="domainvalue"
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12} sm={6}>
-                                        <FieldSelect
-                                            label={'Categoria'}
-                                            variant="outlined"
-                                            valueDefault={getValues('category')}
-                                            onChange={(value) => setValue('category', `${value?.domainvalue}`)}
-                                            error={errors.category?.message}
-                                            loading={multiResult.loading}
-                                            data={dataAux.listCategory}
-                                            optionDesc="domainvalue"
-                                            optionValue="domainvalue"
-                                        />
-                                    </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <FieldEdit
+                                        label={'Código'}
+                                        valueDefault={getValues('code')}
+                                        onChange={(value) => setValue('code', `${value}`)}
+                                        error={errors.code?.message}
+                                        variant="outlined"
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <FieldEdit
+                                        label={'Cod. Barra'}
+                                        valueDefault={getValues('barcode')}
+                                        onChange={(value) => setValue('barcode', `${value}`)}
+                                        error={errors.barcode?.message}
+                                        variant="outlined"
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <FieldEdit
+                                        label={'Precio compra'}
+                                        valueDefault={getValues('purchase_price')}
+                                        onChange={() => setValue('purchase_price', 0)}
+                                        error={errors.purchase_price?.message}
+                                        variant="outlined"
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <FieldEdit
+                                        label={'Precio venta'}
+                                        valueDefault={getValues('selling_price')}
+                                        onChange={() => setValue('selling_price', 0)}
+                                        error={errors.selling_price?.message}
+                                        variant="outlined"
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <FieldEdit
+                                        label={'Unidad'}
+                                        valueDefault={getValues('unit')}
+                                        onChange={(value) => setValue('unit', `${value}`)}
+                                        error={errors.unit?.message}
+                                        variant="outlined"
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <FieldEdit
+                                        label={'Color'}
+                                        valueDefault={getValues('color')}
+                                        onChange={(value) => setValue('color', `${value}`)}
+                                        error={errors.color?.message}
+                                        variant="outlined"
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <FieldSelect
+                                        label={'Estado'}
+                                        variant="outlined"
+                                        valueDefault={getValues('status')}
+                                        onChange={(value) => setValue('status', `${value?.domainvalue}`)}
+                                        error={errors.status?.message}
+                                        loading={multiResult.loading}
+                                        data={dataAux.listStatus}
+                                        optionDesc="domainvalue"
+                                        optionValue="domainvalue"
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <FieldSelect
+                                        label={'Categoria'}
+                                        variant="outlined"
+                                        valueDefault={getValues('category')}
+                                        onChange={(value) => setValue('category', `${value?.domainvalue}`)}
+                                        error={errors.category?.message}
+                                        loading={multiResult.loading}
+                                        data={dataAux.listCategory}
+                                        optionDesc="domainvalue"
+                                        optionValue="domainvalue"
+                                    />
                                 </Grid>
                             </Grid>
                         </Grid>
-                        <Grid item xs sx={{ display: { xs: 'none', md: 'none', lg: 'flex' }, justifyContent: 'center' }}>
-                            <Box className="px-6 py-6 mb-4 flex">
-                                <DropZone url={getValues('image')} onFileUpload={handleFileUpload} />
-                            </Box>
-                        </Grid>
                     </Grid>
-                </Paper>
-            </Box>
-        </>
+                    <Grid item xs sx={{ display: { xs: 'none', md: 'none', lg: 'flex' }, justifyContent: 'center' }}>
+                        <Box className="px-6 py-6 mb-4 flex">
+                            <DropZone url={getValues('image')} onFileUpload={handleFileUpload} />
+                        </Box>
+                    </Grid>
+                </Grid>
+            </Paper>
+        </Box>
     );
 };
 
