@@ -1,9 +1,8 @@
-import React from 'react';
 import { Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { styled } from '@mui/system';
 
-const NotFoundContainer = styled('div')(({  }) => ({
+const NotFoundContainer = styled('div')(() => ({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',

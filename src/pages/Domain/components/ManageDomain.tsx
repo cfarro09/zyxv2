@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Box, Breadcrumbs, Button, Grid, Paper, Typography } from '@mui/material';
+import { Box, Breadcrumbs, Grid, Paper, Typography } from '@mui/material';
 import { domainIns, getValuesFromDomain } from 'common/helpers';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -9,7 +9,6 @@ import { Link, useParams } from 'react-router-dom';
 import DeleteIcon from '@mui/icons-material/Delete';
 import TableSimple from 'components/Controls/TableSimple';
 import type { ColumnDef } from '@tanstack/react-table';
-import SaveIcon from '@mui/icons-material/Save';
 import DomainValueDialog from './DomainValueDialog';
 import { useSendFormApi } from 'hooks/useSendFormApi';
 import { IDomainValue, IMainProps, ObjectZyx } from '@types';
@@ -98,15 +97,6 @@ export const ManageDomain: React.FC<IMainProps> = ({ baseUrl }) => {
                                     Modificar dominio
                                 </Typography>
                             </Box>
-                        </Grid>
-                        <Grid item xs={12} sm={6} container justifyContent={'flex-end'} gap={2}>
-                            <Button
-                                color='primary'
-                                type='submit'
-                                startIcon={<SaveIcon />}
-                                disabled={multiResult.loading}
-                                variant="contained">Guardar
-                            </Button>
                         </Grid>
                     </Grid>
                     <Box className="p-6">
