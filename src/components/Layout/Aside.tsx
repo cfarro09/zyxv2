@@ -10,9 +10,10 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { useNavigate  } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { routes } from 'routes/routes';
 import { RouteConfig } from '@types';
+import { useSelector } from 'hooks';
 
 const drawerWidth = 240;
 
@@ -98,8 +99,13 @@ const ElementMenu: React.FC<{ route: RouteConfig; open: boolean }> = ({ route, o
 
 const Aside: React.FC<{ open: boolean; handleDrawerClose: () => void }> = ({ open, handleDrawerClose }) => {
     const theme = useTheme();
+    const applications = useSelector(state => state.login?.validateToken?.user?.menu);
 
-
+    // [item.app_view ? 1 : 0,
+    //     item.app_update ? 1 : 0,
+    //     item.app_create ? 1 : 0,
+    //     item.app_delete ? 1 : 0,
+    //     item.app_download ? 1 : 0
     return (
         <Drawer variant="permanent" open={open}>
             <DrawerHeader>
@@ -109,7 +115,7 @@ const Aside: React.FC<{ open: boolean; handleDrawerClose: () => void }> = ({ ope
             </DrawerHeader>
             <Divider />
             <List>
-                {routes.map((route) => (
+                {routes.filter(x => applications[x.path]?.[0]).map((route) => (
                     <ElementMenu
                         key={route.path}
                         route={route}

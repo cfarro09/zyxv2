@@ -10,6 +10,9 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import Aside from './Aside';
 import Popus from './Popus';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import { removeAuthorizationToken } from 'common/helpers';
+import { useNavigate } from 'react-router-dom';
 
 const drawerWidth = 240;
 
@@ -50,7 +53,7 @@ interface MainLayoutProps {
 
 const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
 	const [open, setOpen] = React.useState(false);
-
+	const navigate = useNavigate();
 	const handleDrawerOpen = () => {
 		setOpen(true);
 	};
@@ -77,9 +80,19 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
 						>
 							<MenuIcon />
 						</IconButton>
-						<Typography variant="h6" noWrap component="div">
+						<Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
 							Mini variant drawer
 						</Typography>
+						<IconButton
+							color="inherit"
+							aria-label="logout"
+							onClick={() => {
+								removeAuthorizationToken();
+								navigate("/login")
+							}}
+						>
+							<ExitToAppIcon />
+						</IconButton>
 					</Toolbar>
 				</AppBar>
 				<Aside

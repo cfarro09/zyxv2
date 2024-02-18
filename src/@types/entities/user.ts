@@ -12,3 +12,20 @@ export interface IUser {
     status: string;
     createdate: string;
 }
+
+type ValueArray = [number, number, number, number, number];
+
+export type IApplicationsRecord = Record<string, ValueArray>;
+
+export interface IUserSession {
+    email: string;
+    firstname: string;
+    lastname: string;
+    status: string;
+    token: string;
+    usr: string;
+    userid: number;
+    corpid: number;
+    orgid: number;
+    menu: IApplicationsRecord;
+}

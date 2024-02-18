@@ -25,7 +25,7 @@ export const useSendFormApi = ({ onSave, operation }: SendFormApiProps) => {
 
         dispatch(manageConfirmation({
             visible: true,
-            question: operation === "DELETE" ? "¿Está seguro de eliminar el registro?" : `¿Está seguro de continuar?`,
+            question: operation === "DELETE" ? "¿Está seguro de eliminar el registro?" : `¿Está seguro que desea guardar el registro?`,
             callback
         }));
     };

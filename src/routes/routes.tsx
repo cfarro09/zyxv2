@@ -14,6 +14,7 @@ import { Product } from 'pages/Product/Index';
 import ManageProduct from 'pages/Product/components/ManageProduct';
 import { Domain, ManageDomain } from "pages/Domain/Index";
 import { Customer, ManageCustomer } from 'pages/Customer/Index';
+import Account from 'pages/Account/components/Account';
 
 export const routes: RouteConfig[] = [
     {
@@ -22,6 +23,14 @@ export const routes: RouteConfig[] = [
         tooltip: 'dashboard',
         path: paths.DASHBOARD,
         mainView: <User />,
+        icon: () => <Dashboard style={{ width: 22, height: 22 }} />,
+    },
+    {
+        key: 'account',
+        description: 'account',
+        tooltip: 'account',
+        path: paths.ACCOUNT,
+        mainView: <Account />,
         icon: () => <Dashboard style={{ width: 22, height: 22 }} />,
     },
     {

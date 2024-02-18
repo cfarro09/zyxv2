@@ -1,5 +1,5 @@
 import { IAction, IUser } from "@types";
-import { initialState, IState } from "./reducer";
+import reducer, { initialState, IState } from "./reducer";
 import { saveAuthorizationToken, removeAuthorizationToken } from "common/helpers";
 import { keys } from "common/constants";
 
@@ -116,7 +116,6 @@ export const validateTokenSuccess = (state: IState, action: IAction): IState => 
             loading: false,
             error: false,
             user: action.payload.data,
-            notifications: action.payload.data.notifications
         }
     }
 };
@@ -144,7 +143,6 @@ export const newNotification = (state: IState, action: IAction): IState => ({
     ...state,
     validateToken: {
         ...state.validateToken,
-        notifications: [...(state.validateToken?.notifications || []), action.payload]
     }
 });
 

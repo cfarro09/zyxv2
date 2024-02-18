@@ -1,12 +1,10 @@
-import { IUser, ITemplate, NotificationZyx } from "@types";
+import { ITemplate, IUserSession } from "@types";
 import { createReducer, initialCommon } from "common/helpers";
 import * as caseFunctions from './caseFunctions';
 import actionTypes from "./actionTypes";
 
-
 export interface IUserTmp extends ITemplate {
-    user: IUser | null;
-    notifications?: NotificationZyx[];
+    user: IUserSession | null;
     lastConnection?: string;
 }
 
@@ -22,7 +20,7 @@ export interface IState {
 export const initialState: IState = {
     login: { ...initialCommon, user: null },
     triggerChangeOrganization: initialCommon,
-    validateToken: { ...initialCommon, user: null, loading: true, notifications: [] },
+    validateToken: { ...initialCommon, user: null, loading: true },
     logout: initialCommon,
     invokeIncremental: initialCommon,
     ignorePwdchangefirstloginValidation: false,

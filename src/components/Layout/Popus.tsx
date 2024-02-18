@@ -62,12 +62,10 @@ const Popus: React.FC = () => {
                 aria-labelledby="alert-dialog-slide-title"
                 aria-describedby="alert-dialog-slide-description"
             >
-                <DialogTitle>{"¿Está seguro de continuar?"}</DialogTitle>
+                <DialogTitle>{"Confirmación"}</DialogTitle>
                 <DialogContent>
-                    <DialogContentText color="textPrimary">
-                        <div style={{ whiteSpace: "pre-wrap" }}>
-                            {popus.question.question}
-                        </div>
+                    <DialogContentText color="textPrimary" sx={{ whiteSpace: "pre-wrap" }}>
+                        {popus.question.question}
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
