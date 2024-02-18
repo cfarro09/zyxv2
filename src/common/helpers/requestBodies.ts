@@ -1,4 +1,5 @@
 import { IRequestBody, IRequestBodyPaginated, IUser } from '@types';
+import { IProduct } from 'pages/Product/models';
 
 type IPaginated = {
     skip: number;
@@ -45,7 +46,6 @@ export const getProductSel = (productid: number): IRequestBody => ({
     },
 });
 
-
 export const getDomainSel = (): IRequestBody => ({
     method: 'UFN_DOMAIN_SEL',
     key: 'UFN_DOMAIN_SEL',
@@ -63,10 +63,10 @@ export const userIns = (parameters: { operation: string } & IUser): IRequestBody
     },
 });
 
-export const productIns = (parameters: any): IRequestBody => ({
+export const productIns = (parameters: { operation: string } & IProduct): IRequestBody => ({
     method: 'UFN_PRODUCT_INS',
     key: 'UFN_PRODUCT_INS',
-    parameters
+    parameters,
 });
 
 export const getRoles = (): IRequestBody => ({
