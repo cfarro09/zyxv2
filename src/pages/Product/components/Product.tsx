@@ -106,7 +106,7 @@ export const Product: React.FC = () => {
                 <Box className="px-6 py-3 border-b">
                     <Typography variant="h5">Productos</Typography>
                 </Box>
-                <Box className="p-6">
+                <Box>
                     <TableSimple
                         data={mainData}
                         loading={mainResult.loading}

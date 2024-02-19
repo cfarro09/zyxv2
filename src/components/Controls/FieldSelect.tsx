@@ -20,9 +20,10 @@ type TemplateAutocompleteProps<T> = {
     error?: string;
     multiline?: boolean;
     orderbylabel?: boolean;
+    placeholder?: string;
 } & Omit<FormControlProps, 'onChange' | 'error'>;
 
-export const FieldSelect = <T,>({ multiline = false, error, label, data = [], optionValue, optionDesc, valueDefault = "", onChange, disabled = false, triggerOnChangeOnFirst = false, loading = false, fregister = {}, variant = "standard", readOnly = false, orderbylabel = false, renderOption }: TemplateAutocompleteProps<T>) => {
+export const FieldSelect = <T,>({ multiline = false, error, label, data = [], optionValue, optionDesc, valueDefault = "", onChange, disabled = false, triggerOnChangeOnFirst = false, loading = false, fregister = {}, variant = "standard", readOnly = false, orderbylabel = false, renderOption, placeholder = '' }: TemplateAutocompleteProps<T>) => {
     const [value, setValue] = useState<T | null>(null);
     const [dataG, setDataG] = useState<T[]>([])
 
@@ -79,6 +80,7 @@ export const FieldSelect = <T,>({ multiline = false, error, label, data = [], op
                     variant={variant}
                     multiline={multiline}
                     helperText={error}
+                    placeholder={placeholder}
                     error={Boolean(error)}
                     InputProps={{
                         ...params.InputProps,

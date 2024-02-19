@@ -1,4 +1,5 @@
 import { ICustomer, IDomainValue, IRequestBody, IRequestBodyPaginated, IUser } from '@types';
+import { IInventoryFilters } from 'pages/Inventory/models';
 import { IProduct } from 'pages/Product/models';
 
 type IPaginated = {
@@ -36,6 +37,15 @@ export const getUserSel = (userid: number): IRequestBody => ({
         userid,
     },
 });
+
+export const getInventorySel = (parameters: IInventoryFilters): IRequestBody => ({
+    method: 'UFN_INVENTORY_SEL',
+    key: 'UFN_INVENTORY_SEL',
+    parameters: {
+        ...parameters
+    },
+});
+
 
 export const getCustomerSel = (clientid: number): IRequestBody => ({
     method: 'UFN_CLIENT_SEL',

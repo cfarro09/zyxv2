@@ -3,10 +3,10 @@ import paths from 'common/constants/paths';
 import {
     Dashboard,
     ShoppingCart,
-    Inventory,
     FormatListNumberedRtlSharp,
     Receipt,
     Assignment,
+    Inventory as InventoryIcon
 } from '@mui/icons-material';
 import { User, ManageUser } from 'pages/User/Index';
 import { Product } from 'pages/Product/Index';
@@ -17,6 +17,7 @@ import Account from 'pages/Account/components/Account';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import FaceIcon from '@mui/icons-material/Face';
 import { ManagePurchase, Purchase } from 'pages/Purchases/Index';
+import { Inventory } from 'pages/Inventory';
 
 export const routes: RouteConfig[] = [
     {
@@ -67,8 +68,8 @@ export const routes: RouteConfig[] = [
         description: 'Inventario',
         tooltip: 'Inventario',
         path: paths.INVENTORY,
-        mainView: <User />,
-        icon: () => <Inventory style={{ width: 22, height: 22 }} />,
+        mainView: <Inventory />,
+        icon: () => <InventoryIcon style={{ width: 22, height: 22 }} />,
     },
     {
         key: 'domains',

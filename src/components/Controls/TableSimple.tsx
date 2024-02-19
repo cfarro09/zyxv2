@@ -41,6 +41,7 @@ interface ReactTableProps<T extends object> {
     redirectOnSelect?: boolean;
     onClickOnRow?: ((_: T | null) => void);
     columnKey?: string;
+    filterElement?: React.ReactNode;
 }
 
 const LoadingSkeleton: React.FC<{ columns: number }> = ({ columns }) => {
@@ -52,7 +53,7 @@ const LoadingSkeleton: React.FC<{ columns: number }> = ({ columns }) => {
 };
 
 
-const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSelect, loading, showOptions, optionsMenu, addButton, onClickOnRow }: ReactTableProps<T>) => {
+const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSelect, loading, showOptions, optionsMenu, addButton, onClickOnRow, filterElement }: ReactTableProps<T>) => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [globalFilter, setGlobalFilter] = useState('');
     const [rowSelected, setRowSelected] = useState<T | null>(null)
@@ -132,19 +133,12 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
 
     return (
         <>
-            <Grid className="border-b flex justify-between pb-4">
-                <Grid className="w-52">
-                    <FieldSelect
-                        label={''}
-                        variant="outlined"
-                        valueDefault={table.getState().pagination.pageSize}
-                        data={pagesSizes}
-                        disabled={loading}
-                        onChange={(e) => handlePageSizeChange(e as IPageSizes)}
-                        optionDesc="label"
-                        optionValue="value"
-                    />
+            {filterElement && (
+                <Grid className="border-b flex justify-between py-4 px-6">
+                    {filterElement}
                 </Grid>
+            )}
+            <Grid className="border-b flex flex-row-reverse py-4 px-6">
                 <Grid className="flex flex-row-reverse gap-4">
                     {addButton &&
                         <Button
@@ -211,13 +205,26 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
                     ))}
                 </TableBody>
             </Table>
-            <Box className="flex items-center justify-between px-4 pt-4">
+            <Box className="flex items-center justify-between p-6">
                 <Box>
-                    <Typography component={'span'} className="text-[#a5a3ae]">
-                        {`Pagina ${table.getState().pagination.pageIndex + 1} de ${table.getPageCount()}`}
+                    <Typography component={'span'} className="text-[#a5a3ae]" fontSize={14}>
+                        {`Página ${table.getState().pagination.pageIndex + 1} de ${table.getPageCount()}`}
                     </Typography>
                 </Box>
+
                 <Box className="flex">
+                    <Grid className="w-48 mr-4">
+                        <FieldSelect
+                            label={''}
+                            variant="outlined"
+                            valueDefault={table.getState().pagination.pageSize}
+                            data={pagesSizes}
+                            disabled={loading}
+                            onChange={(e) => handlePageSizeChange(e as IPageSizes)}
+                            optionDesc="label"
+                            optionValue="value"
+                        />
+                    </Grid>
                     <IconButton
                         onClick={() => table.setPageIndex(0)}
                         disabled={loading || !table.getCanPreviousPage()}>

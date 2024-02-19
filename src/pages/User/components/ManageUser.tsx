@@ -69,12 +69,6 @@ export const ManageUser: React.FC<IMainProps> = ({ baseUrl }) => {
         reset,
         setDataAux,
         collections: [
-            ...(id !== 'new' ? [{
-                rb: getUserSel(parseInt(`${id}`)),
-                key: 'UFN_USERS_SEL',
-                keyData: "",
-                main: true,
-            }] : []),
             { rb: getValuesFromDomain('TIPODOCUMENTO'), key: 'UFN_DOMAIN_VALUES_SEL-TIPODOCUMENTO', keyData: "listDocumentType" },
             { rb: getValuesFromDomain('ESTADO'), key: 'UFN_DOMAIN_VALUES_SEL-ESTADO', keyData: "listStatus" },
             { rb: getRoles(), key: 'UFN_ROLE_LIST', keyData: "listRoles" },

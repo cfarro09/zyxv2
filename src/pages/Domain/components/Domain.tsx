@@ -64,7 +64,7 @@ export const Domain: React.FC = () => {
                 <Box className="px-6 py-3 border-b">
                     <Typography variant="h5">Dominios</Typography>
                 </Box>
-                <Box className="p-6">
+                <Box>
                     <TableSimple
                         loading={mainResult.loading}
                         data={mainData}
