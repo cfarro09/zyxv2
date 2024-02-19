@@ -2,7 +2,7 @@ const ENV = import.meta.env.VITE_ENV || 'LOCAL';
 
 const APIS_URL: Record<string, Record<string, string | boolean>> = {
     DEVELOP: {
-        API: 'https://apix.laraigo.com/api',
+        API: 'http://38.242.249.178:6014/api',
         //WS: 'http://localhost:7070',
         WS: 'https://socket.laraigo.com',
     },
@@ -12,14 +12,14 @@ const APIS_URL: Record<string, Record<string, string | boolean>> = {
     },
     LOCAL: {
         // API: 'http://localhost:6065/api',
-        API: 'http://38.242.249.178:6014/api',
+        API: 'http://localhost:6065/api',
         //API: 'https://apix.laraigo.com/api',
         //WS: 'http://localhost:7070',
-    }
-}
+    },
+};
 
-const BASE_URL = APIS_URL[ENV].API
-const WS_URL = APIS_URL[ENV].WS
+const BASE_URL = APIS_URL[ENV].API;
+const WS_URL = APIS_URL[ENV].WS;
 
 export const apiUrls = {
     WS_URL,

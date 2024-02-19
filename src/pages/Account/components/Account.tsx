@@ -28,8 +28,8 @@ export const Account: React.FC = () => {
                 <Box className="px-6 py-3 border-b">
                     <Typography variant="h5">Configuración de cuenta</Typography>
                 </Box>
-                <Box className="p-6">
-                   
+                <Box>
+
                 </Box>
             </Paper>
         </Box>
