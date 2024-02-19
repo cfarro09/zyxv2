@@ -22,3 +22,15 @@ export interface IDomainValue {
 export interface IDataAux {
     listWarehouse: IDomainValue[];
 }
+
+export interface InventoryFiltersProps {
+    dataAux: IDataAux;
+    filters: IInventoryFilters;
+    loading: boolean;
+    handleChange: (_value: IDomainValue) => void;
+}
+
+export interface InventoryDialogUploadProps {
+    open: boolean;
+    handleClose: () => void;
+}

@@ -31,6 +31,6 @@
         ],
         "react/react-in-jsx-scope": "off",
         "react/prop-types": "off",
-        "reacthooks/exhaustive-deps": "off",
+        "react-hooks/exhaustive-deps": "off"
     },
 }

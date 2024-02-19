@@ -42,6 +42,7 @@ interface ReactTableProps<T extends object> {
     onClickOnRow?: ((_: T | null) => void);
     columnKey?: string;
     filterElement?: React.ReactNode;
+    buttonElement?: React.ReactNode;
 }
 
 const LoadingSkeleton: React.FC<{ columns: number }> = ({ columns }) => {
@@ -53,7 +54,7 @@ const LoadingSkeleton: React.FC<{ columns: number }> = ({ columns }) => {
 };
 
 
-const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSelect, loading, showOptions, optionsMenu, addButton, onClickOnRow, filterElement }: ReactTableProps<T>) => {
+const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSelect, loading, showOptions, optionsMenu, addButton, onClickOnRow, filterElement, buttonElement }: ReactTableProps<T>) => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [globalFilter, setGlobalFilter] = useState('');
     const [rowSelected, setRowSelected] = useState<T | null>(null)
@@ -134,11 +135,11 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
     return (
         <>
             {filterElement && (
-                <Grid className="border-b flex justify-between py-4 px-6">
+                <Grid className="border-b flex justify-between py-2 px-6">
                     {filterElement}
                 </Grid>
             )}
-            <Grid className="border-b flex flex-row-reverse py-4 px-6">
+            <Grid className="border-b flex flex-row-reverse py-2 px-6">
                 <Grid className="flex flex-row-reverse gap-4">
                     {addButton &&
                         <Button
@@ -158,6 +159,7 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
                             Nuevo
                         </Button>
                     }
+                    {buttonElement && buttonElement}
                     {/* <Button id="basic-button" aria-haspopup="true" className="px-4 bg-light-grey text-grey">
                         Exportar
                     </Button> */}

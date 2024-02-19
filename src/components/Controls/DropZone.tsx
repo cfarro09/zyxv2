@@ -1,14 +1,14 @@
 import { Box, Button, Grid, Typography } from '@mui/material';
-import type { SxProps } from '@mui/system';
+import { IClasses, IStylesProps } from '@types';
 import { getFileSizeInKb } from 'common/helpers';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import type { FileRejection } from 'react-dropzone';
-import { set } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from 'stores';
 import { uploadFile } from 'stores/main/actions';
 import { showBackdrop, showSnackbar } from 'stores/popus/actions';
+import type { Accept } from 'react-dropzone';
 
 // interface FileWithPreview extends File {
 //     preview: string;
@@ -18,10 +18,6 @@ interface IFile {
     name?: string;
     size?: number;
     preview?: string;
-}
-
-interface IClasses {
-    [key: string]: SxProps;
 }
 
 const classes: IClasses = {
@@ -64,12 +60,20 @@ const classes: IClasses = {
     },
 };
 
-interface DropZoneProps {
-    url: string;
-    onFileUpload: (fileUrl: string) => void;
+const styles: IStylesProps = {
+    imageStyles: { width: '100%', height: '100%', objectFit: 'contain' },
+    fileNameInfoStyles: { padding: '0 1rem', color: '#6f6b7d', textOverflow: 'ellipsis', overflow: 'hidden', width: '100%' }
 }
 
-const DropZone: React.FC<DropZoneProps> = ({ url, onFileUpload }) => {
+interface DropZoneProps {
+    url: string;
+    onFileUpload?: (_fileUrl: string) => void;
+    accept?: Accept;
+    dispatchUpload?: boolean;
+    handleLoadFile?: (_file: File) => void;
+}
+
+const DropZone: React.FC<DropZoneProps> = ({ url, dispatchUpload = true, onFileUpload, handleLoadFile, accept = { 'image/*': ['.png'] } }) => {
     const dispatch = useDispatch();
     const [waitUpload, setWaitUpload] = useState(false)
     const uploadResult = useSelector((state: IRootState) => state.main.uploadFile);
@@ -89,9 +93,13 @@ const DropZone: React.FC<DropZoneProps> = ({ url, onFileUpload }) => {
     const onDrop = useCallback((acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
         if (acceptedFiles.length > 0) {
             const file = acceptedFiles[0];
-            handleFileUpload(file)
-            setWaitUpload(true)
-            dispatch(showBackdrop(true));
+            if (dispatchUpload) {
+                handleFileUpload(file)
+                setWaitUpload(true)
+                dispatch(showBackdrop(true));
+            } else {
+                handleLoadFile && handleLoadFile(file);
+            }
         }
 
         // Handle rejected files if needed
@@ -111,7 +119,7 @@ const DropZone: React.FC<DropZoneProps> = ({ url, onFileUpload }) => {
                         preview: uploadResult?.url,
                     }
                 ]);
-                onFileUpload(uploadResult?.url || '');
+                onFileUpload && onFileUpload(uploadResult?.url || '');
             } else if (uploadResult.error) {
                 dispatch(showSnackbar({ show: true, severity: "error", message: `${uploadResult.code}` }));
                 dispatch(showBackdrop(false));
@@ -122,7 +130,7 @@ const DropZone: React.FC<DropZoneProps> = ({ url, onFileUpload }) => {
 
     const { getRootProps, getInputProps } = useDropzone({
         onDrop,
-        accept: { 'image/*': ['image'] },
+        accept
     });
 
     const removeFile = (index: number) => {
@@ -134,9 +142,9 @@ const DropZone: React.FC<DropZoneProps> = ({ url, onFileUpload }) => {
     return (
         <Grid container sx={classes.dropzoneStyles} padding={2}>
             {!files.length && (
-                <Grid item {...getRootProps()}>
+                <Grid container item {...getRootProps()} alignContent={'center'}>
                     <input {...getInputProps()} />
-                    <p>Drag & drop some files here, or click to select files</p>
+                    <p style={{ textAlign: 'center' }}>Arrastra y suelta algunos archivos aquí, o haz clic para seleccionar archivos</p>
                 </Grid>
             )}
             {files.length > 0 && (
@@ -148,10 +156,10 @@ const DropZone: React.FC<DropZoneProps> = ({ url, onFileUpload }) => {
                                     <img
                                         src={file.preview}
                                         alt={`Preview ${file.name}`}
-                                        style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                                        style={styles.imageStyles}
                                     />
                                 </Grid>
-                                <Box style={{ padding: '0 1rem', color: '#6f6b7d', textOverflow: 'ellipsis', overflow: 'hidden', width: '100%' }}>
+                                <Box style={styles.fileNameInfoStyles}>
                                     <Typography noWrap style={{ fontSize: '13px', whiteSpace: 'normal' }}>{file.name}</Typography>
                                 </Box>
                             </Grid>

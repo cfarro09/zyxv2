@@ -1,6 +1,6 @@
-import { Box, Grid, Paper, Typography } from "@mui/material";
+import { Box, Button, Paper, Typography } from "@mui/material";
 import type { ColumnDef } from "@tanstack/react-table";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IDataAux, IDomainValue, IInventory, IInventoryFilters } from "../models";
 import { useDispatch, useSelector } from "react-redux";
 import { getCollection } from "stores/main/actions";
@@ -9,17 +9,11 @@ import { IRootState } from "stores";
 import TableSimple from "components/Controls/TableSimple";
 import dayjs from "dayjs";
 import { useMultiData } from "hooks/useMultiData";
-import { FieldSelect } from "components/Controls/FieldSelect";
+import { InventoryFilters } from "./InventoryFilters";
+import InventoryDialogUpload from "./InventoryDialogUpload";
+import { FileUpload } from "@mui/icons-material";
 
 const columns: ColumnDef<IInventory>[] = [
-  {
-    header: 'inventoryid',
-    accessorKey: 'inventoryid'
-  },
-  {
-    header: 'productid',
-    accessorKey: 'productid'
-  },
   {
     header: 'title',
     accessorKey: 'title'
@@ -48,8 +42,19 @@ export const Inventory: React.FC<unknown> = () => {
   const [mainData, setMainData] = useState<IInventory[]>([]);
   const [dataAux, setDataAux] = useState<IDataAux>({ listWarehouse: [] });
   const [filters, setFilters] = useState<IInventoryFilters>({ warehouse: '' })
+  const [openImportDialog, setOpenImportDialog] = React.useState(true);
 
-  const fetchData = useCallback(() => dispatch(getCollection(getInventorySel({ ...filters }))), [dispatch, filters])
+  const handleClickOpen = () => {
+    setOpenImportDialog(true);
+  };
+
+  const handleDialogClose = () => {
+    setOpenImportDialog(false);
+  };
+
+  const fetchData = () => {
+    dispatch(getCollection(getInventorySel({ ...filters })))
+  }
 
   const { giveMeData, loading } = useMultiData<IInventory, IDataAux>({
     setDataAux,
@@ -69,12 +74,16 @@ export const Inventory: React.FC<unknown> = () => {
     }
   }, [mainResult]);
 
+  useEffect(() => {
+    fetchData();
+  }, [filters]);
+
   // const deleteRow = (user: IInventory) => onSubmitData(userIns({ ...user, password: "", operation: "DELETE" }))
 
   const handleChange = (newValue: IDomainValue) => {
     setFilters({ ...filters, warehouse: newValue?.domainvalue || '' })
-    fetchData()
   }
+
   return (
     <Box className="flex max-w-screen-xl mr-auto ml-auto flex-col">
       <Paper className="w-full mt-6">
@@ -91,30 +100,26 @@ export const Inventory: React.FC<unknown> = () => {
             redirectOnSelect={true}
             columnKey={"inventoryid"}
             filterElement={
-              <Grid container flexDirection={'column'} gap={1}>
-                <Grid item>
-                  <Typography>Filtros</Typography>
-                </Grid>
-                <Grid item>
-                  <Grid className="w-52">
-                    <FieldSelect
-                      label={''}
-                      variant="outlined"
-                      valueDefault={filters.warehouse}
-                      data={dataAux.listWarehouse}
-                      disabled={loading}
-                      onChange={(e) => handleChange(e as IDomainValue)}
-                      optionDesc="domaindesc"
-                      optionValue="domainvalue"
-                      placeholder={'Almacen'}
-                    />
-                  </Grid>
-                </Grid>
-              </Grid>
+              <InventoryFilters
+                dataAux={dataAux}
+                filters={filters}
+                loading={loading}
+                handleChange={handleChange}
+              />
+            }
+            buttonElement={
+              <>
+                <Button
+                  className={"bg-light-grey px-4 text-grey flex gap-2"}
+                  onClick={() => setOpenImportDialog(true)}>
+                  <FileUpload fontSize="small" /> Importar
+                </Button>
+              </>
             }
           />
         </Box>
       </Paper>
+      <InventoryDialogUpload open={openImportDialog} handleClose={handleDialogClose} />
     </Box>
   );
 };
