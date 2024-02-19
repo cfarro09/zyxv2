@@ -9,7 +9,7 @@ export interface IUser {
     document: string;
     document_type: string;
     email?: string;
-    status: string;
+status: string;
     createdate: string;
 }
 

@@ -210,7 +210,7 @@ const ManageProduct: React.FC<IMainProps> = ({ baseUrl }) => {
                                         label={'Estado'}
                                         variant="outlined"
                                         valueDefault={getValues('status')}
-                                        onChange={(value) => setValue('status', `${value?.domainvalue}`)}
+                                        onChange={(value) => setValue('status', value?.domainvalue as string ?? "")}
                                         error={errors.status?.message}
                                         loading={multiResult.loading}
                                         data={dataAux.listStatus}
@@ -223,7 +223,7 @@ const ManageProduct: React.FC<IMainProps> = ({ baseUrl }) => {
                                         label={'Categoria'}
                                         variant="outlined"
                                         valueDefault={getValues('category')}
-                                        onChange={(value) => setValue('category', `${value?.domainvalue}`)}
+                                        onChange={(value) => setValue('category', value?.domainvalue as string ?? "")}
                                         error={errors.category?.message}
                                         loading={multiResult.loading}
                                         data={dataAux.listCategory}

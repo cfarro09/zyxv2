@@ -17,6 +17,7 @@ import { Customer, ManageCustomer } from 'pages/Customer/Index';
 import Account from 'pages/Account/components/Account';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import FaceIcon from '@mui/icons-material/Face';
+import { ManagePurchase, Purchase } from 'pages/Purchases/Index';
 
 export const routes: RouteConfig[] = [
     {
@@ -84,7 +85,8 @@ export const routes: RouteConfig[] = [
         description: 'Ordenes de Compra',
         tooltip: 'Ordenes de Compra',
         path: paths.PURCHASE_ORDERS,
-        mainView: <User />,
+        mainView: <Purchase />,
+        manageView: (baseUrl) => <ManagePurchase baseUrl={baseUrl} />,
         icon: () => <Assignment style={{ width: 22, height: 22 }} />,
     },
     {

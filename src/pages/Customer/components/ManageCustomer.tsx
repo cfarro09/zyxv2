@@ -2,9 +2,6 @@
 import { Box, Breadcrumbs, Button, Grid, Paper, Typography } from '@mui/material';
 import { customerIns, getCustomerSel, getValuesFromDomain } from 'common/helpers';
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { IRootState } from 'stores';
-import { getMultiCollection, resetMultiMain } from 'stores/main/actions';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import FieldEdit from 'components/Controls/FieldEdit';
 import { FieldSelect } from 'components/Controls/FieldSelect';
@@ -12,6 +9,7 @@ import { useForm } from 'react-hook-form';
 import { IMainProps, ICustomer, ObjectZyx } from '@types';
 import SaveIcon from '@mui/icons-material/Save';
 import { useSendFormApi } from 'hooks/useSendFormApi';
+import { useMultiData } from 'hooks/useMultiData';
 interface IDataAux {
     listDocumentType: ObjectZyx[];
     listStatus: ObjectZyx[];
@@ -19,23 +17,15 @@ interface IDataAux {
 
 export const ManageCustomer: React.FC<IMainProps> = ({ baseUrl }) => {
     const navigate = useNavigate();
-    const dispatch = useDispatch();
 
     const { id } = useParams<{ id?: string }>();
-    const multiResult = useSelector((state: IRootState) => state.main.multiData);
     const [dataAux, setDataAux] = useState<IDataAux>({ listDocumentType: [], listStatus: [] });
+
     const { onSubmitData } = useSendFormApi({
         operation: "INSERT",
         onSave: () => navigate(baseUrl),
     });
-    const {
-        register,
-        handleSubmit,
-        setValue,
-        getValues,
-        reset,
-        formState: { errors },
-    } = useForm<ICustomer>({
+    const { register, handleSubmit, setValue, getValues, reset, formState: { errors } } = useForm<ICustomer>({
         defaultValues: {
             clientid: 0,
             name: '',
@@ -48,44 +38,32 @@ export const ManageCustomer: React.FC<IMainProps> = ({ baseUrl }) => {
         },
     });
 
-    const registerX = () => {
-        register('clientid');
-        register('name', { validate: (value) => Boolean(value?.length) || 'El campo es requerido' });
-        register('status', { validate: (value) => Boolean(value?.length) || 'El campo es requerido' });
-        register('address');
-        register('phone');
-        register('document');
-        register('email');
-    };
+    const { giveMeData, loading } = useMultiData<ICustomer, IDataAux>({
+        registerX: () => {
+            register('clientid');
+            register('name', { validate: (value) => Boolean(value?.length) || 'El campo es requerido' });
+            register('status', { validate: (value) => Boolean(value?.length) || 'El campo es requerido' });
+            register('address');
+            register('phone');
+            register('document');
+            register('email');
+        },
+        reset,
+        setDataAux,
+        collections: [
+            ...(id !== 'new' ? [{
+                rb: getCustomerSel(parseInt(`${id}`)),
+                key: 'UFN_CLIENT_SEL',
+                keyData: "",
+                main: true,
+            }] : []),
+            { rb: getValuesFromDomain('TIPODOCUMENTO'), key: 'UFN_DOMAIN_VALUES_SEL-TIPODOCUMENTO', keyData: "listDocumentType" },
+            { rb: getValuesFromDomain('ESTADO'), key: 'UFN_DOMAIN_VALUES_SEL-ESTADO', keyData: "listStatus" },
+        ],
+    });
 
     useEffect(() => {
-        registerX();
-        dispatch(
-            getMultiCollection([
-                ...(id !== 'new' ? [getCustomerSel(parseInt(`${id}`))] : []),
-                getValuesFromDomain('TIPODOCUMENTO'),
-                getValuesFromDomain('ESTADO'),
-            ]),
-        );
-    }, [dispatch, register, id]);
-
-    useEffect(() => {
-        if (!multiResult.loading && !multiResult.error) {
-            const rows = multiResult.data.find((f) => f.key === `UFN_CLIENT_SEL`)?.data ?? [];
-            if (rows.length > 0) {
-                reset(rows[0]);
-            }
-            registerX()
-            const listDocumentType = multiResult.data.find(f => f.key === `UFN_DOMAIN_VALUES_SEL-TIPODOCUMENTO`)?.data ?? [];
-            const listStatus = multiResult.data.find(f => f.key === `UFN_DOMAIN_VALUES_SEL-ESTADO`)?.data ?? [];
-            setDataAux({ listDocumentType, listStatus });
-        }
-    }, [multiResult]);
-
-    useEffect(() => {
-        return () => {
-            dispatch(resetMultiMain())
-        }
+        giveMeData();
     }, []);
 
     const onSubmit = handleSubmit((data) => onSubmitData(customerIns(data, data.clientid > 0 ? "UPDATE" : "INSERT")));
@@ -114,7 +92,7 @@ export const ManageCustomer: React.FC<IMainProps> = ({ baseUrl }) => {
                             color='primary'
                             type='submit'
                             startIcon={<SaveIcon />}
-                            disabled={multiResult.loading}
+                            disabled={loading}
                             variant="contained">Guardar
                         </Button>
                     </Grid>
@@ -166,9 +144,9 @@ export const ManageCustomer: React.FC<IMainProps> = ({ baseUrl }) => {
                                 label={'Tipo de documento'}
                                 variant="outlined"
                                 valueDefault={getValues('document_type')}
-                                onChange={(value) => setValue('document_type', `${value?.domainvalue}`)}
+                                onChange={(value) => setValue('document_type', value?.domainvalue as string ?? "")}
                                 error={errors.document_type?.message}
-                                loading={multiResult.loading}
+                                loading={loading}
                                 data={dataAux.listDocumentType}
                                 optionDesc="domainvalue"
                                 optionValue="domainvalue"
@@ -188,9 +166,9 @@ export const ManageCustomer: React.FC<IMainProps> = ({ baseUrl }) => {
                                 label={'Estado'}
                                 variant="outlined"
                                 valueDefault={getValues('status')}
-                                onChange={(value) => setValue('status', `${value?.domainvalue}`)}
+                                onChange={(value) => setValue('status', value?.domainvalue as string ?? "")}
                                 error={errors.status?.message}
-                                loading={multiResult.loading}
+                                loading={loading}
                                 data={dataAux.listStatus}
                                 optionDesc="domainvalue"
                                 optionValue="domainvalue"

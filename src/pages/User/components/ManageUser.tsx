@@ -2,9 +2,7 @@
 import { Box, Breadcrumbs, Button, Grid, Paper, Typography } from '@mui/material';
 import { getRoles, getUserSel, getValuesFromDomain, userIns } from 'common/helpers';
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { IRootState } from 'stores';
-import { getMultiCollection, resetMultiMain } from 'stores/main/actions';
+import { useDispatch } from 'react-redux';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import FieldEdit from 'components/Controls/FieldEdit';
 import { FieldSelect } from 'components/Controls/FieldSelect';
@@ -15,6 +13,7 @@ import { showSnackbar } from 'stores/popus/actions';
 import SaveIcon from '@mui/icons-material/Save';
 import HttpsIcon from '@mui/icons-material/Https';
 import { useSendFormApi } from 'hooks/useSendFormApi';
+import { useMultiData } from 'hooks/useMultiData';
 interface IDataAux {
     listDocumentType: ObjectZyx[];
     listStatus: ObjectZyx[];
@@ -26,7 +25,6 @@ export const ManageUser: React.FC<IMainProps> = ({ baseUrl }) => {
     const dispatch = useDispatch();
     const { id } = useParams<{ id?: string }>();
     const [openPasswordDialog, setOpenPasswordDialog] = useState(false);
-    const multiResult = useSelector((state: IRootState) => state.main.multiData);
     const [dataAux, setDataAux] = useState<IDataAux>({ listDocumentType: [], listStatus: [], listRoles: [] });
     const { onSubmitData } = useSendFormApi({
         operation: "INSERT",
@@ -55,50 +53,36 @@ export const ManageUser: React.FC<IMainProps> = ({ baseUrl }) => {
         },
     });
 
-    const registerX = () => {
-        register('userid');
-        register('username', { validate: (value) => Boolean(value?.length) || 'El campo es requerido' });
-        register('password', id === 'new' ? { validate: (value) => Boolean(value?.length) || '**Debe ingresar una contraseña' } : undefined);
-        register('firstname', { validate: (value) => Boolean(value?.length) || 'El campo es requerido' });
-        register('status', { validate: (value) => Boolean(value?.length) || 'El campo es requerido' });
-        register('lastname', { validate: (value) => Boolean(value?.length) || 'El campo es requerido' });
-        register('document', { validate: (value) => Boolean(value?.length) || 'El campo es requerido' });
-        register('document_type', { validate: (value) => Boolean(value?.length) || 'El campo es requerido' });
-        register('email');
-        register('roleid', { validate: (value) => Boolean(value) || 'El campo es requerido' });
-    };
+    const { giveMeData, loading } = useMultiData<IUser, IDataAux>({
+        registerX: () => {
+            register('userid');
+            register('username', { validate: (value) => Boolean(value?.length) || 'El campo es requerido' });
+            register('password', id === 'new' ? { validate: (value) => Boolean(value?.length) || '**Debe ingresar una contraseña' } : undefined);
+            register('firstname', { validate: (value) => Boolean(value?.length) || 'El campo es requerido' });
+            register('status', { validate: (value) => Boolean(value?.length) || 'El campo es requerido' });
+            register('lastname', { validate: (value) => Boolean(value?.length) || 'El campo es requerido' });
+            register('document', { validate: (value) => Boolean(value?.length) || 'El campo es requerido' });
+            register('document_type', { validate: (value) => Boolean(value?.length) || 'El campo es requerido' });
+            register('email');
+            register('roleid', { validate: (value) => Boolean(value) || 'El campo es requerido' });
+        },
+        reset,
+        setDataAux,
+        collections: [
+            ...(id !== 'new' ? [{
+                rb: getUserSel(parseInt(`${id}`)),
+                key: 'UFN_USERS_SEL',
+                keyData: "",
+                main: true,
+            }] : []),
+            { rb: getValuesFromDomain('TIPODOCUMENTO'), key: 'UFN_DOMAIN_VALUES_SEL-TIPODOCUMENTO', keyData: "listDocumentType" },
+            { rb: getValuesFromDomain('ESTADO'), key: 'UFN_DOMAIN_VALUES_SEL-ESTADO', keyData: "listStatus" },
+            { rb: getRoles(), key: 'UFN_ROLE_LIST', keyData: "listRoles" },
+        ],
+    });
 
     useEffect(() => {
-        registerX();
-        dispatch(
-            getMultiCollection([
-                ...(id !== 'new' ? [getUserSel(parseInt(`${id}`))] : []),
-                getValuesFromDomain('TIPODOCUMENTO'),
-                getValuesFromDomain('ESTADO'),
-                getRoles(),
-            ]),
-        );
-    }, [dispatch, register, id]);
-
-    useEffect(() => {
-        if (!multiResult.loading && !multiResult.error) {
-            const rows = multiResult.data.find((f) => f.key === `UFN_USERS_SEL`)?.data ?? [];
-            if (rows.length > 0) {
-                reset(rows[0]);
-            }
-            registerX()
-            const listDocumentType = multiResult.data.find(f => f.key === `UFN_DOMAIN_VALUES_SEL-TIPODOCUMENTO`)?.data ?? [];
-            const listStatus = multiResult.data.find(f => f.key === `UFN_DOMAIN_VALUES_SEL-ESTADO`)?.data ?? [];
-            const listRoles = multiResult.data.find(f => f.key === `UFN_ROLE_LIST`)?.data ?? [];
-
-            setDataAux({ listDocumentType, listStatus, listRoles });
-        }
-    }, [multiResult]);
-
-    useEffect(() => {
-        return () => {
-            dispatch(resetMultiMain())
-        }
+        giveMeData();
     }, []);
 
     const onSubmit = handleSubmit((data) => {
@@ -138,7 +122,7 @@ export const ManageUser: React.FC<IMainProps> = ({ baseUrl }) => {
                                 color="info"
                                 onClick={() => setOpenPasswordDialog(true)}
                                 type='button'
-                                disabled={multiResult.loading}
+                                disabled={loading}
                                 startIcon={<HttpsIcon />}
                                 variant="contained">
                                 {id !== "new" ? "Cambiar contraseña" : "Ingresar contraseña"}
@@ -147,11 +131,11 @@ export const ManageUser: React.FC<IMainProps> = ({ baseUrl }) => {
                                 color='primary'
                                 type='submit'
                                 startIcon={<SaveIcon />}
-                                disabled={multiResult.loading}
+                                disabled={loading}
                                 variant="contained">Guardar
                             </Button>
                         </Grid>
-                    </Grid>
+                </Grid>
                     <Box className="p-6">
                         <Grid container spacing={2}>
                             {errors.password?.message && (
@@ -201,9 +185,9 @@ export const ManageUser: React.FC<IMainProps> = ({ baseUrl }) => {
                                     label={'Tipo de documento'}
                                     variant="outlined"
                                     valueDefault={getValues('document_type')}
-                                    onChange={(value) => setValue('document_type', `${value?.domainvalue}`)}
+                                    onChange={(value) => setValue('document_type', value?.domainvalue as string ?? "")}
                                     error={errors.document_type?.message}
-                                    loading={multiResult.loading}
+                                    loading={loading}
                                     data={dataAux.listDocumentType}
                                     optionDesc="domainvalue"
                                     optionValue="domainvalue"
@@ -225,7 +209,7 @@ export const ManageUser: React.FC<IMainProps> = ({ baseUrl }) => {
                                     valueDefault={getValues('roleid')}
                                     onChange={(value) => setValue('roleid', (value?.roleid as number) || 0)}
                                     error={errors.roleid?.message}
-                                    loading={multiResult.loading}
+                                    loading={loading}
                                     data={dataAux.listRoles}
                                     optionDesc="rolename"
                                     optionValue="roleid"
@@ -236,9 +220,9 @@ export const ManageUser: React.FC<IMainProps> = ({ baseUrl }) => {
                                     label={'Estado'}
                                     variant="outlined"
                                     valueDefault={getValues('status')}
-                                    onChange={(value) => setValue('status', `${value?.domainvalue}`)}
+                                    onChange={(value) => setValue('status', value?.domainvalue as string ?? "")}
                                     error={errors.status?.message}
-                                    loading={multiResult.loading}
+                                    loading={loading}
                                     data={dataAux.listStatus}
                                     optionDesc="domainvalue"
                                     optionValue="domainvalue"

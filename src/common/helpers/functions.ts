@@ -889,3 +889,10 @@ export const getFileSizeInKb = (size: number | string ) => {
     const fileSize = typeof size === 'string' ? parseInt(size) : size;
     return (fileSize / 1024).toFixed(2);
 }
+
+export function a11yProps(index: number) {
+    return {
+      id: `full-width-tab-${index}`,
+      'aria-controls': `full-width-tabpanel-${index}`,
+    };
+  }

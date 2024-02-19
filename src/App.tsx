@@ -8,16 +8,16 @@ const theme = createTheme({
     direction: 'ltr',
     palette: {
         primary: {
-            main: '#7367f0',
-            dark: '#493dba',
-            light: '#aa53e0',
-            contrastText: '#fff',
+            main: '#5376FF',
+            dark: '#3057D5',
+            light: '#7A9BFF',
+            contrastText: '#FFFFFF',
         },
         secondary: {
-            main: '#FFFFFF',
-            light: '#FFFFFF',
-            dark: '#FFFFFF',
-            contrastText: '#000',
+            main: '#03DAC5',
+            dark: '#018786',
+            light: '#70EFDE',
+            contrastText: '#FFF', // O #FFFFFF si prefieres contraste con blanco
         },
         text: {
             primary: '#2E2C34',

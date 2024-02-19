@@ -49,7 +49,7 @@ const columns: ColumnDef<ICustomer>[] = [
     }
 ];
 
-export const Customer: React.FC = () => {
+export const Purchase: React.FC = () => {
     const dispatch = useDispatch();
     const mainResult = useSelector((state: IRootState) => state.main.mainData);
     const [mainData, setMainData] = useState<ICustomer[]>([]);
@@ -77,7 +77,7 @@ export const Customer: React.FC = () => {
         <Box className="flex max-w-screen-xl mr-auto ml-auto flex-col">
             <Paper className="w-full mt-6">
                 <Box className="px-6 py-3 border-b">
-                    <Typography variant="h5">Clientes</Typography>
+                    <Typography variant="h5">Ordenes de compra</Typography>
                 </Box>
                 <Box className="p-6">
                     <TableSimple
@@ -100,4 +100,4 @@ export const Customer: React.FC = () => {
     );
 };
 
-export default Customer;
+export default Purchase;

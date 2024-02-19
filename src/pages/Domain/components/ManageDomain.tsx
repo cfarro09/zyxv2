@@ -2,9 +2,8 @@
 import { Box, Breadcrumbs, Grid, Paper, Typography } from '@mui/material';
 import { domainIns, getValuesFromDomain } from 'common/helpers';
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { IRootState } from 'stores';
-import { getMultiCollection, resetMultiMain } from 'stores/main/actions';
+import { useDispatch } from 'react-redux';
+import { getMultiCollection } from 'stores/main/actions';
 import { Link, useParams } from 'react-router-dom';
 import DeleteIcon from '@mui/icons-material/Delete';
 import TableSimple from 'components/Controls/TableSimple';
@@ -12,6 +11,7 @@ import type { ColumnDef } from '@tanstack/react-table';
 import DomainValueDialog from './DomainValueDialog';
 import { useSendFormApi } from 'hooks/useSendFormApi';
 import { IDomainValue, IMainProps, ObjectZyx } from '@types';
+import { useMultiData } from 'hooks/useMultiData';
 
 interface IDataAux {
     listStatus: ObjectZyx[];
@@ -39,7 +39,6 @@ export const ManageDomain: React.FC<IMainProps> = ({ baseUrl }) => {
     const dispatch = useDispatch();
     const { id: domainname } = useParams<{ id?: string }>();
     const [openDomainValueDialog, setOpenDomainValueDialog] = useState(false);
-    const multiResult = useSelector((state: IRootState) => state.main.multiData);
     const [domainValueSelected, setDomainValueSelected] = useState<IDomainValue>({ domainname: `${domainname}`, domainid: 0, domaindesc: '', domainvalue: '' })
     const [dataAux, setDataAux] = useState<IDataAux>({ listStatus: [], domainValues: [] });
 
@@ -50,27 +49,16 @@ export const ManageDomain: React.FC<IMainProps> = ({ baseUrl }) => {
         onSave: fetchData
     });
 
-    useEffect(() => {
-        dispatch(
-            getMultiCollection([
-                getValuesFromDomain(`${domainname}`),
-                getValuesFromDomain('ESTADO'),
-            ]),
-        );
-    }, [dispatch]);
+    const { giveMeData, loading } = useMultiData<IDomainValue, IDataAux>({
+        setDataAux,
+        collections: [
+            { rb: getValuesFromDomain(`${domainname}`), key: `UFN_DOMAIN_VALUES_SEL-${domainname}`, keyData: "domainValues" },
+            { rb: getValuesFromDomain('ESTADO'), key: `UFN_DOMAIN_VALUES_SEL-ESTADO`, keyData: "listStatus" },
+        ],
+    });
 
     useEffect(() => {
-        if (!multiResult.loading && !multiResult.error) {
-            const domainValues = (multiResult.data.find((f) => f.key === `UFN_DOMAIN_VALUES_SEL-${domainname}`)?.data ?? []) as unknown as IDomainValue[];
-            const listStatus = multiResult.data.find(f => f.key === `UFN_DOMAIN_VALUES_SEL-ESTADO`)?.data ?? [];
-            setDataAux({ listStatus, domainValues });
-        }
-    }, [multiResult]);
-
-    useEffect(() => {
-        return () => {
-            dispatch(resetMultiMain())
-        }
+        giveMeData();
     }, []);
 
     const selectDomainValue = (row: IDomainValue | null) => {
@@ -103,7 +91,7 @@ export const ManageDomain: React.FC<IMainProps> = ({ baseUrl }) => {
                         <Grid container spacing={2}>
                             <Grid item xs={12} sm={12}>
                                 <TableSimple
-                                    loading={multiResult.loading}
+                                    loading={loading}
                                     data={dataAux.domainValues}
                                     addButton={true}
                                     showOptions={true}
