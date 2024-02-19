@@ -1,7 +1,7 @@
 
 export interface IPayment {
     paymentid: number;
-    type: string;
+    paymentMethod: string;
     evidence: string;
     amount: number;
 }

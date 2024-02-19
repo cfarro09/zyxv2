@@ -103,7 +103,7 @@ export const ManageUser: React.FC<IMainProps> = ({ baseUrl }) => {
                 <div className="my-3">
                     <Breadcrumbs aria-label="breadcrumb">
                         <Link color="textPrimary" to={baseUrl}>
-                            Usuarios
+                            <Typography color="primary" fontWeight={500}>Usuarios</Typography>
                         </Link>
                         <Typography color="textSecondary">Detalle</Typography>
                     </Breadcrumbs>
@@ -135,7 +135,7 @@ export const ManageUser: React.FC<IMainProps> = ({ baseUrl }) => {
                                 variant="contained">Guardar
                             </Button>
                         </Grid>
-                </Grid>
+                    </Grid>
                     <Box className="p-6">
                         <Grid container spacing={2}>
                             {errors.password?.message && (

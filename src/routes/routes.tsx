@@ -2,7 +2,6 @@ import { RouteConfig } from '@types';
 import paths from 'common/constants/paths';
 import {
     Dashboard,
-    Person,
     ShoppingCart,
     Inventory,
     FormatListNumberedRtlSharp,
