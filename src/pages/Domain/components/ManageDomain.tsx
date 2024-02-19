@@ -72,12 +72,12 @@ export const ManageDomain: React.FC<IMainProps> = ({ baseUrl }) => {
                 <div className="my-3">
                     <Breadcrumbs aria-label="breadcrumb">
                         <Link color="textPrimary" to={baseUrl}>
-                            Dominios
+                            <Typography color="primary" fontWeight={500}>Dominios</Typography>
                         </Link>
                         <Typography color="textSecondary">Detalle</Typography>
                     </Breadcrumbs>
                 </div>
-                <Paper className="w-full mt-6" sx={{ marginTop: 0 }}>
+                <Paper className="w-full" sx={{ marginTop: 0 }}>
                     <Grid container className="px-6 py-3 border-b">
                         <Grid item xs={12} sm={6}>
                             <Box>

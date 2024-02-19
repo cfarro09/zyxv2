@@ -1,23 +1,26 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Box, Breadcrumbs, Button, Grid, Paper, Typography } from '@mui/material';
-import { a11yProps, customerIns, getCustomerSel, getValuesFromDomain } from 'common/helpers';
+import { a11yProps, customerIns, getProductSel, getValuesFromDomain } from 'common/helpers';
 import React, { useEffect, useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import FieldEdit from 'components/Controls/FieldEdit';
 import { FieldSelect } from 'components/Controls/FieldSelect';
-import { useFieldArray, useForm } from 'react-hook-form';
+import { FormProvider, useForm } from 'react-hook-form';
 import { IMainProps, IPurchase, ObjectZyx } from '@types';
 import SaveIcon from '@mui/icons-material/Save';
 import { useSendFormApi } from 'hooks/useSendFormApi';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import { useMultiData } from 'hooks/useMultiData';
-import { Products } from './Products';
+import { PurchaseProducts } from './PurchaseProducts';
+import { PurchasePayments } from './PurchasePayments';
 
 interface IDataAux {
     listDocumentType: ObjectZyx[];
     listStatus: ObjectZyx[];
-    listCustomer: ObjectZyx[];
+    listWarehouse: ObjectZyx[];
+    listProduct: ObjectZyx[];
+    listPaymentMethod: ObjectZyx[];
 }
 
 interface TabPanelProps {
@@ -56,28 +59,28 @@ export const ManagePurchase: React.FC<IMainProps> = ({ baseUrl }) => {
     };
 
     const { id } = useParams<{ id?: string }>();
-    const [dataAux, setDataAux] = useState<IDataAux>({ listDocumentType: [], listStatus: [], listCustomer: [] });
+    const [dataAux, setDataAux] = useState<IDataAux>({ listDocumentType: [], listStatus: [], listProduct: [], listPaymentMethod: [], listWarehouse: [] });
     const { onSubmitData } = useSendFormApi({
         operation: "INSERT",
         onSave: () => navigate(baseUrl),
     });
-    const { control, register, handleSubmit, setValue, getValues, reset, formState: { errors } } = useForm<IPurchase>({
+    const methods = useForm<IPurchase>({
         defaultValues: {
             purchaseorderid: 0,
-            clientid: 0,
+            warehouse: '',
             date: '',
             status: 'ACTIVO',
             products: [],
             payments: []
         },
     });
-
+    const { control, register, handleSubmit, setValue, getValues, reset, formState: { errors } } = methods;
 
     const { giveMeData, loading } = useMultiData<IPurchase, IDataAux>({
         registerX: () => {
             register('purchaseorderid');
             register('status');
-            register('clientid', { validate: (value) => Boolean(value) || 'El campo es requerido' });
+            register('warehouse', { validate: (value) => Boolean(value?.length) || 'El campo es requerido' });
             register('date', { validate: (value) => Boolean(value?.length) || 'El campo es requerido' });
         },
         reset,
@@ -91,7 +94,9 @@ export const ManagePurchase: React.FC<IMainProps> = ({ baseUrl }) => {
             // }] : []),
             { rb: getValuesFromDomain('TIPODOCUMENTO'), key: 'UFN_DOMAIN_VALUES_SEL-TIPODOCUMENTO', keyData: "listDocumentType" },
             { rb: getValuesFromDomain('ESTADO'), key: 'UFN_DOMAIN_VALUES_SEL-ESTADO', keyData: "listStatus" },
-            { rb: getCustomerSel(0), key: 'UFN_CLIENT_SEL', keyData: "listCustomer" },
+            { rb: getValuesFromDomain('ALMACEN'), key: 'UFN_DOMAIN_VALUES_SEL-ALMACEN', keyData: "listWarehouse" },
+            { rb: getValuesFromDomain('METODOPAGO'), key: 'UFN_DOMAIN_VALUES_SEL-METODOPAGO', keyData: "listPaymentMethod" },
+            { rb: getProductSel(0), key: 'UFN_PRODUCT_SEL', keyData: "listProduct" },
         ],
     });
 
@@ -106,84 +111,103 @@ export const ManagePurchase: React.FC<IMainProps> = ({ baseUrl }) => {
             <div className="my-3">
                 <Breadcrumbs aria-label="breadcrumb">
                     <Link color='secondary' to={baseUrl}>
-                        <Typography color="blue">Ordenes de compra</Typography>
+                        <Typography color="primary">Ordenes de compra</Typography>
                     </Link>
                     <Typography color="textSecondary">Detalle</Typography>
                 </Breadcrumbs>
             </div>
-            <Paper className="w-full mt-6" component={'form'} onSubmit={onSubmit} sx={{ marginTop: 0 }}>
-                <Grid container className="px-6 py-3 border-b">
-                    <Grid item xs={12} sm={6}>
-                        <Box>
-                            <Typography variant="h5">
-                                {id === 'new' ? 'Nueva Orden de Compra' : 'Modificar Orden de Compra'}
-                            </Typography>
-                        </Box>
-                    </Grid>
-                    <Grid item xs={12} sm={6} container justifyContent={'flex-end'} gap={2}>
-                        <Button
-                            color='primary'
-                            type='submit'
-                            startIcon={<SaveIcon />}
-                            disabled={loading}
-                            variant="contained">Guardar
-                        </Button>
-                    </Grid>
-                </Grid>
-
-                <Box className="p-6">
-                    <Grid container spacing={2}>
+            <FormProvider {...methods}>
+                <Paper className="w-full mt-6" component={'form'} onSubmit={onSubmit} sx={{ marginTop: 0 }}>
+                    <Grid container className="px-6 py-3 border-b">
                         <Grid item xs={12} sm={6}>
-                            <FieldSelect
-                                label={'Clientes'}
-                                variant="outlined"
-                                valueDefault={getValues('clientid')}
-                                onChange={(value) => setValue('clientid', value?.clientid as number ?? 0)}
-                                error={errors.clientid?.message}
-                                loading={loading}
-                                data={dataAux.listCustomer}
-                                optionDesc="name"
-                                optionValue="name"
-                            />
+                            <Box>
+                                <Typography variant="h5">
+                                    {id === 'new' ? 'Nueva Orden de Compra' : 'Modificar Orden de Compra'}
+                                </Typography>
+                            </Box>
                         </Grid>
-                        <Grid item xs={12} sm={4}>
-                            <FieldEdit
-                                label={'Fecha'}
-                                type="date"
-                                valueDefault={getValues('date')}
-                                onChange={(value) => setValue('date', `${value}`)}
-                                error={errors.date?.message}
-                                variant="outlined"
-                            />
+                        <Grid item xs={12} sm={6} container justifyContent={'flex-end'} gap={2}>
+                            <Button
+                                color='primary'
+                                type='submit'
+                                startIcon={<SaveIcon />}
+                                disabled={loading}
+                                variant="contained">Guardar
+                            </Button>
                         </Grid>
                     </Grid>
-                </Box>
-                <Box className="px-6" sx={{ width: '100%' }}>
-                    <Box sx={{ width: '100%', }}>
-                        <Tabs
-                            value={tab}
-                            onChange={handleChangeTab}
-                            indicatorColor='primary'
-                            textColor='primary'
-                            variant="fullWidth"
-                            aria-label="full width tabs example"
-                        >
-                            <Tab label="Productos" {...a11yProps(0)} />
-                            <Tab label="Pagos" {...a11yProps(1)} />
-                        </Tabs>
+
+                    <Box className="p-6">
+                        <Grid container spacing={2}>
+                            <Grid item xs={12} sm={6}>
+                                <FieldSelect
+                                    label={'Almacen'}
+                                    variant="outlined"
+                                    valueDefault={getValues('warehouse')}
+                                    onChange={(value) => setValue('warehouse', value?.domainvalue as string ?? "")}
+                                    error={errors?.warehouse?.message}
+                                    loading={loading}
+                                    data={dataAux.listWarehouse}
+                                    optionDesc="domainvalue"
+                                    optionValue="domainvalue"
+                                />
+                            </Grid>
+                            <Grid item xs={12} sm={4}>
+                                <FieldEdit
+                                    label={'Fecha'}
+                                    type="date"
+                                    valueDefault={getValues('date')}
+                                    onChange={(value) => setValue('date', `${value}`)}
+                                    error={errors.date?.message}
+                                    variant="outlined"
+                                />
+                            </Grid>
+                        </Grid>
                     </Box>
-                </Box >
-                <Box >
-                    <TabPanel value={tab} index={0}>
-                        <Products
-                            control={control}
-                        />
-                    </TabPanel>
-                    <TabPanel value={tab} index={1}>
-                        Pagos
-                    </TabPanel>
-                </Box>
-            </Paper >
+                    <Box className="px-6">
+                        <Typography variant="h6">
+                            Total: {(getValues('products').reduce((acc, item) => acc + item.subtotal, 0)).toFixed(2)}
+
+                        </Typography>
+                    </Box>
+                    <Box className="px-6" sx={{ width: '100%' }}>
+                        <Box sx={{ width: '100%', }}>
+                            <Tabs
+                                value={tab}
+                                onChange={handleChangeTab}
+                                indicatorColor='primary'
+                                textColor='primary'
+                                variant="fullWidth"
+                                aria-label="full width tabs example"
+                            >
+                                <Tab label="Productos" {...a11yProps(0)} />
+                                <Tab
+                                    label="Pagos" {...a11yProps(1)}
+                                    disabled={getValues('products').reduce((acc, item) => acc + item.subtotal, 0) === 0}
+                                />
+                            </Tabs>
+                        </Box>
+                    </Box >
+                    <Box >
+                        <TabPanel value={tab} index={0}>
+                            <PurchaseProducts
+                                control={control}
+                                loading={loading}
+                                listProduct={dataAux.listProduct}
+                                errors={errors}
+                            />
+                        </TabPanel>
+                        <TabPanel value={tab} index={1}>
+                            <PurchasePayments
+                                control={control}
+                                loading={loading}
+                                listPaymentMethod={dataAux.listPaymentMethod}
+                                errors={errors}
+                            />
+                        </TabPanel>
+                    </Box>
+                </Paper >
+            </FormProvider>
         </Box >
     );
 };

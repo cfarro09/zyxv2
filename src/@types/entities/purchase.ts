@@ -1,11 +1,21 @@
-import { IProduct } from "pages/Product/models";
 import { IPayment } from "./payment";
+
+export interface IProductZyx {
+    productid: number;
+    code: string;
+    description: string;
+    image: string;
+    barcode: string;
+    purchase_price: number;
+    quantity: number;
+    subtotal: number;
+}
 
 export interface IPurchase {
     purchaseorderid: number;
-    clientid: number;
+    warehouse: string;
     date: string;
     status: string;
-    products: IProduct[]
+    products: IProductZyx[]
     payments: IPayment[]
 }
