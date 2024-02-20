@@ -580,7 +580,7 @@ export const mainGraphicReset = (state: IState): IState => ({
     mainGraphic: initialState.mainGraphic,
 });
 
-export const resetAll = (state: IState): IState => ({
+export const resetAll = (): IState => ({
     ...initialState,
 });
 

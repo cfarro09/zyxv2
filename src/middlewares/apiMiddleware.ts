@@ -2,7 +2,7 @@ import { IAction, IActionTypes, IAPIMiddlewareAction } from '@types';
 import { AxiosError } from 'axios';
 import { messages } from 'common/constants';
 // import { type } from 'os';
-import { Middleware, Dispatch } from 'redux';
+import type { Middleware, Dispatch } from 'redux';
 
 const validTypes = (types: IActionTypes): boolean => {
     return types.failure !== "" && types.success !== "" && types.loading !== "";
