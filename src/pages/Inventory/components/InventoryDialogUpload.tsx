@@ -1,9 +1,12 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, Typography } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControlLabel, Grid, Switch, Typography } from "@mui/material";
 import React from "react";
 import { InventoryDialogUploadProps } from "../models";
 import { IClasses } from "@types";
 import DropZone from "components/Controls/DropZone";
-import { read as readXlsx, utils as xlsxUtils } from 'xlsx';
+import { useDispatch } from "react-redux";
+import { showBackdrop, showSnackbar } from "stores/popus/actions";
+import { exportExcel, uploadExcel, bulkloadInventoryIns } from "common/helpers";
+import { useSendFormApi } from "hooks/useSendFormApi";
 
 const classes: IClasses = {
     dialogTitle: {
@@ -26,25 +29,91 @@ const classes: IClasses = {
     }
 };
 
-const InventoryDialogUpload: React.FC<InventoryDialogUploadProps> = ({ open, handleClose }) => {
+const excelColumns = [
+    {
+        header: 'ALMACEN',
+        key: 'warehouse',
+        type: 'string',
+        required: true,
+    },
+    {
+        header: 'STOCK',
+        key: 'stock',
+        type: 'number',
+        required: true,
+    },
+    {
+        header: 'CODIGO PRODUCTO',
+        key: 'code',
+        type: 'string',
+        required: true,
+    }
+]
 
-    const handelFileLoad = (file: File) => {
-        if (file.name.endsWith('.xls') || file.name.endsWith('.xlsx')) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const data = new Uint8Array(e?.target?.result);
+interface IExcelColumn {
+    header: string;
+    key: string;
+    type: string;
+    required: boolean;
+}
 
-                // Cambiar XLSX.read() a readXlsx()
-                const workbook = readXlsx(data, { type: 'array' });
-                const sheetName = workbook.SheetNames[0];
-                const sheet = workbook.Sheets[sheetName];
+interface IExcelData {
+    [key: string]: string;
+}
 
-                // Cambiar XLSX.utils.sheet_to_json() a xlsxUtils.sheet_to_json()
-                const jsonData = xlsxUtils.sheet_to_json(sheet, { header: 1 });
-                console.log('jsonData', jsonData)
-            };
+const validateData = (data: IExcelData[], columns: IExcelColumn[]) => {
+    const newData: IExcelData[] = [];
+    let errorMessage = '';
+
+    for (const row of data) {
+        const newRow: IExcelData = {};
+
+        for (const column of columns) {
+            const columnName = column.header
+            const key = column.key;
+
+            if (column.required && !Object.prototype.hasOwnProperty.call(row, columnName)) {
+                errorMessage = `Columna '${columnName}' es requerida pero no se encuentra en la fila`;
+                break;
+            }
+            newRow[key as string] = row[columnName];
         }
-        console.log('handelFileLoad', file);
+        newData.push(newRow);
+    }
+    return [errorMessage, newData];
+}
+
+const InventoryDialogUpload: React.FC<InventoryDialogUploadProps> = ({ open, handleClose, fetchData }) => {
+    const dispatch = useDispatch();
+    const { onSubmitData } = useSendFormApi({
+        operation: "INSERT",
+        onSave: () => { handleClose(); fetchData() },
+    });
+
+    const generateExcel = () => {
+        exportExcel(
+            'plantilla-inventario.xlsx',
+            excelColumns.map((x) => ({ [x.header]: '' }))
+        )
+    }
+
+    const handelFileLoad = async (file: File) => {
+        if (file.name.endsWith('.xls') || file.name.endsWith('.xlsx')) {
+            const excelData: IExcelData[] = await uploadExcel(file) as IExcelData[];
+            const [validate, data] = validateData(excelData, excelColumns);
+
+            if (validate) {
+                dispatch(showSnackbar({ show: true, severity: "error", message: validate as string }));
+                dispatch(showBackdrop(false));
+                return;
+            }
+
+            handleSubmit(data as IExcelData[])
+        }
+    }
+
+    const handleSubmit = (data: IExcelData[]) => {
+        onSubmitData(bulkloadInventoryIns({ data: JSON.stringify(data) }));
     }
 
     return (
@@ -58,11 +127,23 @@ const InventoryDialogUpload: React.FC<InventoryDialogUploadProps> = ({ open, han
                 {"Importa tu archivo de inventario"}
             </DialogTitle>
             <DialogContent>
-                <DialogContentText id="alert-dialog-description">
-                    Sube tu archivo importando esta{" "}
-                    <Typography color="primary" component="a" sx={classes.link}>
-                        plantilla
-                    </Typography> de ejemplo para actualizar tu inventario.
+                <Grid container gap={1}>
+                    <Grid item>
+                        <DialogContentText id="alert-dialog-description" component={'div'}>
+                            <p>Sube tu archivo importando esta{" "}
+                                <Typography color="primary" component="a" sx={classes.link} onClick={generateExcel}>
+                                    plantilla
+                                </Typography> de ejemplo para actualizar tu inventario.</p>
+
+                        </DialogContentText>
+                    </Grid>
+
+                    <FormControlLabel
+                        sx={{ color: '#5b5b5b', fontSize: '0.5rem', '& .MuiTypography-root': { fontSize: '0.875rem' } }}
+                        control={<Switch />}
+                        label="El sistema crea automaticamente el producto en caso no exista"
+                    />
+
                     <Grid container sx={{ minHeight: '120px', marginTop: '1rem' }}>
                         <DropZone
                             url={''}
@@ -71,7 +152,7 @@ const InventoryDialogUpload: React.FC<InventoryDialogUploadProps> = ({ open, han
                             accept={{ 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['*'] }}
                         />
                     </Grid>
-                </DialogContentText>
+                </Grid>
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleClose}>Cancelar</Button>

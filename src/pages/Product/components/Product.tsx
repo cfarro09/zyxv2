@@ -50,7 +50,7 @@ const columns: ColumnDef<IProduct>[] = [
     },
     {
         header: 'Cantidad',
-        accessorKey: 'quantity',
+        accessorKey: 'stock',
     },
     {
         id: 'estado',

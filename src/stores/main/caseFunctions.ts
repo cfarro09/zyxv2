@@ -429,6 +429,7 @@ export const executeFailure = (state: IState, action: IAction): IState => ({
         error: true,
         code: action.payload.code ? "error_" + action.payload.code.toString().toLowerCase() : 'error_unexpected_error',
         message: action.payload.message || 'error_unexpected_error',
+        usererror: action.payload.usererror || undefined,
         success: false,
     }
 });

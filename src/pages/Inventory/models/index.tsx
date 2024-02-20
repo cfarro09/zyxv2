@@ -33,4 +33,5 @@ export interface InventoryFiltersProps {
 export interface InventoryDialogUploadProps {
     open: boolean;
     handleClose: () => void;
+    fetchData: () => void;
 }

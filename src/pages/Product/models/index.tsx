@@ -11,6 +11,5 @@ export interface IProduct {
     color: string;
     status: string;
     category: string;
-
-    quantity?: 0;
+    stock?: number;
 }

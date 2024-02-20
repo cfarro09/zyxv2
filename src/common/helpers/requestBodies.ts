@@ -103,6 +103,12 @@ export const userIns = (parameters: { operation: string } & IUser): IRequestBody
     },
 });
 
+export const bulkloadInventoryIns = (parameters: { data: string }): IRequestBody => ({
+    method: 'UFN_INVENTORY_BULKLOAD_INS',
+    key: 'UFN_INVENTORY_BULKLOAD_INS',
+    parameters
+});
+
 export const productIns = (parameters: { operation: string } & IProduct): IRequestBody => ({
     method: 'UFN_PRODUCT_INS',
     key: 'UFN_PRODUCT_INS',
