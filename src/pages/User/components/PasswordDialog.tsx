@@ -2,16 +2,17 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { Button, Grid, IconButton, InputAdornment } from "@mui/material";
 import FieldEdit from "components/Controls/FieldEdit";
 import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { UseFormSetValue, useForm } from "react-hook-form";
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
+import { IUser } from "@types";
 
 interface PasswordDialogProps {
     openModal: boolean;
     setOpenModal: (_: boolean) => void;
-    parentSetValue: (..._: any) => void;
+    parentSetValue: UseFormSetValue<IUser>;
 }
 
 const PasswordDialog: React.FC<PasswordDialogProps> = ({ openModal, setOpenModal, parentSetValue }) => {

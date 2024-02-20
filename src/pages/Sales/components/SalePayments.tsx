@@ -7,7 +7,7 @@ import { FieldSelect } from "components/Controls/FieldSelect";
 import React, { useState } from "react";
 import { Control, FieldErrors, useFieldArray, useFormContext } from "react-hook-form";
 
-export const PurchasePayments: React.FC<{
+export const SalePayments: React.FC<{
     control: Control<IPurchase, object, IPurchase>;
     loading: boolean;
     listPaymentMethod: ObjectZyx[];

@@ -12,8 +12,8 @@ import { useSendFormApi } from 'hooks/useSendFormApi';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import { useMultiData } from 'hooks/useMultiData';
-import { PurchaseProducts } from './PurchaseProducts';
-import { PurchasePayments } from './PurchasePayments';
+import { SaleProducts } from './SaleProducts';
+import { SalePayments } from './SalePayments';
 import TabPanel from 'components/Layout/TabPanel';
 
 interface IDataAux {
@@ -24,11 +24,15 @@ interface IDataAux {
     listPaymentMethod: ObjectZyx[];
 }
 
-export const ManagePurchase: React.FC<IMainProps> = ({ baseUrl }) => {
+
+
+export const ManageSale: React.FC<IMainProps> = ({ baseUrl }) => {
     const navigate = useNavigate();
     const [tab, settab] = React.useState(0);
 
-    const handleChangeTab = (_: React.SyntheticEvent, newValue: number) => settab(newValue);
+    const handleChangeTab = (_: React.SyntheticEvent, newValue: number) => {
+        settab(newValue);
+    };
 
     const { id } = useParams<{ id?: string }>();
     const [dataAux, setDataAux] = useState<IDataAux>({ listDocumentType: [], listStatus: [], listProduct: [], listPaymentMethod: [], listWarehouse: [] });
@@ -83,7 +87,7 @@ export const ManagePurchase: React.FC<IMainProps> = ({ baseUrl }) => {
             <div className="my-3">
                 <Breadcrumbs aria-label="breadcrumb">
                     <Link color='secondary' to={baseUrl}>
-                        <Typography color="primary">Ordenes de compra</Typography>
+                        <Typography color="primary">Ventas</Typography>
                     </Link>
                     <Typography color="textSecondary">Detalle</Typography>
                 </Breadcrumbs>
@@ -162,7 +166,7 @@ export const ManagePurchase: React.FC<IMainProps> = ({ baseUrl }) => {
                     </Box >
                     <Box >
                         <TabPanel value={tab} index={0}>
-                            <PurchaseProducts
+                            <SaleProducts
                                 control={control}
                                 loading={loading}
                                 listProduct={dataAux.listProduct}
@@ -170,7 +174,7 @@ export const ManagePurchase: React.FC<IMainProps> = ({ baseUrl }) => {
                             />
                         </TabPanel>
                         <TabPanel value={tab} index={1}>
-                            <PurchasePayments
+                            <SalePayments
                                 control={control}
                                 loading={loading}
                                 listPaymentMethod={dataAux.listPaymentMethod}
@@ -184,4 +188,4 @@ export const ManagePurchase: React.FC<IMainProps> = ({ baseUrl }) => {
     );
 };
 
-export default ManagePurchase;
+export default ManageSale;

@@ -18,6 +18,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import FaceIcon from '@mui/icons-material/Face';
 import { ManagePurchase, Purchase } from 'pages/Purchases/Index';
 import { Inventory } from 'pages/Inventory';
+import { ManageSale, Sale } from 'pages/Sales/Index';
 
 export const routes: RouteConfig[] = [
     {
@@ -94,7 +95,8 @@ export const routes: RouteConfig[] = [
         description: 'Ventas',
         tooltip: 'Ventas',
         path: paths.SALE_ORDERS,
-        mainView: <User />,
+        mainView: <Sale />,
+        manageView: (baseUrl) => <ManageSale baseUrl={baseUrl} />,
         icon: () => <Receipt style={{ width: 22, height: 22 }} />,
     },
 ];

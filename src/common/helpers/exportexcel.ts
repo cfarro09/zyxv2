@@ -1,10 +1,9 @@
-import * as FileSaver from 'file-saver';
+import FileSaver from 'file-saver';
 
 type ColumnTmp = {
     Header: string;
     accessor: string;
     prefixTranslation?: string;
-    type?: string
 }
 interface ObjectZyx {
     [key: string]: string | number | boolean | null;
@@ -18,7 +17,7 @@ export function exportExcel(filename: string, csvData: ObjectZyx[], columnsexpor
             datafromtable = csvData.map((x: ObjectZyx) => {
                 const newx: ObjectZyx = {};
                 columnsexport.forEach((y: ColumnTmp) => {
-                    newx[y.Header] =  (y.type === "porcentage" ? `${(Number(x[y.accessor]) * 100).toFixed(0)}%` : x[y.accessor])
+                    newx[y.Header] =  x[y.accessor]
                 });
                 return newx;
             });

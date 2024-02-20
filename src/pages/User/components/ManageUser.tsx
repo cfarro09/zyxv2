@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Box, Breadcrumbs, Button, Grid, Paper, Typography } from '@mui/material';
-import { getRoles, getUserSel, getValuesFromDomain, userIns } from 'common/helpers';
+import { getRoles, getValuesFromDomain, userIns } from 'common/helpers';
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Link, useParams, useNavigate } from 'react-router-dom';

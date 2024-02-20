@@ -96,7 +96,6 @@ const ManageProduct: React.FC<IMainProps> = ({ baseUrl }) => {
     })));
 
     const handleFileUpload = (fileUrl: string) => {
-        console.log({ fileUrl })
         setValue('image', fileUrl);
     };
 

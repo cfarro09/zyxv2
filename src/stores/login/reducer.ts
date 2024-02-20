@@ -53,7 +53,6 @@ export default createReducer<IState>(initialState, {
     [actionTypes.LOGOUT_FAILURE]: caseFunctions.logoutFailure,
     [actionTypes.LOGOUT_RESET]: caseFunctions.logoutReset,
 
-    [actionTypes.CHANGE_PWD_FIRST_LOGIN]: caseFunctions.changePwdFirstLogin,
     [actionTypes.NEW_NOTIFICATION]: caseFunctions.newNotification,
     [actionTypes.UPDATE_CONNECTION]: caseFunctions.updateConnection,
 });
