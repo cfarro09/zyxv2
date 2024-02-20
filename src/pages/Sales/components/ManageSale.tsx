@@ -141,7 +141,7 @@ export const ManageSale: React.FC<IMainProps> = ({ baseUrl }) => {
                     </Box>
                     <Box className="px-6">
                         <Typography variant="h6">
-                            Total: {(getValues('products').reduce((acc, item) => acc + item.subtotal, 0)).toFixed(2)}
+                            Total: {(getValues('products').reduce((acc, item) => acc + item.total, 0)).toFixed(2)}
 
                         </Typography>
                     </Box>
@@ -158,7 +158,7 @@ export const ManageSale: React.FC<IMainProps> = ({ baseUrl }) => {
                                 <Tab label="Productos" {...a11yProps(0)} />
                                 <Tab
                                     label="Pagos" {...a11yProps(1)}
-                                    disabled={getValues('products').reduce((acc, item) => acc + item.subtotal, 0) === 0}
+                                    disabled={getValues('products').reduce((acc, item) => acc + item.total, 0) === 0}
                                 />
                             </Tabs>
                         </Box>

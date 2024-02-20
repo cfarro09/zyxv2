@@ -1,7 +1,7 @@
 
 export interface IPayment {
-    paymentid: number;
-    paymentMethod: string;
-    evidence: string;
-    amount: number;
+    payment_method: string;
+    evidence_url: string;
+    status: string;
+    payment_amount: number;
 }

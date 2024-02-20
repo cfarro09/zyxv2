@@ -1,60 +1,41 @@
-import { Box, Chip, Paper, Typography } from '@mui/material';
-import { customerIns, getCustomerSel } from 'common/helpers';
+import { Box, Paper, Typography } from '@mui/material';
+import { getPurchaseOrder, purchaseOrderIns } from 'common/helpers';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from 'stores';
 import { getCollection } from 'stores/main/actions';
-import clsx from 'clsx';
 import TableSimple from 'components/Controls/TableSimple';
 import type { ColumnDef } from '@tanstack/react-table';
-import { ICustomer } from '@types';
+import { IPurchase } from '@types';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useSendFormApi } from 'hooks/useSendFormApi';
-import classes from 'common/constants/classes';
+import dayjs from 'dayjs';
 
-const columns: ColumnDef<ICustomer>[] = [
+const columns: ColumnDef<IPurchase>[] = [
     {
-        header: 'NOMBRE COMPLETO',
-        accessorKey: 'name',
+        header: 'Nº ORDEN',
+        accessorKey: 'order_number',
     },
     {
-        header: 'TIPO DOC.',
-        accessorKey: 'document_type',
+        header: 'FECHA.',
+        accessorFn: (row) => dayjs(row.order_date).format('DD/MM/YYYY'),
     },
     {
-        header: 'DOCUMENTO',
-        accessorKey: 'document',
+        header: 'TOTAL',
+        accessorKey: 'total_amount',
     },
     {
-        id: 'estado',
-        accessorKey: 'status',
-        header: () => <Box className="text-center">ESTADO</Box>,
-        cell: (info) => {
-            const status = info.row.original.status;
-            return (
-                <Box className="flex justify-center">
-                    <Chip
-                        className={clsx(
-                            status === 'ACTIVO' && classes.successLabel,
-                            status === 'INACTIVO' && classes.inactiveLabel,
-                            status === 'PENDIENTE' && classes.pendingLabel,
-                            'w-24',
-                            'font-medium',
-                        )}
-                        label={info.row.original.status}
-                    />
-                </Box>
-            );
-        },
-    }
+        header: 'PRODUCTOS',
+        accessorKey: 'total_quantity',
+    },
 ];
 
 export const Purchase: React.FC = () => {
     const dispatch = useDispatch();
     const mainResult = useSelector((state: IRootState) => state.main.mainData);
-    const [mainData, setMainData] = useState<ICustomer[]>([]);
+    const [mainData, setMainData] = useState<IPurchase[]>([]);
 
-    const fetchData = useCallback(() => dispatch(getCollection(getCustomerSel(0))), [dispatch])
+    const fetchData = useCallback(() => dispatch(getCollection(getPurchaseOrder(0))), [dispatch])
 
     const { onSubmitData } = useSendFormApi({
         operation: "DELETE",
@@ -66,12 +47,12 @@ export const Purchase: React.FC = () => {
     }, [dispatch, fetchData]);
 
     useEffect(() => {
-        if (!mainResult.loading && !mainResult.error && mainResult.key === 'UFN_CLIENT_SEL') {
-            setMainData((mainResult.data as ICustomer[]) || []);
+        if (!mainResult.loading && !mainResult.error && mainResult.key === 'UFN_PURCHASE_ORDER_SEL') {
+            setMainData((mainResult.data as IPurchase[]) || []);
         }
     }, [mainResult]);
 
-    const deleteRow = (customer: ICustomer) => onSubmitData(customerIns(customer, "DELETE"))
+    const deleteRow = (customer: IPurchase) => onSubmitData(purchaseOrderIns({ ...customer, operation: "DELETE" }))
 
     return (
         <Box className="flex max-w-screen-xl mr-auto ml-auto flex-col">
@@ -92,7 +73,7 @@ export const Purchase: React.FC = () => {
                         }]}
                         columns={columns}
                         redirectOnSelect={true}
-                        columnKey={"clientid"}
+                        columnKey={"purchaseorderid"}
                     />
                 </Box>
             </Paper>

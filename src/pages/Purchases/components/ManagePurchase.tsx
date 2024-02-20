@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Box, Breadcrumbs, Button, Grid, Paper, Typography } from '@mui/material';
-import { a11yProps, customerIns, getProductSel, getValuesFromDomain } from 'common/helpers';
+import { a11yProps, getProductSel, getPurchaseOrder, getValuesFromDomain, purchaseOrderIns, purchaseOrderLineIns, purchaseOrderPaymentIns } from 'common/helpers';
 import React, { useEffect, useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import FieldEdit from 'components/Controls/FieldEdit';
@@ -16,22 +16,27 @@ import { PurchaseProducts } from './PurchaseProducts';
 import { PurchasePayments } from './PurchasePayments';
 import TabPanel from 'components/Layout/TabPanel';
 import dayjs from 'dayjs';
+import { useDispatch } from 'react-redux';
+import { showSnackbar } from 'stores/popus/actions';
 
 interface IDataAux {
     listStatus: ObjectZyx[];
     listSupplier: ObjectZyx[];
     listProduct: ObjectZyx[];
     listPaymentMethod: ObjectZyx[];
+    listWarehouse: ObjectZyx[];
 }
 
 export const ManagePurchase: React.FC<IMainProps> = ({ baseUrl }) => {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+
     const [tab, settab] = React.useState(0);
 
     const handleChangeTab = (_: React.SyntheticEvent, newValue: number) => settab(newValue);
 
     const { id } = useParams<{ id?: string }>();
-    const [dataAux, setDataAux] = useState<IDataAux>({ listStatus: [], listProduct: [], listPaymentMethod: [], listSupplier: [] });
+    const [dataAux, setDataAux] = useState<IDataAux>({ listStatus: [], listProduct: [], listPaymentMethod: [], listSupplier: [], listWarehouse: [] });
     const { onSubmitData } = useSendFormApi({
         operation: "INSERT",
         onSave: () => navigate(baseUrl),
@@ -40,8 +45,10 @@ export const ManagePurchase: React.FC<IMainProps> = ({ baseUrl }) => {
         defaultValues: {
             purchaseorderid: 0,
             supplier: '',
-            date: dayjs().format('YYYY-MM-DD'),
+            order_date: dayjs().format('YYYY-MM-DD'),
             status: 'ACTIVO',
+            total_amount: 0,
+            sub_total: 0,
             products: [],
             payments: []
         },
@@ -52,21 +59,23 @@ export const ManagePurchase: React.FC<IMainProps> = ({ baseUrl }) => {
         registerX: () => {
             register('purchaseorderid');
             register('status');
+            register('warehouse', { validate: (value) => Boolean(value?.length) || 'El campo es requerido' });
             register('supplier', { validate: (value) => Boolean(value?.length) || 'El campo es requerido' });
-            register('date', { validate: (value) => Boolean(value?.length) || 'El campo es requerido' });
+            register('order_date', { validate: (value) => Boolean(value?.length) || 'El campo es requerido' });
         },
         reset,
         setDataAux,
         collections: [
-            // ...(id !== 'new' ? [{
-            //     rb: getCustomerSel(parseInt(`${id}`)),
-            //     key: 'UFN_CLIENT_SEL',
-            //     keyData: "",
-            //     main: true,
-            // }] : []),
+            ...(id !== 'new' ? [{
+                rb: getPurchaseOrder(parseInt(`${id}`)),
+                key: 'UFN_PURCHASE_ORDER_SEL',
+                keyData: "",
+                main: true,
+            }] : []),
             { rb: getValuesFromDomain('ESTADO'), key: 'UFN_DOMAIN_VALUES_SEL-ESTADO', keyData: "listStatus" },
             { rb: getValuesFromDomain('PROVEEDOR'), key: 'UFN_DOMAIN_VALUES_SEL-PROVEEDOR', keyData: "listSupplier" },
             { rb: getValuesFromDomain('METODOPAGO'), key: 'UFN_DOMAIN_VALUES_SEL-METODOPAGO', keyData: "listPaymentMethod" },
+            { rb: getValuesFromDomain('ALMACEN'), key: 'UFN_DOMAIN_VALUES_SEL-ALMACEN', keyData: "listWarehouse" },
             { rb: getProductSel(0), key: 'UFN_PRODUCT_SEL', keyData: "listProduct" },
         ],
     });
@@ -75,7 +84,30 @@ export const ManagePurchase: React.FC<IMainProps> = ({ baseUrl }) => {
         giveMeData();
     }, []);
 
-    const onSubmit = handleSubmit((data) => onSubmitData(customerIns(data, data.clientid > 0 ? "UPDATE" : "INSERT")));
+    const onSubmit = handleSubmit((data) => {
+        const totalProducts = data.products.reduce((acc, item) => acc + item.total, 0);
+        const totalPayments = data.payments.reduce((acc, item) => acc + item.payment_amount, 0);
+        if (totalProducts === 0) {
+            dispatch(showSnackbar({ show: true, severity: "warning", message: `Debes ingresar al menos un producto` }));
+            return;
+        }
+        if (totalProducts !== totalPayments) {
+            dispatch(showSnackbar({ show: true, severity: "warning", message: `La diferencia a pagar es diferente al total de productos.` }));
+            return;
+        }
+        onSubmitData({
+            header: purchaseOrderIns({
+                ...data,
+                operation: data.purchaseorderid > 0 ? "UPDATE" : "INSERT",
+                total_amount: totalProducts,
+                sub_total: totalProducts
+            }),
+            detail: [
+                ...data.products.map(product => purchaseOrderLineIns({ ...product, operation: product.purchaseorderlineid > 0 ? "UPDATE" : "INSERT" })),
+                ...data.payments.map(payment => purchaseOrderPaymentIns({ ...payment, operation: payment.purchaseorderpaymentid > 0 ? "UPDATE" : "INSERT" })),
+            ]
+        }, true)
+    });
 
     return (
         <Box className="flex max-w-screen-xl mr-auto ml-auto flex-col">
@@ -93,7 +125,7 @@ export const ManagePurchase: React.FC<IMainProps> = ({ baseUrl }) => {
                         <Grid item xs={12} sm={6}>
                             <Box>
                                 <Typography variant="h5">
-                                    {id === 'new' ? 'Nueva Orden de Compra' : 'Modificar Orden de Compra'}
+                                    {id === 'new' ? 'Nueva Orden de Compra' : `Orden de Compra ${getValues('order_number')}`}
                                 </Typography>
                             </Box>
                         </Grid>
@@ -110,7 +142,7 @@ export const ManagePurchase: React.FC<IMainProps> = ({ baseUrl }) => {
 
                     <Box className="p-6">
                         <Grid container spacing={2}>
-                            <Grid item xs={12} sm={6}>
+                            <Grid item xs={12} sm={4}>
                                 <FieldSelect
                                     label={'Proveedor'}
                                     variant="outlined"
@@ -124,12 +156,25 @@ export const ManagePurchase: React.FC<IMainProps> = ({ baseUrl }) => {
                                 />
                             </Grid>
                             <Grid item xs={12} sm={4}>
+                                <FieldSelect
+                                    label={'Almacén'}
+                                    variant="outlined"
+                                    valueDefault={getValues('warehouse')}
+                                    onChange={(value) => setValue('warehouse', value?.domainvalue as string ?? "")}
+                                    error={errors?.warehouse?.message}
+                                    loading={loading}
+                                    data={dataAux.listWarehouse}
+                                    optionDesc="domainvalue"
+                                    optionValue="domainvalue"
+                                />
+                            </Grid>
+                            <Grid item xs={12} sm={4}>
                                 <FieldEdit
                                     label={'Fecha'}
                                     type="date"
-                                    valueDefault={getValues('date')}
-                                    onChange={(value) => setValue('date', `${value}`)}
-                                    error={errors.date?.message}
+                                    valueDefault={getValues('order_date')}
+                                    onChange={(value) => setValue('order_date', `${value}`)}
+                                    error={errors.order_date?.message}
                                     variant="outlined"
                                 />
                             </Grid>
@@ -137,7 +182,7 @@ export const ManagePurchase: React.FC<IMainProps> = ({ baseUrl }) => {
                     </Box>
                     <Box className="px-6">
                         <Typography variant="h6">
-                            Total: {(getValues('products').reduce((acc, item) => acc + item.subtotal, 0)).toFixed(2)}
+                            Total: {(getValues('products').reduce((acc, item) => acc + item.total, 0)).toFixed(2)}
 
                         </Typography>
                     </Box>
@@ -152,7 +197,7 @@ export const ManagePurchase: React.FC<IMainProps> = ({ baseUrl }) => {
                                 <Tab label="Productos" {...a11yProps(0)} />
                                 <Tab
                                     label="Pagos" {...a11yProps(1)}
-                                    disabled={getValues('products').reduce((acc, item) => acc + item.subtotal, 0) === 0}
+                                    disabled={getValues('products').reduce((acc, item) => acc + item.total, 0) === 0}
                                 />
                             </Tabs>
                         </Box>

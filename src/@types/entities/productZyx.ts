@@ -7,5 +7,6 @@ export interface IProductZyx {
     purchase_price?: number;
     selling_price?: number;
     quantity: number;
-    subtotal: number;
+    status: string;
+    total: number;
 }

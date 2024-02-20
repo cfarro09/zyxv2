@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { showBackdrop, showSnackbar, manageConfirmation } from 'stores/popus/actions'; // Ajusta las importaciones según tus archivos
-import { IRequestBody } from '@types';
+import { IRequestBody, ITransaction } from '@types';
 import { IRootState } from 'stores';
 import { execute } from 'stores/main/actions';
 
@@ -16,10 +16,10 @@ export const useSendFormApi = ({ onSave, operation }: SendFormApiProps) => {
     const [waitSave, setWaitSave] = useState(false);
 
     // Función para manejar el envío del formulario
-    const onSubmitData = (requestBody: IRequestBody) => {
+    const onSubmitData = (requestBody: IRequestBody | ITransaction, transaction: boolean = false) => {
         const callback = () => {
             dispatch(showBackdrop(true));
-            dispatch(execute(requestBody));
+            dispatch(execute(requestBody, transaction));
             setWaitSave(true);
         };
 

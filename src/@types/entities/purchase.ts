@@ -3,9 +3,14 @@ import { IProductZyx } from "./productZyx";
 
 export interface IPurchase {
     purchaseorderid: number;
-    supplier : string;
-    date: string;
+    supplier: string;
+    warehouse: string;
+    order_date: string;
     status: string;
-    products: IProductZyx[]
-    payments: IPayment[]
+    order_number: string;
+    products: (IProductZyx & { purchaseorderlineid: number })[];
+    payments: (IPayment & { purchaseorderpaymentid: number })[]
+    total_amount: number;
+    sub_total: number;
+    total_quantity?: number;
 }

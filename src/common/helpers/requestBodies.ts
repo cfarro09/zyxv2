@@ -1,4 +1,4 @@
-import { ICustomer, IDomainValue, IRequestBody, IRequestBodyPaginated, IUser } from '@types';
+import { ICustomer, IDomainValue, IPayment, IProductZyx, IPurchase, IRequestBody, IRequestBodyPaginated, IUser } from '@types';
 import { IInventoryFilters } from 'pages/Inventory/models';
 import { IProduct } from 'pages/Product/models';
 
@@ -63,12 +63,61 @@ export const customerIns = (customer: ICustomer, operation: string): IRequestBod
         operation
     },
 });
-
 export const getProductSel = (productid: number): IRequestBody => ({
     method: 'UFN_PRODUCT_SEL',
     key: 'UFN_PRODUCT_SEL',
     parameters: {
         productid,
+    },
+});
+export const purchaseOrderIns = (purchase: (IPurchase & { operation: string })): IRequestBody => ({
+    method: 'UFN_PURCHASE_ORDER_OPS',
+    key: 'UFN_PURCHASE_ORDER_OPS',
+    parameters: {
+        ...purchase,
+        order_number: "",
+        type: 'NINGUNO'
+    },
+});
+
+export const purchaseOrderLineIns = (orderline: (IProductZyx & { operation: string, purchaseorderlineid: number })): IRequestBody => ({
+    method: 'UFN_PURCHASE_ORDER_LINE_OPS',
+    key: 'UFN_PURCHASE_ORDER_LINE_OPS',
+    parameters: {
+        ...orderline,
+        type: 'NINGUNO'
+    },
+});
+
+export const purchaseOrderPaymentIns = (orderpayment: (IPayment & { operation: string, purchaseorderpaymentid: number })): IRequestBody => ({
+    method: 'UFN_PURCHASE_ORDER_PAYMENT_OPS',
+    key: 'UFN_PURCHASE_ORDER_PAYMENT_OPS',
+    parameters: {
+        ...orderpayment,
+        type: 'NINGUNO'
+    },
+});
+
+export const getPurchaseOrder = (purchaseorderid: number): IRequestBody => ({
+    method: 'UFN_PURCHASE_ORDER_SEL',
+    key: 'UFN_PURCHASE_ORDER_SEL',
+    parameters: {
+        purchaseorderid,
+    },
+});
+
+export const getPurchaseOrderLine = (purchaseorderid: number): IRequestBody => ({
+    method: 'UFN_PURCHASE_ORDER_LINE_SEL',
+    key: 'UFN_PURCHASE_ORDER_LINE_SEL',
+    parameters: {
+        purchaseorderid,
+    },
+});
+export const getPurchaseOrderPayment = (purchaseorderid: number): IRequestBody => ({
+    method: 'UFN_PURCHASE_ORDER_PAYMENT_SEL',
+    key: 'UFN_PURCHASE_ORDER_PAYMENT_SEL',
+    parameters: {
+        purchaseorderid,
     },
 });
 
