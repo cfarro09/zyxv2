@@ -20,9 +20,9 @@ export const SaleProducts: React.FC<{
     });
 
     const calculateSubtotal = (i: number, price: number, quantity: number) => {
-        const subtotal = (price || 0) * (quantity || 0);
-        setValue(`products.${i}.subtotal`, subtotal);
-        trigger(`products.${i}.subtotal`);
+        const total = (price || 0) * (quantity || 0);
+        setValue(`products.${i}.total`, total);
+        trigger(`products.${i}.total`);
     }
 
     return (
@@ -35,7 +35,18 @@ export const SaleProducts: React.FC<{
                                 <IconButton
                                     size="small"
                                     disabled={loading}
-                                    onClick={() => append({ productid: 0, barcode: '', code: '', description: '', image: '', quantity: 1, selling_price: 0, subtotal: 0 })}
+                                    onClick={() => append({
+                                        saleorderlineid: 0,
+                                        productid: 0,
+                                        barcode: '',
+                                        code: '',
+                                        description: '',
+                                        image: '',
+                                        status: 'ACTIVO',
+                                        quantity: 1,
+                                        selling_price: 0,
+                                        total: 0
+                                    })}
                                 >
                                     <Add />
                                 </IconButton>
@@ -71,8 +82,9 @@ export const SaleProducts: React.FC<{
                                         variant='outlined'
                                         onChange={(value) => {
                                             if (value) {
-                                                setValue(`products.${i}`, value);
+                                                // setValue(`products.${i}`, value);
                                                 setValue(`products.${i}.quantity`, 1);
+                                                setValue(`products.${i}.productid`, value.productid);
                                             }
                                             setValue(`products.${i}.productid`, (value?.productid as number) ?? 0);
                                             setValue(`products.${i}.selling_price`, (value?.selling_price as number) ?? 0);
@@ -112,7 +124,6 @@ export const SaleProducts: React.FC<{
                                 </TableCell>
                                 <TableCell style={{ width: 200 }}>
                                     <FieldEdit
-                                        disabled
                                         fregister={{
                                             ...register(`products.${i}.selling_price`, {
                                                 validate: (value) => (value > 0) || "Debe ser mayor de 0"
@@ -131,7 +142,7 @@ export const SaleProducts: React.FC<{
                                     />
                                 </TableCell>
                                 <TableCell sx={{ width: 150, textAlign: 'right' }}>
-                                    {(getValues(`products.${i}.subtotal`) || 0 as number).toFixed(2)}
+                                    {(getValues(`products.${i}.total`) || 0 as number).toFixed(2)}
                                 </TableCell>
                             </TableRow>
                         )}

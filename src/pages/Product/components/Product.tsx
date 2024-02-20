@@ -6,7 +6,7 @@ import TableSimple from 'components/Controls/TableSimple';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from 'stores';
-import { getCollection } from 'stores/main/actions';
+import { getCollection, resetMain } from 'stores/main/actions';
 import { IProduct } from '../models';
 import { Delete } from '@mui/icons-material';
 import { useSendFormApi } from 'hooks/useSendFormApi';
@@ -90,6 +90,9 @@ export const Product: React.FC = () => {
 
     useEffect(() => {
         fetchData();
+        return () => {
+            dispatch(resetMain());
+        }
     }, [dispatch, fetchData]);
 
     useEffect(() => {

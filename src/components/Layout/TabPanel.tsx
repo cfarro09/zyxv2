@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 import * as React from 'react';
 
 interface TabPanelProps {
@@ -17,8 +17,8 @@ const TabPanel: React.FC<TabPanelProps> = ({ children, value, index, ...other })
         {...other}
     >
         {value === index && (
-            <Box sx={{ p: 3 }}>
-                <Typography>{children}</Typography>
+            <Box sx={{ p: 3, pt: 1 }}>
+                {children}
             </Box>
         )}
     </div>

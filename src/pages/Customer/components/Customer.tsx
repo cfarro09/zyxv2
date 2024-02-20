@@ -3,7 +3,7 @@ import { customerIns, getCustomerSel } from 'common/helpers';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from 'stores';
-import { getCollection } from 'stores/main/actions';
+import { getCollection, resetMain } from 'stores/main/actions';
 import clsx from 'clsx';
 import TableSimple from 'components/Controls/TableSimple';
 import type { ColumnDef } from '@tanstack/react-table';
@@ -63,6 +63,9 @@ export const Customer: React.FC = () => {
 
     useEffect(() => {
         fetchData();
+        return () => {
+            dispatch(resetMain());
+        }
     }, [dispatch, fetchData]);
 
     useEffect(() => {

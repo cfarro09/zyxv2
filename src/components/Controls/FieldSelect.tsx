@@ -56,6 +56,7 @@ export const FieldSelect = <T,>({ multiline = false, error, label, data = [], op
             filterSelectedOptions
             fullWidth
             {...fregister}
+            autoHighlight
             disabled={disabled}
             value={data?.length > 0 ? value : null}
             onChange={(_, newValue) => {

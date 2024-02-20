@@ -3,7 +3,7 @@ import { getPurchaseOrder, purchaseOrderIns } from 'common/helpers';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from 'stores';
-import { getCollection } from 'stores/main/actions';
+import { getCollection, resetMain } from 'stores/main/actions';
 import TableSimple from 'components/Controls/TableSimple';
 import type { ColumnDef } from '@tanstack/react-table';
 import { IPurchase } from '@types';
@@ -17,7 +17,15 @@ const columns: ColumnDef<IPurchase>[] = [
         accessorKey: 'order_number',
     },
     {
-        header: 'FECHA.',
+        header: 'ALMACEN',
+        accessorKey: 'warehouse',
+    },
+    {
+        header: 'PROVEEDOR',
+        accessorKey: 'supplier',
+    },
+    {
+        header: 'FECHA',
         accessorFn: (row) => dayjs(row.order_date).format('DD/MM/YYYY'),
     },
     {
@@ -26,7 +34,7 @@ const columns: ColumnDef<IPurchase>[] = [
     },
     {
         header: 'PRODUCTOS',
-        accessorKey: 'total_quantity',
+        accessorKey: 'quantity',
     },
 ];
 
@@ -44,6 +52,9 @@ export const Purchase: React.FC = () => {
 
     useEffect(() => {
         fetchData();
+        return () => {
+            dispatch(resetMain());
+        }
     }, [dispatch, fetchData]);
 
     useEffect(() => {

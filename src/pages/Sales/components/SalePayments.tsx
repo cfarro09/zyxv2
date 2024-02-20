@@ -24,14 +24,15 @@ export const SalePayments: React.FC<{
         name: 'payments',
     });
     const appendProduct = () => {
-        const amountPaid = getValues('payments').reduce((acc: number, item: IPayment) => acc + item.amount, 0);
-        const amountToPay = getValues('products').reduce((acc: number, item: IProductZyx) => acc + item.subtotal, 0);
+         const amountPaid = getValues('payments').reduce((acc: number, item: IPayment) => acc + item.payment_amount, 0);
+        const amountToPay = getValues('products').reduce((acc: number, item: IProductZyx) => acc + item.total, 0);
         if (amountPaid < amountToPay) {
             append({
-                paymentid: 0,
-                paymentMethod: '',
-                evidence: '',
-                amount: amountToPay - amountPaid
+                saleorderpaymentid: 0,
+                payment_method: '',
+                evidence_url: '',
+                status: 'ACTIVO',
+                payment_amount: amountToPay - amountPaid
             })
         } else {
             dispatch(showSnackbar({ show: true, severity: "warning", message: "El monto total a pagar ya fue registrado" }))
@@ -40,21 +41,16 @@ export const SalePayments: React.FC<{
 
     const handleChangeValidateAmount = (value: string, position: number) => {
         const amount = parseFloat(value || "0.0");
-        const amountToPay = getValues('products').reduce((acc: number, item: IProductZyx) => acc + item.subtotal, 0);
-        const amountPaid = getValues('payments').reduce((acc: number, item: IPayment, i: number) => acc + (i === position ? 0 : item.amount), 0);
+        const amountToPay = getValues('products').reduce((acc: number, item: IProductZyx) => acc + item.total, 0);
+        const amountPaid = getValues('payments').reduce((acc: number, item: IPayment, i: number) => acc + (i === position ? 0 : item.payment_amount), 0);
         if (amountPaid + amount > amountToPay) {
             dispatch(showSnackbar({ show: true, severity: "warning", message: "El monto ingresado excede el monto total a pagar." }))
         }
-        console.log("amountPaid", amountPaid, "amount", amount, "newAmount", amountPaid + amount <= amountToPay ? amount : amountToPay - amountPaid);
-
         const newAmount = amountPaid + amount <= amountToPay ? amount : amountToPay - amountPaid;
-        setValue(`payments.${position}.amount`, newAmount);
-        trigger(`payments.${position}.amount`);
-        console.log("newAmount", newAmount)
+        setValue(`payments.${position}.payment_amount`, newAmount);
+        trigger(`payments.${position}.payment_amount`);
         return newAmount;
     }
-
-    console.log("getValues(`payments.${i}.amount`)", getValues(`payments.${0}.amount`))
 
     return (
         <>
@@ -92,17 +88,17 @@ export const SalePayments: React.FC<{
                                 <TableCell >
                                     <FieldSelect
                                         label={"Método de pago"}
-                                        valueDefault={getValues(`payments.${i}.paymentMethod`)}
+                                        valueDefault={getValues(`payments.${i}.payment_method`)}
                                         fregister={{
-                                            ...register(`payments.${i}.paymentMethod`, {
+                                            ...register(`payments.${i}.payment_method`, {
                                                 validate: (value) => Boolean(value?.length) || "El campo es requerido"
                                             })
                                         }}
                                         variant='outlined'
                                         onChange={(value) => {
-                                            setValue(`payments.${i}.paymentMethod`, (value?.domainvalue as string) ?? "");
+                                            setValue(`payments.${i}.payment_method`, (value?.domainvalue as string) ?? "");
                                         }}
-                                        error={errors?.payments?.[i]?.paymentMethod?.message}
+                                        error={errors?.payments?.[i]?.payment_method?.message}
                                         data={listPaymentMethod}
                                         optionDesc="domainvalue"
                                         optionValue="domainvalue"
@@ -111,13 +107,13 @@ export const SalePayments: React.FC<{
                                 <TableCell sx={{ width: 200 }}>
                                     <FieldEdit
                                         fregister={{
-                                            ...register(`payments.${i}.amount`, {
+                                            ...register(`payments.${i}.payment_amount`, {
                                                 validate: (value) => (value > 0) || "Debe ser mayor de 0"
                                             })
                                         }}
                                         type="number"
-                                        valueDefault={getValues(`payments.${i}.amount`)}
-                                        error={errors.payments?.[i]?.amount?.message}
+                                        valueDefault={getValues(`payments.${i}.payment_amount`)}
+                                        error={errors.payments?.[i]?.payment_amount?.message}
                                         onChange={(value) => handleChangeValidateAmount(value as string, i)}
                                     />
                                 </TableCell>
@@ -129,7 +125,7 @@ export const SalePayments: React.FC<{
                                         }}
                                     >
                                         <Avatar
-                                            src={getValues(`payments.${i}.evidence`)}
+                                            src={getValues(`payments.${i}.evidence_url`)}
                                         />
                                     </IconButton>
                                 </TableCell>
@@ -139,10 +135,10 @@ export const SalePayments: React.FC<{
                 </Table>
             </TableContainer>
             <DropZoneDialog
-                url={getValues(`payments.${position}.evidence`)}
+                url={getValues(`payments.${position}.evidence_url`)}
                 onFileUpload={(url) => {
-                    setValue(`payments.${position}.evidence`, url);
-                    trigger(`payments.${position}.evidence`);
+                    setValue(`payments.${position}.evidence_url`, url);
+                    trigger(`payments.${position}.evidence_url`);
                 }}
                 title="Subir evidencia"
                 openDialog={openDialogEvidence}

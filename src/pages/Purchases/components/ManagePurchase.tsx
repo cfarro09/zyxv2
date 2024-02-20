@@ -76,7 +76,7 @@ export const ManagePurchase: React.FC<IMainProps> = ({ baseUrl }) => {
             { rb: getValuesFromDomain('PROVEEDOR'), key: 'UFN_DOMAIN_VALUES_SEL-PROVEEDOR', keyData: "listSupplier" },
             { rb: getValuesFromDomain('METODOPAGO'), key: 'UFN_DOMAIN_VALUES_SEL-METODOPAGO', keyData: "listPaymentMethod" },
             { rb: getValuesFromDomain('ALMACEN'), key: 'UFN_DOMAIN_VALUES_SEL-ALMACEN', keyData: "listWarehouse" },
-            { rb: getProductSel(0), key: 'UFN_PRODUCT_SEL', keyData: "listProduct" },
+            { rb: getProductSel(0, true), key: 'UFN_PRODUCT_SEL', keyData: "listProduct" },
         ],
     });
 
@@ -140,7 +140,7 @@ export const ManagePurchase: React.FC<IMainProps> = ({ baseUrl }) => {
                         </Grid>
                     </Grid>
 
-                    <Box className="p-6">
+                    <Box className="p-6  border-b">
                         <Grid container spacing={2}>
                             <Grid item xs={12} sm={4}>
                                 <FieldSelect
@@ -172,19 +172,13 @@ export const ManagePurchase: React.FC<IMainProps> = ({ baseUrl }) => {
                                 <FieldEdit
                                     label={'Fecha'}
                                     type="date"
-                                    valueDefault={getValues('order_date')}
+                                    valueDefault={getValues('order_date')?.split(" ")[0]}
                                     onChange={(value) => setValue('order_date', `${value}`)}
                                     error={errors.order_date?.message}
                                     variant="outlined"
                                 />
                             </Grid>
                         </Grid>
-                    </Box>
-                    <Box className="px-6">
-                        <Typography variant="h6">
-                            Total: {(getValues('products').reduce((acc, item) => acc + item.total, 0)).toFixed(2)}
-
-                        </Typography>
                     </Box>
                     <Box className="px-6" sx={{ width: '100%' }}>
                         <Box sx={{ width: '100%', }}>
@@ -201,8 +195,8 @@ export const ManagePurchase: React.FC<IMainProps> = ({ baseUrl }) => {
                                 />
                             </Tabs>
                         </Box>
-                    </Box >
-                    <Box >
+                    </Box>
+                    <Box>
                         <TabPanel value={tab} index={0}>
                             <PurchaseProducts
                                 control={control}
@@ -219,6 +213,11 @@ export const ManagePurchase: React.FC<IMainProps> = ({ baseUrl }) => {
                                 errors={errors}
                             />
                         </TabPanel>
+                    </Box>
+                    <Box className="p-6 pt-0">
+                        <Typography sx={{ fontWeight: "bold", textAlign: "right" }}>
+                            Total a pagar S/ {(getValues('products').reduce((acc, item) => acc + item.total, 0)).toFixed(2)}
+                        </Typography>
                     </Box>
                 </Paper >
             </FormProvider>

@@ -1,4 +1,4 @@
-import { ICustomer, IDomainValue, IPayment, IProductZyx, IPurchase, IRequestBody, IRequestBodyPaginated, IUser } from '@types';
+import { ICustomer, IDomainValue, IPayment, IProductZyx, IPurchase, IRequestBody, IRequestBodyPaginated, ISale, IUser } from '@types';
 import { IInventoryFilters } from 'pages/Inventory/models';
 import { IProduct } from 'pages/Product/models';
 
@@ -63,13 +63,15 @@ export const customerIns = (customer: ICustomer, operation: string): IRequestBod
         operation
     },
 });
-export const getProductSel = (productid: number): IRequestBody => ({
+export const getProductSel = (productid: number, viewpurchase = false): IRequestBody => ({
     method: 'UFN_PRODUCT_SEL',
     key: 'UFN_PRODUCT_SEL',
     parameters: {
         productid,
+        viewpurchase
     },
 });
+
 export const purchaseOrderIns = (purchase: (IPurchase & { operation: string })): IRequestBody => ({
     method: 'UFN_PURCHASE_ORDER_OPS',
     key: 'UFN_PURCHASE_ORDER_OPS',
@@ -106,20 +108,47 @@ export const getPurchaseOrder = (purchaseorderid: number): IRequestBody => ({
     },
 });
 
-export const getPurchaseOrderLine = (purchaseorderid: number): IRequestBody => ({
-    method: 'UFN_PURCHASE_ORDER_LINE_SEL',
-    key: 'UFN_PURCHASE_ORDER_LINE_SEL',
+
+
+
+export const saleOrderIns = (sale: (ISale & { operation: string })): IRequestBody => ({
+    method: 'UFN_SALE_ORDER_OPS',
+    key: 'UFN_SALE_ORDER_OPS',
     parameters: {
-        purchaseorderid,
+        ...sale,
+        order_number: "",
+        type: 'NINGUNO'
     },
 });
-export const getPurchaseOrderPayment = (purchaseorderid: number): IRequestBody => ({
-    method: 'UFN_PURCHASE_ORDER_PAYMENT_SEL',
-    key: 'UFN_PURCHASE_ORDER_PAYMENT_SEL',
+
+export const saleOrderLineIns = (orderline: (IProductZyx & { operation: string, saleorderlineid: number })): IRequestBody => ({
+    method: 'UFN_SALE_ORDER_LINE_OPS',
+    key: 'UFN_SALE_ORDER_LINE_OPS',
     parameters: {
-        purchaseorderid,
+        ...orderline,
+        type: 'NINGUNO'
     },
 });
+
+export const saleOrderPaymentIns = (orderpayment: (IPayment & { operation: string, saleorderpaymentid: number })): IRequestBody => ({
+    method: 'UFN_SALE_ORDER_PAYMENT_OPS',
+    key: 'UFN_SALE_ORDER_PAYMENT_OPS',
+    parameters: {
+        ...orderpayment,
+        type: 'NINGUNO'
+    },
+});
+
+export const getSaleOrder = (saleorderid: number): IRequestBody => ({
+    method: 'UFN_SALE_ORDER_SEL',
+    key: 'UFN_SALE_ORDER_SEL',
+    parameters: {
+        saleorderid,
+    },
+});
+
+
+
 
 export const getDomainSel = (): IRequestBody => ({
     method: 'UFN_DOMAIN_SEL',
