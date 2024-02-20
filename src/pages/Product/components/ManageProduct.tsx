@@ -16,6 +16,7 @@ import { useSendFormApi } from 'hooks/useSendFormApi';
 
 interface IDataAux {
     listStatus: ObjectZyx[];
+    listUnidad: ObjectZyx[];
     listCategory: ObjectZyx[];
 }
 
@@ -23,7 +24,7 @@ const ManageProduct: React.FC<IMainProps> = ({ baseUrl }) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const multiResult = useSelector((state: IRootState) => state.main.multiData);
-    const [dataAux, setDataAux] = useState<IDataAux>({ listStatus: [], listCategory: [] });
+    const [dataAux, setDataAux] = useState<IDataAux>({ listStatus: [], listCategory: [], listUnidad: [] });
     const { id } = useParams<{ id?: string }>();
     const { onSubmitData } = useSendFormApi({
         operation: "INSERT",
@@ -65,6 +66,7 @@ const ManageProduct: React.FC<IMainProps> = ({ baseUrl }) => {
                 ...(id !== 'new' ? [getProductSel(parseInt(`${id}`))] : []),
                 getValuesFromDomain('ESTADO'),
                 getValuesFromDomain('UNIDAD'),
+                getValuesFromDomain('CATEGORIA'),
             ]),
         );
 
@@ -78,8 +80,9 @@ const ManageProduct: React.FC<IMainProps> = ({ baseUrl }) => {
             }
             registerX()
             const listStatus = multiResult.data.find((f) => f.key === `UFN_DOMAIN_VALUES_SEL-ESTADO`)?.data ?? [];
+            const listUnidad = multiResult.data.find((f) => f.key === `UFN_DOMAIN_VALUES_SEL-UNIDAD`)?.data ?? [];
             const listCategory = multiResult.data.find((f) => f.key === `UFN_DOMAIN_VALUES_SEL-CATEGORIA`)?.data ?? [];
-            setDataAux({ listStatus, listCategory });
+            setDataAux({ listStatus, listCategory, listUnidad });
         }
     }, [multiResult]);
 
@@ -187,12 +190,16 @@ const ManageProduct: React.FC<IMainProps> = ({ baseUrl }) => {
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
-                                    <FieldEdit
+                                    <FieldSelect
                                         label={'Unidad'}
-                                        valueDefault={getValues('unit')}
-                                        onChange={(value) => setValue('unit', `${value}`)}
-                                        error={errors.unit?.message}
                                         variant="outlined"
+                                        valueDefault={getValues('unit')}
+                                        onChange={(value) => setValue('unit', value?.domainvalue as string ?? "")}
+                                        error={errors.unit?.message}
+                                        loading={multiResult.loading}
+                                        data={dataAux.listUnidad}
+                                        optionDesc="domainvalue"
+                                        optionValue="domainvalue"
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
