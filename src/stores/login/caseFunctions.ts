@@ -1,5 +1,5 @@
 import { IAction, IUser } from "@types";
-import reducer, { initialState, IState } from "./reducer";
+import { initialState, IState } from "./reducer";
 import { saveAuthorizationToken, removeAuthorizationToken } from "common/helpers";
 import { keys } from "common/constants";
 
@@ -55,7 +55,7 @@ export const invokeIncremental = (state: IState): IState => ({
     }
 });
 
-export const invokeIncrementalSuccess = (state: IState, action: IAction): IState => {
+export const invokeIncrementalSuccess = (state: IState): IState => {
     return {
         ...state,
         invokeIncremental: {
@@ -139,7 +139,7 @@ export const validateTokenReset = (state: IState): IState => ({
 });
 
 
-export const newNotification = (state: IState, action: IAction): IState => ({
+export const newNotification = (state: IState): IState => ({
     ...state,
     validateToken: {
         ...state.validateToken,
@@ -220,7 +220,7 @@ export const logout = (state: IState): IState => {
     }
 };
 
-export const logoutSuccess = (state: IState, action: IAction): IState => {
+export const logoutSuccess = (state: IState): IState => {
     return {
         ...state,
         logout: {
@@ -255,7 +255,7 @@ export const changePwdFirstLogin = (state: IState, action: IAction): IState => (
         ...state.validateToken,
         user: {
             ...(state.validateToken.user || {} as IUser),
-            pwdchangefirstlogin: action.payload.value,
+            pwdchangefirstlogin: true,
         },
     },
     ignorePwdchangefirstloginValidation: action.payload.ignorePwdchangefirstloginValidation,
