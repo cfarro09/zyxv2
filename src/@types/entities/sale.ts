@@ -3,7 +3,7 @@ import { IProductZyx } from "./productZyx";
 
 export interface ISale {
     saleorderid: number;
-    warehouse: string;
+    clientid: number;
     date: string;
     status: string;
     products: IProductZyx[]

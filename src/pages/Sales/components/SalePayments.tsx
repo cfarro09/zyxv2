@@ -1,18 +1,21 @@
 import { Add, Delete } from "@mui/icons-material";
 import { Avatar, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
-import { ObjectZyx, ISale, IProductZyx } from "@types";
+import { ObjectZyx, ISale, IProductZyx, IPayment } from "@types";
 import DropZoneDialog from "components/Controls/DropZoneDialog";
 import FieldEdit from "components/Controls/FieldEdit";
 import { FieldSelect } from "components/Controls/FieldSelect";
 import React, { useState } from "react";
 import { Control, FieldErrors, useFieldArray, useFormContext } from "react-hook-form";
+import { useDispatch } from 'react-redux';
+import { showSnackbar } from "stores/popus/actions";
 
 export const SalePayments: React.FC<{
     control: Control<ISale, object, ISale>;
     loading: boolean;
     listPaymentMethod: ObjectZyx[];
-    errors: FieldErrors<ISale>
+    errors: FieldErrors<ISale>;
 }> = ({ control, loading, listPaymentMethod, errors }) => {
+    const dispatch = useDispatch();
     const [openDialogEvidence, setOpenDialogEvidence] = useState(false);
     const { setValue, register, getValues, trigger } = useFormContext();
     const [position, setPosition] = useState<number>(0)
@@ -20,6 +23,38 @@ export const SalePayments: React.FC<{
         control,
         name: 'payments',
     });
+    const appendProduct = () => {
+        const amountPaid = getValues('payments').reduce((acc: number, item: IPayment) => acc + item.amount, 0);
+        const amountToPay = getValues('products').reduce((acc: number, item: IProductZyx) => acc + item.subtotal, 0);
+        if (amountPaid < amountToPay) {
+            append({
+                paymentid: 0,
+                paymentMethod: '',
+                evidence: '',
+                amount: amountToPay - amountPaid
+            })
+        } else {
+            dispatch(showSnackbar({ show: true, severity: "warning", message: "El monto total a pagar ya fue registrado" }))
+        }
+    }
+
+    const handleChangeValidateAmount = (value: string, position: number) => {
+        const amount = parseFloat(value || "0.0");
+        const amountToPay = getValues('products').reduce((acc: number, item: IProductZyx) => acc + item.subtotal, 0);
+        const amountPaid = getValues('payments').reduce((acc: number, item: IPayment, i: number) => acc + (i === position ? 0 : item.amount), 0);
+        if (amountPaid + amount > amountToPay) {
+            dispatch(showSnackbar({ show: true, severity: "warning", message: "El monto ingresado excede el monto total a pagar." }))
+        }
+        console.log("amountPaid", amountPaid, "amount", amount, "newAmount", amountPaid + amount <= amountToPay ? amount : amountToPay - amountPaid);
+
+        const newAmount = amountPaid + amount <= amountToPay ? amount : amountToPay - amountPaid;
+        setValue(`payments.${position}.amount`, newAmount);
+        trigger(`payments.${position}.amount`);
+        console.log("newAmount", newAmount)
+        return newAmount;
+    }
+
+    console.log("getValues(`payments.${i}.amount`)", getValues(`payments.${0}.amount`))
 
     return (
         <>
@@ -31,7 +66,7 @@ export const SalePayments: React.FC<{
                                 <IconButton
                                     size="small"
                                     disabled={loading}
-                                    onClick={async () => append({ paymentid: 0, paymentMethod: '', evidence: '', amount: getValues('products').reduce((acc: number, item: IProductZyx) => acc + item.subtotal, 0) })}
+                                    onClick={appendProduct}
                                 >
                                     <Add />
                                 </IconButton>
@@ -60,7 +95,7 @@ export const SalePayments: React.FC<{
                                         valueDefault={getValues(`payments.${i}.paymentMethod`)}
                                         fregister={{
                                             ...register(`payments.${i}.paymentMethod`, {
-                                                validate: (value) => (value > 0) || "El campo es requerido"
+                                                validate: (value) => Boolean(value?.length) || "El campo es requerido"
                                             })
                                         }}
                                         variant='outlined'
@@ -78,14 +113,12 @@ export const SalePayments: React.FC<{
                                         fregister={{
                                             ...register(`payments.${i}.amount`, {
                                                 validate: (value) => (value > 0) || "Debe ser mayor de 0"
-                                            }),
+                                            })
                                         }}
                                         type="number"
                                         valueDefault={getValues(`payments.${i}.amount`)}
-                                        error={errors.payments?.[0]?.amount?.message}
-                                        onChange={(value) => {
-                                            setValue(`payments.${i}.amount`, parseFloat(value || "0.0"));
-                                        }}
+                                        error={errors.payments?.[i]?.amount?.message}
+                                        onChange={(value) => handleChangeValidateAmount(value as string, i)}
                                     />
                                 </TableCell>
                                 <TableCell style={{ width: 200 }}>

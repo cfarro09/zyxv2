@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Box, Breadcrumbs, Button, Grid, Paper, Typography } from '@mui/material';
-import { getRoles, getValuesFromDomain, userIns } from 'common/helpers';
+import { getRoles, getUserSel, getValuesFromDomain, userIns } from 'common/helpers';
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Link, useParams, useNavigate } from 'react-router-dom';
@@ -69,6 +69,12 @@ export const ManageUser: React.FC<IMainProps> = ({ baseUrl }) => {
         reset,
         setDataAux,
         collections: [
+            ...(id !== 'new' ? [{
+                rb: getUserSel(parseInt(`${id}`)),
+                key: 'UFN_USERS_SEL',
+                keyData: "",
+                main: true,
+            }] : []),
             { rb: getValuesFromDomain('TIPODOCUMENTO'), key: 'UFN_DOMAIN_VALUES_SEL-TIPODOCUMENTO', keyData: "listDocumentType" },
             { rb: getValuesFromDomain('ESTADO'), key: 'UFN_DOMAIN_VALUES_SEL-ESTADO', keyData: "listStatus" },
             { rb: getRoles(), key: 'UFN_ROLE_LIST', keyData: "listRoles" },
@@ -97,7 +103,7 @@ export const ManageUser: React.FC<IMainProps> = ({ baseUrl }) => {
                 <div className="my-3">
                     <Breadcrumbs aria-label="breadcrumb">
                         <Link color="textPrimary" to={baseUrl}>
-                            <Typography color="primary" fontWeight={500}>Usuarios</Typography>
+                            <Typography color="secondary" fontWeight={500}>Usuarios</Typography>
                         </Link>
                         <Typography color="textSecondary">Detalle</Typography>
                     </Breadcrumbs>

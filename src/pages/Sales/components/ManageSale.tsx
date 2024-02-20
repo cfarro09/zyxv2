@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Box, Breadcrumbs, Button, Grid, Paper, Typography } from '@mui/material';
-import { a11yProps, customerIns, getProductSel, getValuesFromDomain } from 'common/helpers';
+import { a11yProps, customerIns, getCustomerSel, getProductSel, getValuesFromDomain } from 'common/helpers';
 import React, { useEffect, useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import FieldEdit from 'components/Controls/FieldEdit';
@@ -15,16 +15,14 @@ import { useMultiData } from 'hooks/useMultiData';
 import { SaleProducts } from './SaleProducts';
 import { SalePayments } from './SalePayments';
 import TabPanel from 'components/Layout/TabPanel';
+import dayjs from 'dayjs';
 
 interface IDataAux {
-    listDocumentType: ObjectZyx[];
     listStatus: ObjectZyx[];
-    listWarehouse: ObjectZyx[];
+    listCustomer: ObjectZyx[];
     listProduct: ObjectZyx[];
     listPaymentMethod: ObjectZyx[];
 }
-
-
 
 export const ManageSale: React.FC<IMainProps> = ({ baseUrl }) => {
     const navigate = useNavigate();
@@ -35,7 +33,7 @@ export const ManageSale: React.FC<IMainProps> = ({ baseUrl }) => {
     };
 
     const { id } = useParams<{ id?: string }>();
-    const [dataAux, setDataAux] = useState<IDataAux>({ listDocumentType: [], listStatus: [], listProduct: [], listPaymentMethod: [], listWarehouse: [] });
+    const [dataAux, setDataAux] = useState<IDataAux>({ listStatus: [], listProduct: [], listPaymentMethod: [], listCustomer: [] });
     const { onSubmitData } = useSendFormApi({
         operation: "INSERT",
         onSave: () => navigate(baseUrl),
@@ -43,8 +41,8 @@ export const ManageSale: React.FC<IMainProps> = ({ baseUrl }) => {
     const methods = useForm<ISale>({
         defaultValues: {
             saleorderid: 0,
-            warehouse: '',
-            date: '',
+            clientid: 0,
+            date: dayjs().format('YYYY-MM-DD'),
             status: 'ACTIVO',
             products: [],
             payments: []
@@ -56,7 +54,7 @@ export const ManageSale: React.FC<IMainProps> = ({ baseUrl }) => {
         registerX: () => {
             register('saleorderid');
             register('status');
-            register('warehouse', { validate: (value) => Boolean(value?.length) || 'El campo es requerido' });
+            register('clientid', { validate: (value) => Boolean(value > 0) || 'El campo es requerido' });
             register('date', { validate: (value) => Boolean(value?.length) || 'El campo es requerido' });
         },
         reset,
@@ -72,6 +70,7 @@ export const ManageSale: React.FC<IMainProps> = ({ baseUrl }) => {
             { rb: getValuesFromDomain('ESTADO'), key: 'UFN_DOMAIN_VALUES_SEL-ESTADO', keyData: "listStatus" },
             { rb: getValuesFromDomain('ALMACEN'), key: 'UFN_DOMAIN_VALUES_SEL-ALMACEN', keyData: "listWarehouse" },
             { rb: getValuesFromDomain('METODOPAGO'), key: 'UFN_DOMAIN_VALUES_SEL-METODOPAGO', keyData: "listPaymentMethod" },
+            { rb: getCustomerSel(0), key: 'UFN_CLIENT_SEL', keyData: "listCustomer" },
             { rb: getProductSel(0), key: 'UFN_PRODUCT_SEL', keyData: "listProduct" },
         ],
     });
@@ -86,8 +85,8 @@ export const ManageSale: React.FC<IMainProps> = ({ baseUrl }) => {
         <Box className="flex max-w-screen-xl mr-auto ml-auto flex-col">
             <div className="my-3">
                 <Breadcrumbs aria-label="breadcrumb">
-                    <Link color='secondary' to={baseUrl}>
-                        <Typography color="primary">Ventas</Typography>
+                    <Link to={baseUrl}>
+                        <Typography color="secondary" fontWeight={500}>Ventas</Typography>
                     </Link>
                     <Typography color="textSecondary">Detalle</Typography>
                 </Breadcrumbs>
@@ -98,7 +97,7 @@ export const ManageSale: React.FC<IMainProps> = ({ baseUrl }) => {
                         <Grid item xs={12} sm={6}>
                             <Box>
                                 <Typography variant="h5">
-                                    {id === 'new' ? 'Nueva Orden de Compra' : 'Modificar Orden de Compra'}
+                                    {id === 'new' ? 'Nueva Venta' : 'Modificar Venta'}
                                 </Typography>
                             </Box>
                         </Grid>
@@ -117,15 +116,15 @@ export const ManageSale: React.FC<IMainProps> = ({ baseUrl }) => {
                         <Grid container spacing={2}>
                             <Grid item xs={12} sm={6}>
                                 <FieldSelect
-                                    label={'Almacen'}
+                                    label={'Clientes'}
                                     variant="outlined"
-                                    valueDefault={getValues('warehouse')}
-                                    onChange={(value) => setValue('warehouse', value?.domainvalue as string ?? "")}
-                                    error={errors?.warehouse?.message}
+                                    valueDefault={getValues('clientid')}
+                                    onChange={(value) => setValue('clientid', value?.clientid as number ?? 0)}
+                                    error={errors?.clientid?.message}
                                     loading={loading}
-                                    data={dataAux.listWarehouse}
-                                    optionDesc="domainvalue"
-                                    optionValue="domainvalue"
+                                    data={dataAux.listCustomer}
+                                    optionDesc="name"
+                                    optionValue="clientid"
                                 />
                             </Grid>
                             <Grid item xs={12} sm={4}>

@@ -83,8 +83,8 @@ export const routes: RouteConfig[] = [
     },
     {
         key: 'purchase_orders',
-        description: 'Ordenes de Compra',
-        tooltip: 'Ordenes de Compra',
+        description: 'Compras',
+        tooltip: 'Compras',
         path: paths.PURCHASE_ORDERS,
         mainView: <Purchase />,
         manageView: (baseUrl) => <ManagePurchase baseUrl={baseUrl} />,

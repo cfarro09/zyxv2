@@ -66,7 +66,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
 		<React.Fragment>
 			<Box sx={{ display: 'flex', height: '100vh', width: '99vw' }}>
 				<CssBaseline />
-				<AppBar position="fixed" open={open}>
+				<AppBar position="fixed" color='secondary' open={open}>
 					<Toolbar>
 						<IconButton
 							color="inherit"

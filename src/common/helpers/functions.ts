@@ -895,4 +895,11 @@ export function a11yProps(index: number) {
       id: `full-width-tab-${index}`,
       'aria-controls': `full-width-tabpanel-${index}`,
     };
-  }
+}
+
+export const cleanPath = (pathx: string) => {
+    if (pathx.split("/").length === 3) {
+        return `/${pathx.split("/")[1]}`
+    }
+    return normalizePathname(pathx);
+}

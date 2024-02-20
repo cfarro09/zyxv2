@@ -35,7 +35,7 @@ export const PurchaseProducts: React.FC<{
                                 <IconButton
                                     size="small"
                                     disabled={loading}
-                                    onClick={async () => append({ productid: 0, barcode: '', code: '', description: '', image: '', quantity: 1, purchase_price: 0, subtotal: 0 })}
+                                    onClick={() => append({ productid: 0, barcode: '', code: '', description: '', image: '', quantity: 1, purchase_price: 0, subtotal: 0 })}
                                 >
                                     <Add />
                                 </IconButton>
@@ -76,6 +76,8 @@ export const PurchaseProducts: React.FC<{
                                             }
                                             setValue(`products.${i}.productid`, (value?.productid as number) ?? 0);
                                             setValue(`products.${i}.purchase_price`, (value?.purchase_price as number) ?? 0);
+                                            trigger(`products.${i}.purchase_price`);
+                                            calculateSubtotal(i, getValues(`products.${i}.quantity`), (value?.purchase_price as number) ?? 0);
                                         }}
                                         renderOption={(option) => (
                                             <React.Fragment>
@@ -104,7 +106,7 @@ export const PurchaseProducts: React.FC<{
                                             const price = getValues(`products.${i}.purchase_price`) || 0;
                                             setValue(`products.${i}.quantity`, quantity);
                                             trigger(`products.${i}.quantity`);
-                                            calculateSubtotal(i, price, quantity)
+                                            calculateSubtotal(i, price, quantity);
                                         }}
                                     />
                                 </TableCell>
@@ -121,7 +123,7 @@ export const PurchaseProducts: React.FC<{
                                         onChange={(value) => {
                                             const quantity = getValues(`products.${i}.quantity`) || 0;
                                             const price = parseFloat(value || "0.0");
-                                            setValue(`products.${i}.purchase_price`, quantity);
+                                            setValue(`products.${i}.purchase_price`, price);
                                             trigger(`products.${i}.purchase_price`);
                                             calculateSubtotal(i, price, quantity)
                                         }}

@@ -8,16 +8,16 @@ const theme = createTheme({
     direction: 'ltr',
     palette: {
         primary: {
-            main: '#5376FF',
+            main: '#239bae',
             dark: '#3057D5',
-            light: '#7A9BFF',
+            light: '#6bc6db',
             contrastText: '#E1E1E1',
         },
         secondary: {
-            main: '#03DAC5',
-            dark: '#018786',
-            light: '#70EFDE',
-            contrastText: '#E1E1E1', // O #FFFFFF si prefieres contraste con blanco
+            main: '#bf1760',
+            dark: '#870e44',
+            light: '#e287a8',
+            contrastText: '#ffffff', // O #FFFFFF si prefieres contraste con blanco
         },
         text: {
             primary: '#5b5b5b',
@@ -28,6 +28,7 @@ const theme = createTheme({
     typography: {
         fontFamily: 'dm-sans',
     },
+
 });
 
 function App() {

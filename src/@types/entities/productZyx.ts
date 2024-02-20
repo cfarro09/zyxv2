@@ -5,7 +5,7 @@ export interface IProductZyx {
     image: string;
     barcode: string;
     purchase_price?: number;
-    sale_price?: number;
+    selling_price?: number;
     quantity: number;
     subtotal: number;
 }

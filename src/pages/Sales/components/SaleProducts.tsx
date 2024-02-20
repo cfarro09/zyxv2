@@ -35,7 +35,7 @@ export const SaleProducts: React.FC<{
                                 <IconButton
                                     size="small"
                                     disabled={loading}
-                                    onClick={async () => append({ productid: 0, barcode: '', code: '', description: '', image: '', quantity: 1, purchase_price: 0, subtotal: 0 })}
+                                    onClick={() => append({ productid: 0, barcode: '', code: '', description: '', image: '', quantity: 1, selling_price: 0, subtotal: 0 })}
                                 >
                                     <Add />
                                 </IconButton>
@@ -75,12 +75,14 @@ export const SaleProducts: React.FC<{
                                                 setValue(`products.${i}.quantity`, 1);
                                             }
                                             setValue(`products.${i}.productid`, (value?.productid as number) ?? 0);
-                                            setValue(`products.${i}.purchase_price`, (value?.purchase_price as number) ?? 0);
+                                            setValue(`products.${i}.selling_price`, (value?.selling_price as number) ?? 0);
+                                            trigger(`products.${i}.selling_price`);
+                                            calculateSubtotal(i, getValues(`products.${i}.quantity`), (value?.selling_price as number) ?? 0);
                                         }}
                                         renderOption={(option) => (
                                             <React.Fragment>
                                                 <Avatar alt={`${option.description}`} src={`${option.image}`} sx={{ marginRight: 2 }} />
-                                                {option["title"]} - {option["barcode"]}
+                                                {option["description"]}
                                             </React.Fragment>
                                         )}
                                         error={errors?.products?.[i]?.productid?.message}
@@ -101,28 +103,29 @@ export const SaleProducts: React.FC<{
                                         error={errors.products?.[0]?.quantity?.message}
                                         onChange={(value) => {
                                             const quantity = parseInt(value || "0");
-                                            const price = getValues(`products.${i}.purchase_price`) || 0;
+                                            const price = getValues(`products.${i}.selling_price`) || 0;
                                             setValue(`products.${i}.quantity`, quantity);
                                             trigger(`products.${i}.quantity`);
-                                            calculateSubtotal(i, price, quantity)
+                                            calculateSubtotal(i, price, quantity);
                                         }}
                                     />
                                 </TableCell>
                                 <TableCell style={{ width: 200 }}>
                                     <FieldEdit
+                                        disabled
                                         fregister={{
-                                            ...register(`products.${i}.purchase_price`, {
+                                            ...register(`products.${i}.selling_price`, {
                                                 validate: (value) => (value > 0) || "Debe ser mayor de 0"
                                             }),
                                         }}
                                         type="number"
-                                        valueDefault={getValues(`products.${i}.purchase_price`)}
-                                        error={errors?.products?.[i]?.purchase_price?.message}
+                                        valueDefault={getValues(`products.${i}.selling_price`)}
+                                        error={errors?.products?.[i]?.selling_price?.message}
                                         onChange={(value) => {
                                             const quantity = getValues(`products.${i}.quantity`) || 0;
                                             const price = parseFloat(value || "0.0");
-                                            setValue(`products.${i}.purchase_price`, quantity);
-                                            trigger(`products.${i}.purchase_price`);
+                                            setValue(`products.${i}.selling_price`, price);
+                                            trigger(`products.${i}.selling_price`);
                                             calculateSubtotal(i, price, quantity)
                                         }}
                                     />

@@ -107,7 +107,7 @@ const ManageProduct: React.FC<IMainProps> = ({ baseUrl }) => {
             <div className="my-3">
                 <Breadcrumbs aria-label="breadcrumb">
                     <Link color="textPrimary" to={baseUrl}>
-                        <Typography color="primary" fontWeight={500}>Productos</Typography>
+                        <Typography color="secondary" fontWeight={500}>Productos</Typography>
                     </Link>
                     <Typography color="textSecondary">Detalle</Typography>
                 </Breadcrumbs>

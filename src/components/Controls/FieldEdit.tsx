@@ -8,13 +8,12 @@ type InputProps = {
     maxLength?: number;
     fregister?: object;
     error?: string;
-    onChange?: (_?: string | null) => void;
+    onChange?: (_?: string | null) => number | string | void | null;
     onBlur?: (_?: string | null) => void;
 } & Omit<TextFieldProps, 'error' | "onChange">;
 
 const FieldEdit: FC<InputProps> = ({ label, valueDefault = "", onChange, onBlur, error, fregister = {}, variant = "standard", maxLength = 0, ...rest }) => {
     const [value, setvalue] = useState("");
-
     useEffect(() => {
         setvalue(`${valueDefault}`);
     }, [valueDefault])
@@ -32,8 +31,8 @@ const FieldEdit: FC<InputProps> = ({ label, valueDefault = "", onChange, onBlur,
             error={Boolean(error)}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 if (maxLength === 0 || e.target.value.length <= maxLength) {
-                    setvalue(e.target.value);
-                    onChange && onChange(e.target.value);
+                    const vv = onChange ? onChange(e.target.value) : null;
+                    setvalue(vv ? `${vv}` : e.target.value);
                 }
             }}
             onBlur={(e: React.FocusEvent<HTMLInputElement>) => {

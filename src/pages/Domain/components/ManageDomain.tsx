@@ -72,7 +72,7 @@ export const ManageDomain: React.FC<IMainProps> = ({ baseUrl }) => {
                 <div className="my-3">
                     <Breadcrumbs aria-label="breadcrumb">
                         <Link color="textPrimary" to={baseUrl}>
-                            <Typography color="primary" fontWeight={500}>Dominios</Typography>
+                            <Typography color="secondary" fontWeight={500}>Dominios</Typography>
                         </Link>
                         <Typography color="textSecondary">Detalle</Typography>
                     </Breadcrumbs>

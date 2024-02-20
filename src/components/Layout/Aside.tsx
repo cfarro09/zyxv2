@@ -14,6 +14,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { routes } from 'routes/routes';
 import { RouteConfig } from '@types';
 import { useSelector } from 'hooks';
+import { cleanPath } from 'common/helpers';
 
 const drawerWidth = 240;
 
@@ -67,7 +68,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 const ElementMenu: React.FC<{ route: RouteConfig; open: boolean }> = ({ route, open }) => {
     const navigate = useNavigate();
     const location = useLocation(); // Obtener la ubicación actual
-    const isActive = location.pathname === route.path;
+    const isActive = cleanPath(location.pathname) === route.path;
 
     return (
         <ListItem
@@ -82,7 +83,7 @@ const ElementMenu: React.FC<{ route: RouteConfig; open: boolean }> = ({ route, o
                     minHeight: 48,
                     justifyContent: open ? 'initial' : 'center',
                     px: 2.5,
-                    color: isActive ? 'primary.main' : undefined, // Cambiar el color del texto si está activo
+                    color: isActive ? 'secondary.main' : undefined, // Cambiar el color del texto si está activo
                 }}
             >
                 <ListItemIcon

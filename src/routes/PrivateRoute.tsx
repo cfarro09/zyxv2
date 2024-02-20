@@ -1,5 +1,5 @@
 import { Backdrop, CircularProgress } from '@mui/material';
-import { getAccessToken, normalizePathname } from 'common/helpers';
+import { cleanPath, getAccessToken } from 'common/helpers';
 import { useSelector } from 'hooks';
 import React, { ReactNode } from 'react';
 import { useDispatch } from 'react-redux';
@@ -8,12 +8,6 @@ import { validateToken } from 'stores/login/actions';
 interface PrivateRouteProps {
     children: ReactNode;
     redirectTo: string;
-}
-const cleanPath = (pathx: string) => {
-    if (pathx.split("/").length === 3) {
-        return `/${pathx.split("/")[1]}`
-    }
-    return normalizePathname(pathx);
 }
 
 const PrivateRoute: React.FC<PrivateRouteProps> = ({

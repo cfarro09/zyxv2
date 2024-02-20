@@ -73,7 +73,7 @@ export const ManageCustomer: React.FC<IMainProps> = ({ baseUrl }) => {
             <div className="my-3">
                 <Breadcrumbs aria-label="breadcrumb">
                     <Link color="blue" to={baseUrl}>
-                        <Typography color="primary" fontWeight={500}>Cliente</Typography>
+                        <Typography color="secondary" fontWeight={500}>Cliente</Typography>
                     </Link>
                     <Typography color="textSecondary">Detalle</Typography>
                 </Breadcrumbs>

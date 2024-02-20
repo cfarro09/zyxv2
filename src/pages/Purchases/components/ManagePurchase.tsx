@@ -15,11 +15,11 @@ import { useMultiData } from 'hooks/useMultiData';
 import { PurchaseProducts } from './PurchaseProducts';
 import { PurchasePayments } from './PurchasePayments';
 import TabPanel from 'components/Layout/TabPanel';
+import dayjs from 'dayjs';
 
 interface IDataAux {
-    listDocumentType: ObjectZyx[];
     listStatus: ObjectZyx[];
-    listWarehouse: ObjectZyx[];
+    listSupplier: ObjectZyx[];
     listProduct: ObjectZyx[];
     listPaymentMethod: ObjectZyx[];
 }
@@ -31,7 +31,7 @@ export const ManagePurchase: React.FC<IMainProps> = ({ baseUrl }) => {
     const handleChangeTab = (_: React.SyntheticEvent, newValue: number) => settab(newValue);
 
     const { id } = useParams<{ id?: string }>();
-    const [dataAux, setDataAux] = useState<IDataAux>({ listDocumentType: [], listStatus: [], listProduct: [], listPaymentMethod: [], listWarehouse: [] });
+    const [dataAux, setDataAux] = useState<IDataAux>({ listStatus: [], listProduct: [], listPaymentMethod: [], listSupplier: [] });
     const { onSubmitData } = useSendFormApi({
         operation: "INSERT",
         onSave: () => navigate(baseUrl),
@@ -39,8 +39,8 @@ export const ManagePurchase: React.FC<IMainProps> = ({ baseUrl }) => {
     const methods = useForm<IPurchase>({
         defaultValues: {
             purchaseorderid: 0,
-            warehouse: '',
-            date: '',
+            supplier: '',
+            date: dayjs().format('YYYY-MM-DD'),
             status: 'ACTIVO',
             products: [],
             payments: []
@@ -52,7 +52,7 @@ export const ManagePurchase: React.FC<IMainProps> = ({ baseUrl }) => {
         registerX: () => {
             register('purchaseorderid');
             register('status');
-            register('warehouse', { validate: (value) => Boolean(value?.length) || 'El campo es requerido' });
+            register('supplier', { validate: (value) => Boolean(value?.length) || 'El campo es requerido' });
             register('date', { validate: (value) => Boolean(value?.length) || 'El campo es requerido' });
         },
         reset,
@@ -64,9 +64,8 @@ export const ManagePurchase: React.FC<IMainProps> = ({ baseUrl }) => {
             //     keyData: "",
             //     main: true,
             // }] : []),
-            { rb: getValuesFromDomain('TIPODOCUMENTO'), key: 'UFN_DOMAIN_VALUES_SEL-TIPODOCUMENTO', keyData: "listDocumentType" },
             { rb: getValuesFromDomain('ESTADO'), key: 'UFN_DOMAIN_VALUES_SEL-ESTADO', keyData: "listStatus" },
-            { rb: getValuesFromDomain('ALMACEN'), key: 'UFN_DOMAIN_VALUES_SEL-ALMACEN', keyData: "listWarehouse" },
+            { rb: getValuesFromDomain('PROVEEDOR'), key: 'UFN_DOMAIN_VALUES_SEL-PROVEEDOR', keyData: "listSupplier" },
             { rb: getValuesFromDomain('METODOPAGO'), key: 'UFN_DOMAIN_VALUES_SEL-METODOPAGO', keyData: "listPaymentMethod" },
             { rb: getProductSel(0), key: 'UFN_PRODUCT_SEL', keyData: "listProduct" },
         ],
@@ -82,8 +81,8 @@ export const ManagePurchase: React.FC<IMainProps> = ({ baseUrl }) => {
         <Box className="flex max-w-screen-xl mr-auto ml-auto flex-col">
             <div className="my-3">
                 <Breadcrumbs aria-label="breadcrumb">
-                    <Link color='secondary' to={baseUrl}>
-                        <Typography color="primary">Ordenes de compra</Typography>
+                    <Link color='textPrimary' to={baseUrl}>
+                        <Typography color="secondary" fontWeight={500}>Ordenes de compra</Typography>
                     </Link>
                     <Typography color="textSecondary">Detalle</Typography>
                 </Breadcrumbs>
@@ -113,13 +112,13 @@ export const ManagePurchase: React.FC<IMainProps> = ({ baseUrl }) => {
                         <Grid container spacing={2}>
                             <Grid item xs={12} sm={6}>
                                 <FieldSelect
-                                    label={'Almacen'}
+                                    label={'Proveedor'}
                                     variant="outlined"
-                                    valueDefault={getValues('warehouse')}
-                                    onChange={(value) => setValue('warehouse', value?.domainvalue as string ?? "")}
-                                    error={errors?.warehouse?.message}
+                                    valueDefault={getValues('supplier')}
+                                    onChange={(value) => setValue('supplier', value?.domainvalue as string ?? "")}
+                                    error={errors?.supplier?.message}
                                     loading={loading}
-                                    data={dataAux.listWarehouse}
+                                    data={dataAux.listSupplier}
                                     optionDesc="domainvalue"
                                     optionValue="domainvalue"
                                 />
@@ -147,8 +146,6 @@ export const ManagePurchase: React.FC<IMainProps> = ({ baseUrl }) => {
                             <Tabs
                                 value={tab}
                                 onChange={handleChangeTab}
-                                indicatorColor='primary'
-                                textColor='primary'
                                 variant="fullWidth"
                                 aria-label="full width tabs example"
                             >

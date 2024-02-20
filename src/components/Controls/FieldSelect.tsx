@@ -75,7 +75,6 @@ export const FieldSelect = <T,>({ multiline = false, error, label, data = [], op
             renderInput={(params) => (
                 <TextField
                     {...params}
-                    color="secondary"
                     label={variant !== "standard" && label}
                     variant={variant}
                     multiline={multiline}
