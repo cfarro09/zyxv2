@@ -42,11 +42,7 @@ export const Inventory: React.FC<unknown> = () => {
   const [mainData, setMainData] = useState<IInventory[]>([]);
   const [dataAux, setDataAux] = useState<IDataAux>({ listWarehouse: [] });
   const [filters, setFilters] = useState<IInventoryFilters>({ warehouse: '' })
-  const [openImportDialog, setOpenImportDialog] = React.useState(true);
-
-  const handleClickOpen = () => {
-    setOpenImportDialog(true);
-  };
+  const [openImportDialog, setOpenImportDialog] = React.useState(false);
 
   const handleDialogClose = () => {
     setOpenImportDialog(false);
@@ -119,7 +115,7 @@ export const Inventory: React.FC<unknown> = () => {
           />
         </Box>
       </Paper>
-      <InventoryDialogUpload open={openImportDialog} handleClose={handleDialogClose} />
+      <InventoryDialogUpload open={openImportDialog} handleClose={handleDialogClose} fetchData={fetchData} />
     </Box>
   );
 };

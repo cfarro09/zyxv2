@@ -38,12 +38,12 @@ export const useSendFormApi = ({ onSave, operation }: SendFormApiProps) => {
                 onSave();
                 setWaitSave(false); // Asegurar reinicio del estado
             } else if (executeResult.error) {
-                dispatch(showSnackbar({ show: true, severity: "error", message: `${executeResult.code}` }));
+                dispatch(showSnackbar({ show: true, severity: "error", message: executeResult.usererror ? executeResult.usererror : `${executeResult.code}` }));
                 dispatch(showBackdrop(false));
                 setWaitSave(false);
             }
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [executeResult, waitSave, dispatch, onSave]);
 
     return {

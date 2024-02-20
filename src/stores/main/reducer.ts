@@ -36,7 +36,7 @@ export interface IState {
     multiData: IListStatePaginated<MultiData>;
     multiDataAux: IListStatePaginated<itemMulti>;
     multiDataAux2: IListStatePaginated<itemMulti>;
-    execute: IListStatePaginated<object> & { success: boolean | undefined | null };
+    execute: IListStatePaginated<object> & { success: boolean | undefined | null, usererror?: string  };
     mainAux: IListStatePaginated<object> & { key?: string };
     mainAux2: IListStatePaginated<object> & { key?: string };
     mainPaginated: IListStatePaginated<object>;

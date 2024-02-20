@@ -57,6 +57,7 @@ const ManageProduct: React.FC<IMainProps> = ({ baseUrl }) => {
     const registerX = () => {
         register('productid');
         register('title', { validate: (value) => Boolean(value?.length) || 'El campo es requerido' });
+        register('code', { validate: (value) => Boolean(value?.length) || 'El campo es requerido' });
     };
 
     useEffect(() => {

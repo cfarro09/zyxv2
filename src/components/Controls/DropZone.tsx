@@ -1,6 +1,6 @@
 import { Box, Button, Grid, Typography } from '@mui/material';
 import { IClasses, IStylesProps } from '@types';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import type { FileRejection, Accept } from 'react-dropzone';
 import { useDispatch, useSelector } from 'react-redux';
@@ -58,6 +58,35 @@ const styles: IStylesProps = {
     imageStyles: { width: '100%', height: '100%', objectFit: 'contain' },
     fileNameInfoStyles: { padding: '0 1rem', color: '#6f6b7d', textOverflow: 'ellipsis', overflow: 'hidden', width: '100%' }
 }
+
+const focusedStyle = {
+    borderColor: '#2196f3'
+};
+
+const acceptStyle = {
+    borderColor: '#00e676'
+};
+
+const rejectStyle = {
+    borderColor: '#ff1744'
+};
+
+
+const baseStyle = {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    padding: '20px',
+    borderWidth: 2,
+    borderRadius: 2,
+    borderColor: '#eeeeee',
+    borderStyle: 'dashed',
+    backgroundColor: '#fafafa',
+    color: '#bdbdbd',
+    outline: 'none',
+    transition: 'border .24s ease-in-out'
+};
 
 interface DropZoneProps {
     url: string;
@@ -122,21 +151,39 @@ const DropZone: React.FC<DropZoneProps> = ({ url, dispatchUpload = true, onFileU
         }
     }, [uploadResult, waitUpload, dispatch]);
 
-    const { getRootProps, getInputProps } = useDropzone({
+    const {
+        getRootProps,
+        getInputProps,
+        isFocused,
+        isDragAccept,
+        isDragReject
+    } = useDropzone({
         onDrop,
         accept
     });
+
+    const style = useMemo(() => ({
+        ...baseStyle,
+        ...(isFocused ? focusedStyle : {}),
+        ...(isDragAccept ? acceptStyle : {}),
+        ...(isDragReject ? rejectStyle : {})
+    }), [
+        isFocused,
+        isDragAccept,
+        isDragReject
+    ]);
 
     const removeFile = (index: number) => {
         const newFiles = [...files];
         newFiles.splice(index, 1);
         setFiles(newFiles);
+        onFileUpload && onFileUpload('');
     };
 
     return (
-        <Grid container sx={classes.dropzoneStyles} padding={2}>
+        <Grid container>
             {!files.length && (
-                <Grid container item {...getRootProps()} alignContent={'center'}>
+                <Grid container item {...getRootProps({ style: style as React.CSSProperties })} alignContent={'center'}>
                     <input {...getInputProps()} />
                     <p style={{ textAlign: 'center' }}>Arrastra y suelta algunos archivos aquí, o haz clic para seleccionar archivos</p>
                 </Grid>
