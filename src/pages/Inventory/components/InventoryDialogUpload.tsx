@@ -28,10 +28,6 @@ const classes: IClasses = {
 
 const InventoryDialogUpload: React.FC<InventoryDialogUploadProps> = ({ open, handleClose }) => {
 
-    const handleUpload = () => {
-        console.log('handleUpload');
-    }
-
     const handelFileLoad = (file: File) => {
         if (file.name.endsWith('.xls') || file.name.endsWith('.xlsx')) {
             const reader = new FileReader();
@@ -72,7 +68,7 @@ const InventoryDialogUpload: React.FC<InventoryDialogUploadProps> = ({ open, han
                             url={''}
                             dispatchUpload={false}
                             handleLoadFile={handelFileLoad}
-                            accept={{ 'application/vnd.ms-excel': ['.csv', '.xlsx'] }}
+                            accept={{ 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['*'] }}
                         />
                     </Grid>
                 </DialogContentText>

@@ -20,10 +20,11 @@ const theme = createTheme({
             contrastText: '#E1E1E1', // O #FFFFFF si prefieres contraste con blanco
         },
         text: {
-            primary: '#2E2C34',
+            primary: '#5b5b5b',
             secondary: '#B6B4BA',
         },
     },
+
     typography: {
         fontFamily: 'dm-sans',
     },

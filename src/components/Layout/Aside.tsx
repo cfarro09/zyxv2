@@ -10,7 +10,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { routes } from 'routes/routes';
 import { RouteConfig } from '@types';
 import { useSelector } from 'hooks';
@@ -66,12 +66,14 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 
 const ElementMenu: React.FC<{ route: RouteConfig; open: boolean }> = ({ route, open }) => {
     const navigate = useNavigate();
+    const location = useLocation(); // Obtener la ubicación actual
+    const isActive = location.pathname === route.path;
 
     return (
         <ListItem
             key={`${route.path}`}
             disablePadding
-            sx={{ display: 'block' }}
+            sx={{ display: 'block', backgroundColor: isActive ? 'rgba(0, 0, 0, 0.04)' : 'inherit' }} // Aplicar color de fondo si está activo
             onClick={() => navigate(route.path)}
             component="a"
         >
@@ -80,6 +82,7 @@ const ElementMenu: React.FC<{ route: RouteConfig; open: boolean }> = ({ route, o
                     minHeight: 48,
                     justifyContent: open ? 'initial' : 'center',
                     px: 2.5,
+                    color: isActive ? 'primary.main' : undefined, // Cambiar el color del texto si está activo
                 }}
             >
                 <ListItemIcon
@@ -87,6 +90,7 @@ const ElementMenu: React.FC<{ route: RouteConfig; open: boolean }> = ({ route, o
                         minWidth: 0,
                         mr: open ? 3 : 'auto',
                         justifyContent: 'center',
+                        color: 'inherit'
                     }}
                 >
                     {route.icon()}
@@ -101,11 +105,6 @@ const Aside: React.FC<{ open: boolean; handleDrawerClose: () => void }> = ({ ope
     const theme = useTheme();
     const applications = useSelector(state => state.login?.validateToken?.user?.menu);
 
-    // [item.app_view ? 1 : 0,
-    //     item.app_update ? 1 : 0,
-    //     item.app_create ? 1 : 0,
-    //     item.app_delete ? 1 : 0,
-    //     item.app_download ? 1 : 0
     return (
         <Drawer variant="permanent" open={open}>
             <DrawerHeader>

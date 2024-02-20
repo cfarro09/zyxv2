@@ -81,7 +81,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
 							<MenuIcon />
 						</IconButton>
 						<Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-							Mini variant drawer
+							Queen Store
 						</Typography>
 						<IconButton
 							color="inherit"

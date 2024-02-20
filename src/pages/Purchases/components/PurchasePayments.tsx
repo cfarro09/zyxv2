@@ -1,9 +1,10 @@
 import { Add, Delete } from "@mui/icons-material";
 import { Avatar, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { ObjectZyx, IPayment, IPurchase, IProductZyx } from "@types";
+import DropZoneDialog from "components/Controls/DropZoneDialog";
 import FieldEdit from "components/Controls/FieldEdit";
 import { FieldSelect } from "components/Controls/FieldSelect";
-import React from "react";
+import React, { useState } from "react";
 import { Control, FieldErrors, useFieldArray, useFormContext } from "react-hook-form";
 
 export const PurchasePayments: React.FC<{
@@ -12,15 +13,16 @@ export const PurchasePayments: React.FC<{
     listPaymentMethod: ObjectZyx[];
     errors: FieldErrors<IPurchase>
 }> = ({ control, loading, listPaymentMethod, errors }) => {
-
-    const { setValue, register, getValues, trigger } = useFormContext()
+    const [openDialogEvidence, setOpenDialogEvidence] = useState(false);
+    const { setValue, register, getValues, trigger } = useFormContext();
+    const [position, setPosition] = useState<number>(0)
     const { fields, append, remove } = useFieldArray({
         control,
         name: 'payments',
     });
 
     return (
-        <div>
+        <>
             <TableContainer>
                 <Table size="small">
                     <TableHead>
@@ -87,13 +89,32 @@ export const PurchasePayments: React.FC<{
                                     />
                                 </TableCell>
                                 <TableCell style={{ width: 200 }}>
-                                    Evidencia
+                                    <IconButton
+                                        onClick={() => {
+                                            setPosition(i);
+                                            setOpenDialogEvidence(true);
+                                        }}
+                                    >
+                                        <Avatar
+                                            src={getValues(`payments.${i}.evidence`)}
+                                        />
+                                    </IconButton>
                                 </TableCell>
                             </TableRow>
                         )}
                     </TableBody>
                 </Table>
             </TableContainer>
-        </div>
+            <DropZoneDialog
+                url={getValues(`payments.${position}.evidence`)}
+                onFileUpload={(url) => {
+                    setValue(`payments.${position}.evidence`, url);
+                    trigger(`payments.${position}.evidence`);
+                }}
+                title="Subir evidencia"
+                openDialog={openDialogEvidence}
+                setOpenDialog={setOpenDialogEvidence}
+            />
+        </>
     )
 }

@@ -1,12 +1,10 @@
 import { Backdrop, CircularProgress } from '@mui/material';
-import { getAccessToken } from 'common/helpers';
+import { getAccessToken, normalizePathname } from 'common/helpers';
 import { useSelector } from 'hooks';
 import React, { ReactNode } from 'react';
 import { useDispatch } from 'react-redux';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { validateToken } from 'stores/login/actions';
-import { normalizePathname } from 'common/helpers';
-
 interface PrivateRouteProps {
     children: ReactNode;
     redirectTo: string;
@@ -22,7 +20,7 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({
     children,
     redirectTo,
 }: PrivateRouteProps) => {
-
+    const location = useLocation();
     const resValidateToken = useSelector(state => state.login.validateToken);
     const applications = resValidateToken?.user?.menu;
 

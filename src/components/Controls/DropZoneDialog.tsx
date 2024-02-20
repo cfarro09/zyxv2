@@ -1,4 +1,5 @@
 import { Box, Button, Grid, Typography } from '@mui/material';
+import type { ModalProps } from '@mui/material';
 import { IClasses, IStylesProps } from '@types';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
@@ -7,6 +8,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from 'stores';
 import { uploadFile } from 'stores/main/actions';
 import { showBackdrop, showSnackbar } from 'stores/popus/actions';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
 
 interface IFile {
     name?: string;
@@ -60,14 +65,17 @@ const styles: IStylesProps = {
 }
 
 interface DropZoneProps {
-    url: string;
+    url?: string;
     onFileUpload?: (_fileUrl: string) => void;
     accept?: Accept;
     dispatchUpload?: boolean;
+    openDialog: boolean;
+    setOpenDialog: (_: boolean) => void;
     handleLoadFile?: (_file: File) => void;
+    title: string;
 }
 
-const DropZone: React.FC<DropZoneProps> = ({ url, dispatchUpload = true, onFileUpload, handleLoadFile, accept = { 'image/*': ['.png'] } }) => {
+const DropZoneDialog: React.FC<DropZoneProps> = ({ url, dispatchUpload = true, onFileUpload, handleLoadFile, accept = { 'image/*': ['.png'] }, openDialog, setOpenDialog, title }) => {
     const dispatch = useDispatch();
     const [waitUpload, setWaitUpload] = useState(false)
     const uploadResult = useSelector((state: IRootState) => state.main.uploadFile);
@@ -133,45 +141,69 @@ const DropZone: React.FC<DropZoneProps> = ({ url, dispatchUpload = true, onFileU
         setFiles(newFiles);
     };
 
+    const handleCancelModal: ModalProps['onClose'] = (_, reason) => {
+        if (reason !== 'backdropClick') {
+            setOpenDialog(false);
+        }
+    }
+
     return (
-        <Grid container sx={classes.dropzoneStyles} padding={2}>
-            {!files.length && (
-                <Grid container item {...getRootProps()} alignContent={'center'}>
-                    <input {...getInputProps()} />
-                    <p style={{ textAlign: 'center' }}>Arrastra y suelta algunos archivos aquí, o haz clic para seleccionar archivos</p>
-                </Grid>
-            )}
-            {files.length > 0 && (
-                <Grid item container flexDirection={'column'} sx={classes.imaginePreviewStyles}>
-                    {files.map((file, index) => (
-                        <Grid item container key={file.name} flexGrow={1} flexDirection={'column'}>
-                            <Grid item container flexGrow={1} flexDirection={'column'}>
-                                <Grid item flexGrow={1} sx={classes.imageContainerStyles}>
-                                    <img
-                                        src={file.preview}
-                                        alt={`Preview ${file.name}`}
-                                        style={styles.imageStyles}
-                                    />
-                                </Grid>
-                                <Box style={styles.fileNameInfoStyles}>
-                                    <Typography noWrap style={{ fontSize: '13px', whiteSpace: 'normal' }}>{file.name}</Typography>
-                                </Box>
-                            </Grid>
-                            <Grid item>
-                                <Button
-                                    onClick={() => removeFile(index)}
-                                    fullWidth
-                                    sx={classes.imageRemoveButtonStyles}
-                                >
-                                    <Typography>{'Remover archivo'}</Typography>
-                                </Button>
-                            </Grid>
+        <Dialog
+            open={openDialog}
+            maxWidth="sm"
+            fullWidth
+            onClose={handleCancelModal}
+            disableEscapeKeyDown
+            disableAutoFocus
+        >
+            <DialogTitle>{title}</DialogTitle>
+            <DialogContent>
+                <Grid container sx={classes.dropzoneStyles} padding={2} justifyContent={"center"}>
+                    {!files.length && (
+                        <Grid container item {...getRootProps()} alignContent={'center'}>
+                            <input {...getInputProps()} />
+                            <p style={{ textAlign: 'center' }}>Arrastra y suelta algunos archivos aquí, o haz clic para seleccionar archivos</p>
                         </Grid>
-                    ))}
+                    )}
+                    {files.length > 0 && (
+                        <Grid item container flexDirection={'column'} sx={classes.imaginePreviewStyles}>
+                            {files.map((file, index) => (
+                                <Grid item container key={file.name} flexGrow={1} flexDirection={'column'}>
+                                    <Grid item container flexGrow={1} flexDirection={'column'}>
+                                        <Grid item flexGrow={1} sx={classes.imageContainerStyles}>
+                                            <img
+                                                src={file.preview}
+                                                alt={`Preview ${file.name}`}
+                                                style={styles.imageStyles}
+                                            />
+                                        </Grid>
+                                        <Box style={styles.fileNameInfoStyles}>
+                                            <Typography noWrap style={{ fontSize: '13px', whiteSpace: 'normal' }}>{file.name}</Typography>
+                                        </Box>
+                                    </Grid>
+                                    <Grid item>
+                                        <Button
+                                            onClick={() => removeFile(index)}
+                                            fullWidth
+                                            sx={classes.imageRemoveButtonStyles}
+                                        >
+                                            <Typography color={"primary"}>{'Remover archivo'}</Typography>
+                                        </Button>
+                                    </Grid>
+                                </Grid>
+                            ))}
+                        </Grid>
+                    )}
                 </Grid>
-            )}
-        </Grid>
+            </DialogContent>
+            <DialogActions>
+                <Button
+                    onClick={() => setOpenDialog(false)}
+                    disabled={uploadResult.loading}
+                >Cancelar</Button>
+            </DialogActions>
+        </Dialog>
     );
 };
 
-export default DropZone;
+export default DropZoneDialog;

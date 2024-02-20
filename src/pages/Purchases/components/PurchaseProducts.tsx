@@ -74,6 +74,7 @@ export const PurchaseProducts: React.FC<{
                                         onChange={(value) => {
                                             if (value) {
                                                 setValue(`products.${i}`, value);
+                                                setValue(`products.${i}.quantity`, 1);
                                             }
                                             setValue(`products.${i}.productid`, (value?.productid as number) ?? 0);
                                             setValue(`products.${i}.purchase_price`, (value?.purchase_price as number) ?? 0);
