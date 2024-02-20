@@ -172,7 +172,7 @@ const ManageProduct: React.FC<IMainProps> = ({ baseUrl }) => {
                                     <FieldEdit
                                         label={'Precio compra'}
                                         valueDefault={getValues('purchase_price')}
-                                        onChange={() => setValue('purchase_price', 0)}
+                                        onChange={(value) => setValue('purchase_price', parseFloat(value || "0.0"))}
                                         error={errors.purchase_price?.message}
                                         variant="outlined"
                                     />
@@ -181,7 +181,7 @@ const ManageProduct: React.FC<IMainProps> = ({ baseUrl }) => {
                                     <FieldEdit
                                         label={'Precio venta'}
                                         valueDefault={getValues('selling_price')}
-                                        onChange={() => setValue('selling_price', 0)}
+                                        onChange={(value) => setValue('selling_price', parseFloat(value || "0.0"))}
                                         error={errors.selling_price?.message}
                                         variant="outlined"
                                     />

@@ -1,16 +1,16 @@
 import { Add, Delete } from "@mui/icons-material";
 import { Avatar, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
-import { IPurchase, ObjectZyx } from "@types";
+import { ISale, ObjectZyx } from "@types";
 import FieldEdit from "components/Controls/FieldEdit";
 import { FieldSelect } from "components/Controls/FieldSelect";
 import React from "react";
 import { Control, FieldErrors, useFieldArray, useFormContext } from "react-hook-form";
 
 export const SaleProducts: React.FC<{
-    control: Control<IPurchase, object, IPurchase>;
+    control: Control<ISale, object, ISale>;
     loading: boolean;
     listProduct: ObjectZyx[];
-    errors: FieldErrors<IPurchase>
+    errors: FieldErrors<ISale>
 }> = ({ control, loading, listProduct, errors }) => {
 
     const { setValue, register, getValues, trigger } = useFormContext()
@@ -80,7 +80,7 @@ export const SaleProducts: React.FC<{
                                         renderOption={(option) => (
                                             <React.Fragment>
                                                 <Avatar alt={`${option.description}`} src={`${option.image}`} sx={{ marginRight: 2 }} />
-                                                {option["description"]}
+                                                {option["title"]} - {option["barcode"]}
                                             </React.Fragment>
                                         )}
                                         error={errors?.products?.[i]?.productid?.message}

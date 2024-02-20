@@ -1,15 +1,5 @@
 import { IPayment } from "./payment";
-
-export interface IProductZyx {
-    productid: number;
-    code: string;
-    description: string;
-    image: string;
-    barcode: string;
-    sale_price: number;
-    quantity: number;
-    subtotal: number;
-}
+import { IProductZyx } from "./productZyx";
 
 export interface ISale {
     saleorderid: number;

@@ -6,7 +6,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import FieldEdit from 'components/Controls/FieldEdit';
 import { FieldSelect } from 'components/Controls/FieldSelect';
 import { FormProvider, useForm } from 'react-hook-form';
-import { IMainProps, IPurchase, ObjectZyx } from '@types';
+import { IMainProps, ISale, ObjectZyx } from '@types';
 import SaveIcon from '@mui/icons-material/Save';
 import { useSendFormApi } from 'hooks/useSendFormApi';
 import Tabs from '@mui/material/Tabs';
@@ -40,9 +40,9 @@ export const ManageSale: React.FC<IMainProps> = ({ baseUrl }) => {
         operation: "INSERT",
         onSave: () => navigate(baseUrl),
     });
-    const methods = useForm<IPurchase>({
+    const methods = useForm<ISale>({
         defaultValues: {
-            purchaseorderid: 0,
+            saleorderid: 0,
             warehouse: '',
             date: '',
             status: 'ACTIVO',
@@ -52,9 +52,9 @@ export const ManageSale: React.FC<IMainProps> = ({ baseUrl }) => {
     });
     const { control, register, handleSubmit, setValue, getValues, reset, formState: { errors } } = methods;
 
-    const { giveMeData, loading } = useMultiData<IPurchase, IDataAux>({
+    const { giveMeData, loading } = useMultiData<ISale, IDataAux>({
         registerX: () => {
-            register('purchaseorderid');
+            register('saleorderid');
             register('status');
             register('warehouse', { validate: (value) => Boolean(value?.length) || 'El campo es requerido' });
             register('date', { validate: (value) => Boolean(value?.length) || 'El campo es requerido' });

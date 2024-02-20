@@ -95,6 +95,8 @@ export const userIns = (parameters: { operation: string } & IUser): IRequestBody
     key: 'UFN_USER_INS',
     parameters: {
         ...parameters,
+        user: parameters.username,
+        username: undefined,
         address: '',
         phone: '',
         type: 'NINGUNO',

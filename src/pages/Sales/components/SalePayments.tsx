@@ -1,6 +1,6 @@
 import { Add, Delete } from "@mui/icons-material";
 import { Avatar, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
-import { ObjectZyx, IPurchase, IProductZyx } from "@types";
+import { ObjectZyx, ISale, IProductZyx } from "@types";
 import DropZoneDialog from "components/Controls/DropZoneDialog";
 import FieldEdit from "components/Controls/FieldEdit";
 import { FieldSelect } from "components/Controls/FieldSelect";
@@ -8,10 +8,10 @@ import React, { useState } from "react";
 import { Control, FieldErrors, useFieldArray, useFormContext } from "react-hook-form";
 
 export const SalePayments: React.FC<{
-    control: Control<IPurchase, object, IPurchase>;
+    control: Control<ISale, object, ISale>;
     loading: boolean;
     listPaymentMethod: ObjectZyx[];
-    errors: FieldErrors<IPurchase>
+    errors: FieldErrors<ISale>
 }> = ({ control, loading, listPaymentMethod, errors }) => {
     const [openDialogEvidence, setOpenDialogEvidence] = useState(false);
     const { setValue, register, getValues, trigger } = useFormContext();
