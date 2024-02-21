@@ -72,6 +72,12 @@ export const getProductSel = (productid: number, viewpurchase = false): IRequest
     },
 });
 
+export const getStockSel = (): IRequestBody => ({
+    method: 'UFN_STOCK_SEL',
+    key: 'UFN_STOCK_SEL',
+    parameters: {}
+});
+
 export const purchaseOrderIns = (purchase: (IPurchase & { operation: string })): IRequestBody => ({
     method: 'UFN_PURCHASE_ORDER_OPS',
     key: 'UFN_PURCHASE_ORDER_OPS',
@@ -126,6 +132,7 @@ export const saleOrderLineIns = (orderline: (IProductZyx & { operation: string, 
     key: 'UFN_SALE_ORDER_LINE_OPS',
     parameters: {
         ...orderline,
+        sale_price: orderline.selling_price,
         type: 'NINGUNO'
     },
 });

@@ -14,7 +14,8 @@ export const SalePayments: React.FC<{
     loading: boolean;
     listPaymentMethod: ObjectZyx[];
     errors: FieldErrors<ISale>;
-}> = ({ control, loading, listPaymentMethod, errors }) => {
+    disabled?: boolean;
+}> = ({ control, loading, listPaymentMethod, errors, disabled }) => {
     const dispatch = useDispatch();
     const [openDialogEvidence, setOpenDialogEvidence] = useState(false);
     const { setValue, register, getValues, trigger } = useFormContext();
@@ -24,7 +25,7 @@ export const SalePayments: React.FC<{
         name: 'payments',
     });
     const appendProduct = () => {
-         const amountPaid = getValues('payments').reduce((acc: number, item: IPayment) => acc + item.payment_amount, 0);
+        const amountPaid = getValues('payments').reduce((acc: number, item: IPayment) => acc + item.payment_amount, 0);
         const amountToPay = getValues('products').reduce((acc: number, item: IProductZyx) => acc + item.total, 0);
         if (amountPaid < amountToPay) {
             append({
@@ -59,13 +60,15 @@ export const SalePayments: React.FC<{
                     <TableHead>
                         <TableRow>
                             <TableCell>
-                                <IconButton
-                                    size="small"
-                                    disabled={loading}
-                                    onClick={appendProduct}
-                                >
-                                    <Add />
-                                </IconButton>
+                                {!disabled &&
+                                    <IconButton
+                                        size="small"
+                                        disabled={loading}
+                                        onClick={appendProduct}
+                                    >
+                                        <Add />
+                                    </IconButton>
+                                }
                             </TableCell>
                             <TableCell>{"Método"}</TableCell>
                             <TableCell>{"Cantidad"}</TableCell>
@@ -76,14 +79,14 @@ export const SalePayments: React.FC<{
                         {fields.map((item, i: number) =>
                             <TableRow key={item.id}>
                                 <TableCell width={30}>
-                                    <div style={{ display: 'flex' }}>
+                                    {!disabled &&
                                         <IconButton
                                             size="small"
                                             onClick={() => { remove(i) }}
                                         >
                                             <Delete style={{ color: '#777777' }} />
                                         </IconButton>
-                                    </div>
+                                    }
                                 </TableCell>
                                 <TableCell >
                                     <FieldSelect
@@ -94,6 +97,7 @@ export const SalePayments: React.FC<{
                                                 validate: (value) => Boolean(value?.length) || "El campo es requerido"
                                             })
                                         }}
+                                        disabled={disabled}
                                         variant='outlined'
                                         onChange={(value) => {
                                             setValue(`payments.${i}.payment_method`, (value?.domainvalue as string) ?? "");
@@ -111,6 +115,7 @@ export const SalePayments: React.FC<{
                                                 validate: (value) => (value > 0) || "Debe ser mayor de 0"
                                             })
                                         }}
+                                        disabled={disabled}
                                         type="number"
                                         valueDefault={getValues(`payments.${i}.payment_amount`)}
                                         error={errors.payments?.[i]?.payment_amount?.message}
@@ -119,6 +124,7 @@ export const SalePayments: React.FC<{
                                 </TableCell>
                                 <TableCell style={{ width: 200 }}>
                                     <IconButton
+                                        disabled={disabled}
                                         onClick={() => {
                                             setPosition(i);
                                             setOpenDialogEvidence(true);

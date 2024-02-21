@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Box, Breadcrumbs, Button, Grid, Paper, Typography } from '@mui/material';
-import { a11yProps, getCustomerSel, getProductSel, getValuesFromDomain, getSaleOrder, saleOrderIns, saleOrderLineIns, saleOrderPaymentIns } from 'common/helpers';
+import { a11yProps, getCustomerSel, getProductSel, getValuesFromDomain, getSaleOrder, saleOrderIns, saleOrderLineIns, saleOrderPaymentIns, getStockSel } from 'common/helpers';
 import React, { useEffect, useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import FieldEdit from 'components/Controls/FieldEdit';
@@ -72,7 +72,7 @@ export const ManageSale: React.FC<IMainProps> = ({ baseUrl }) => {
             }] : []),
             { rb: getValuesFromDomain('ESTADO'), key: 'UFN_DOMAIN_VALUES_SEL-ESTADO', keyData: "listStatus" },
             { rb: getValuesFromDomain('METODOPAGO'), key: 'UFN_DOMAIN_VALUES_SEL-METODOPAGO', keyData: "listPaymentMethod" },
-            { rb: getProductSel(0, true), key: 'UFN_PRODUCT_SEL', keyData: "listProduct" },
+            { rb: getStockSel(), key: 'UFN_STOCK_SEL', keyData: "listProduct" },
             { rb: getCustomerSel(0), key: 'UFN_CLIENT_SEL', keyData: "listCustomer" },
         ],
     });
@@ -126,15 +126,17 @@ export const ManageSale: React.FC<IMainProps> = ({ baseUrl }) => {
                                 </Typography>
                             </Box>
                         </Grid>
-                        <Grid item xs={12} sm={6} container justifyContent={'flex-end'} gap={2}>
-                            <Button
-                                color='primary'
-                                type='submit'
-                                startIcon={<SaveIcon />}
-                                disabled={loading}
-                                variant="contained">Guardar
-                            </Button>
-                        </Grid>
+                        {getValues('saleorderid') === 0 &&
+                            <Grid item xs={12} sm={6} container justifyContent={'flex-end'} gap={2}>
+                                <Button
+                                    color='primary'
+                                    type='submit'
+                                    startIcon={<SaveIcon />}
+                                    disabled={loading}
+                                    variant="contained">Guardar
+                                </Button>
+                            </Grid>
+                        }
                     </Grid>
 
                     <Box className="p-6  border-b">
@@ -147,15 +149,17 @@ export const ManageSale: React.FC<IMainProps> = ({ baseUrl }) => {
                                     onChange={(value) => setValue('customerid', value?.clientid as number ?? 0)}
                                     error={errors?.customerid?.message}
                                     loading={loading}
+                                    disabled={getValues('saleorderid') > 0}
                                     data={dataAux.listCustomer}
                                     optionDesc="name"
-                                    optionValue="name"
+                                    optionValue="clientid"
                                 />
                             </Grid>
                             <Grid item xs={12} sm={4}>
                                 <FieldEdit
                                     label={'Fecha'}
                                     type="date"
+                                    disabled={getValues('saleorderid') > 0}
                                     valueDefault={getValues('order_date')?.split(" ")[0]}
                                     onChange={(value) => setValue('order_date', `${value}`)}
                                     error={errors.order_date?.message}
@@ -185,6 +189,7 @@ export const ManageSale: React.FC<IMainProps> = ({ baseUrl }) => {
                             <SaleProducts
                                 control={control}
                                 loading={loading}
+                                disabled={getValues('saleorderid') > 0}
                                 listProduct={dataAux.listProduct}
                                 errors={errors}
                             />
@@ -193,6 +198,7 @@ export const ManageSale: React.FC<IMainProps> = ({ baseUrl }) => {
                             <SalePayments
                                 control={control}
                                 loading={loading}
+                                disabled={getValues('saleorderid') > 0}
                                 listPaymentMethod={dataAux.listPaymentMethod}
                                 errors={errors}
                             />

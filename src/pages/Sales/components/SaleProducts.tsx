@@ -10,8 +10,9 @@ export const SaleProducts: React.FC<{
     control: Control<ISale, object, ISale>;
     loading: boolean;
     listProduct: ObjectZyx[];
-    errors: FieldErrors<ISale>
-}> = ({ control, loading, listProduct, errors }) => {
+    errors: FieldErrors<ISale>;
+    disabled?: boolean;
+}> = ({ control, loading, listProduct, errors, disabled }) => {
 
     const { setValue, register, getValues, trigger } = useFormContext()
     const { fields, append, remove } = useFieldArray({
@@ -32,24 +33,27 @@ export const SaleProducts: React.FC<{
                     <TableHead>
                         <TableRow>
                             <TableCell>
-                                <IconButton
-                                    size="small"
-                                    disabled={loading}
-                                    onClick={() => append({
-                                        saleorderlineid: 0,
-                                        productid: 0,
-                                        barcode: '',
-                                        code: '',
-                                        description: '',
-                                        image: '',
-                                        status: 'ACTIVO',
-                                        quantity: 1,
-                                        selling_price: 0,
-                                        total: 0
-                                    })}
-                                >
-                                    <Add />
-                                </IconButton>
+                                {!disabled &&
+                                    <IconButton
+                                        size="small"
+                                        disabled={loading}
+                                        onClick={() => append({
+                                            saleorderlineid: 0,
+                                            productid: 0,
+                                            inventoryid: 0,
+                                            barcode: '',
+                                            code: '',
+                                            description: '',
+                                            image: '',
+                                            status: 'ACTIVO',
+                                            quantity: 1,
+                                            selling_price: 0,
+                                            total: 0
+                                        })}
+                                    >
+                                        <Add />
+                                    </IconButton>
+                                }
                             </TableCell>
                             <TableCell>{"Producto"}</TableCell>
                             <TableCell>{"Cantidad"}</TableCell>
@@ -61,14 +65,14 @@ export const SaleProducts: React.FC<{
                         {fields.map((item, i: number) =>
                             <TableRow key={item.id}>
                                 <TableCell width={30}>
-                                    <div style={{ display: 'flex' }}>
+                                    {!disabled &&
                                         <IconButton
                                             size="small"
                                             onClick={() => { remove(i) }}
                                         >
                                             <Delete style={{ color: '#777777' }} />
                                         </IconButton>
-                                    </div>
+                                    }
                                 </TableCell>
                                 <TableCell >
                                     <FieldSelect
@@ -79,16 +83,15 @@ export const SaleProducts: React.FC<{
                                                 validate: (value) => (value > 0) || "El campo es requerido"
                                             })
                                         }}
+                                        disabled={disabled}
                                         variant='outlined'
                                         onChange={(value) => {
-                                            if (value) {
-                                                // setValue(`products.${i}`, value);
-                                                setValue(`products.${i}.quantity`, 1);
-                                                setValue(`products.${i}.productid`, value.productid);
-                                            }
                                             setValue(`products.${i}.productid`, (value?.productid as number) ?? 0);
+                                            setValue(`products.${i}.stock`, (value?.stock as number) ?? 0);
+                                            setValue(`products.${i}.inventoryid`, (value?.inventoryid as number) ?? 0);
                                             setValue(`products.${i}.selling_price`, (value?.selling_price as number) ?? 0);
                                             trigger(`products.${i}.selling_price`);
+                                            trigger(`products.${i}.stock`);
                                             calculateSubtotal(i, getValues(`products.${i}.quantity`), (value?.selling_price as number) ?? 0);
                                         }}
                                         renderOption={(option) => (
@@ -105,9 +108,10 @@ export const SaleProducts: React.FC<{
                                 </TableCell>
                                 <TableCell sx={{ width: 200 }}>
                                     <FieldEdit
+                                        disabled={disabled}
                                         fregister={{
                                             ...register(`products.${i}.quantity`, {
-                                                validate: (value) => (value > 0) || "Debe ser mayor de 0"
+                                                validate: (value) => (value > 0) ? (value <= getValues(`products.${i}.stock`) || `La cantidad debe ser menor a la del stock: ${getValues(`products.${i}.stock`)}`) : "Debe ser mayor de 0"
                                             }),
                                         }}
                                         type="number"
@@ -115,6 +119,7 @@ export const SaleProducts: React.FC<{
                                         error={errors.products?.[0]?.quantity?.message}
                                         onChange={(value) => {
                                             const quantity = parseInt(value || "0");
+                                            getValues(`products.${i}.stock`) || 0;
                                             const price = getValues(`products.${i}.selling_price`) || 0;
                                             setValue(`products.${i}.quantity`, quantity);
                                             trigger(`products.${i}.quantity`);
@@ -124,10 +129,11 @@ export const SaleProducts: React.FC<{
                                 </TableCell>
                                 <TableCell style={{ width: 200 }}>
                                     <FieldEdit
+                                        disabled={disabled}
                                         fregister={{
                                             ...register(`products.${i}.selling_price`, {
                                                 validate: (value) => (value > 0) || "Debe ser mayor de 0"
-                                            }),
+                                            })
                                         }}
                                         type="number"
                                         valueDefault={getValues(`products.${i}.selling_price`)}

@@ -8,7 +8,7 @@ export interface ISale {
     order_date: string;
     status: string;
     order_number: string;
-    products: (IProductZyx & { saleorderlineid: number })[];
+    products: (IProductZyx & { saleorderlineid: number, inventoryid: number, stock?: number })[];
     payments: (IPayment & { saleorderpaymentid: number })[]
     total_amount: number;
     sub_total: number;

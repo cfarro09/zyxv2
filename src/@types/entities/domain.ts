@@ -9,4 +9,5 @@ export interface IDomainValue {
     domainname: string;
     domaindesc: string;
     domainvalue: string;
+    bydefault?: boolean;
 }

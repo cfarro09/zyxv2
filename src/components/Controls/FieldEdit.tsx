@@ -6,13 +6,14 @@ type InputProps = {
     label?: string;
     valueDefault?: unknown;
     maxLength?: number;
+    maxNumber?: number;
     fregister?: object;
     error?: string;
     onChange?: (_?: string | null) => number | string | void | null;
     onBlur?: (_?: string | null) => void;
 } & Omit<TextFieldProps, 'error' | "onChange">;
 
-const FieldEdit: FC<InputProps> = ({ label, valueDefault = "", onChange, onBlur, error, fregister = {}, variant = "standard", maxLength = 0, ...rest }) => {
+const FieldEdit: FC<InputProps> = ({ label, valueDefault = "", onChange, onBlur, error, fregister = {}, variant = "standard", maxLength = 0, maxNumber, ...rest }) => {
     const [value, setvalue] = useState("");
     useEffect(() => {
         setvalue(`${valueDefault}`);

@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Button, Grid } from "@mui/material";
+import { Button, FormControlLabel, Grid } from "@mui/material";
 import FieldEdit from "components/Controls/FieldEdit";
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -10,6 +10,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { IDomainValue } from "@types";
 import { domainIns } from "common/helpers";
 import { useSendFormApi } from "../../../hooks/useSendFormApi";
+import Checkbox from '@mui/material/Checkbox';
 
 interface DomainValueDialogProps {
     openModal: boolean;
@@ -26,19 +27,21 @@ const DomainValueDialog: React.FC<DomainValueDialogProps> = ({ openModal, setOpe
             setOpenModal(false);
         },
     });
-    
-    const { register, handleSubmit, setValue, getValues, formState: { errors }, clearErrors, reset } = useForm<IDomainValue>({
+
+    const { register, handleSubmit, setValue, getValues, formState: { errors }, clearErrors, reset, trigger } = useForm<IDomainValue>({
         defaultValues: {
             domainid: 0,
             domainname: '',
             domaindesc: '',
             domainvalue: '',
+            bydefault: false,
         }
     });
 
     const registerX = () => {
         register('domainid');
         register('domainname');
+        register('bydefault');
         register('domaindesc', { validate: (value) => Boolean(value?.length) || "El campo es requerido" });
         register('domainvalue', { validate: (value) => Boolean(value?.length) || "El campo es requerido" });
     }
@@ -72,6 +75,20 @@ const DomainValueDialog: React.FC<DomainValueDialogProps> = ({ openModal, setOpe
         >
             <DialogTitle>Dominio {getValues('domainname')}</DialogTitle>
             <DialogContent>
+                <Grid container spacing={2}>
+                    <Grid item xs={12} sm={6}>
+                        <FormControlLabel
+                            label="Por defecto"
+                            control={<Checkbox
+                                checked={getValues('bydefault')}
+                                onChange={(value) => {
+                                    setValue('bydefault', value.target.checked)
+                                    trigger('bydefault')
+                                }}
+                            />}
+                        />
+                    </Grid>
+                </Grid>
                 <Grid container spacing={2}>
                     <Grid item xs={12} sm={6}>
                         <FieldEdit
