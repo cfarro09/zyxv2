@@ -1,6 +1,8 @@
 /* eslint-disable no-eval */
 /* eslint-disable no-useless-escape */
 // import * as XLSX from 'xlsx';
+import type { Range } from "react-date-range";
+import dayjs from "dayjs";
 
 export const contactCalculateList = [
     { value: "PER_CHANNEL", description: "per_channel" },
@@ -902,4 +904,10 @@ export const cleanPath = (pathx: string) => {
         return `/${pathx.split("/")[1]}`
     }
     return normalizePathname(pathx);
+}
+
+export const initialRange: Range = {
+    startDate: dayjs().subtract(1, 'month').toDate(),
+    endDate: dayjs().add(1, 'day').toDate(),
+    key: 'selection',
 }

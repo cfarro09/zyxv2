@@ -24,7 +24,7 @@ type TemplateAutocompleteProps<T> = {
 } & Omit<FormControlProps, 'onChange' | 'error'>;
 
 export const FieldSelect = <T,>({ multiline = false, error, label, data = [], optionValue, optionDesc, valueDefault = "", onChange, disabled = false, triggerOnChangeOnFirst = false, loading = false, fregister = {}, variant = "standard", readOnly = false, orderbylabel = false, renderOption, placeholder = '' }: TemplateAutocompleteProps<T>) => {
-    const [value, setValue] = useState<T | null>(null);
+    const [value, setValue] = useState<T>(null!);
     const [dataG, setDataG] = useState<T[]>([])
 
     useEffect(() => {
@@ -47,7 +47,7 @@ export const FieldSelect = <T,>({ multiline = false, error, label, data = [], op
                     onChange && onChange(optionfound);
             }
         } else {
-            setValue(null);
+            setValue(null!);
         }
     }, [data, valueDefault]);
 
@@ -58,7 +58,8 @@ export const FieldSelect = <T,>({ multiline = false, error, label, data = [], op
             {...fregister}
             autoHighlight
             disabled={disabled}
-            value={data?.length > 0 ? value : null}
+            disableClearable={true}
+            value={value!}
             onChange={(_, newValue) => {
                 if (readOnly) return;
                 setValue(newValue);

@@ -12,7 +12,7 @@ const APIS_URL: Record<string, Record<string, string | boolean>> = {
     },
     LOCAL: {
         // API: 'http://localhost:6065/api',
-        API: 'http://localhost:6065/api',
+        API: 'http://localhost:6014/api',
         //API: 'https://apix.laraigo.com/api',
         //WS: 'http://localhost:7070',
     },

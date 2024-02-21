@@ -10,12 +10,30 @@ import { IMainProps, ICustomer, ObjectZyx } from '@types';
 import SaveIcon from '@mui/icons-material/Save';
 import { useSendFormApi } from 'hooks/useSendFormApi';
 import { useMultiData } from 'hooks/useMultiData';
+import axios from 'axios';
 interface IDataAux {
     listDocumentType: ObjectZyx[];
     listStatus: ObjectZyx[];
 }
 
-export const ManageCustomer: React.FC<IMainProps> = ({ baseUrl }) => {
+const fetchDocument = async (type: string, document: string) => {
+    try {
+        // const urlparams = type === "RUC" ? `ruc?numero=${document}` : `dni?numero=${document}`
+        const response = await axios.post('http://38.242.249.178:6014/api/main/getdocument', {
+            document, type
+        }, {
+            headers: {
+                'Accept': 'application/json',
+                'Authorization': 'Bearer apis-token-7495.Up1n8BkaSNJc-6yGe2hUo9Ez6032xzHl'
+            }
+        });
+        return response.data;
+    } catch (error) {
+        return null
+    }
+};
+
+export const ManageCustomer: React.FC<IMainProps> = ({ baseUrl, onlyForm, callback }) => {
     const navigate = useNavigate();
 
     const { id } = useParams<{ id?: string }>();
@@ -23,9 +41,15 @@ export const ManageCustomer: React.FC<IMainProps> = ({ baseUrl }) => {
 
     const { onSubmitData } = useSendFormApi({
         operation: "INSERT",
-        onSave: () => navigate(baseUrl),
+        onSave: () => {
+            if (!onlyForm) {
+                navigate(baseUrl);
+            }
+            callback && callback();
+        }
     });
-    const { register, handleSubmit, setValue, getValues, reset, formState: { errors } } = useForm<ICustomer>({
+
+    const { register, handleSubmit, setValue, getValues, reset, formState: { errors }, trigger } = useForm<ICustomer>({
         defaultValues: {
             clientid: 0,
             name: '',
@@ -51,7 +75,7 @@ export const ManageCustomer: React.FC<IMainProps> = ({ baseUrl }) => {
         reset,
         setDataAux,
         collections: [
-            ...(id !== 'new' ? [{
+            ...((id !== 'new' && !onlyForm) ? [{
                 rb: getCustomerSel(parseInt(`${id}`)),
                 key: 'UFN_CLIENT_SEL',
                 keyData: "",
@@ -68,22 +92,40 @@ export const ManageCustomer: React.FC<IMainProps> = ({ baseUrl }) => {
 
     const onSubmit = handleSubmit((data) => onSubmitData(customerIns(data, data.clientid > 0 ? "UPDATE" : "INSERT")));
 
+    const handlerChangeDocument = (value?: string | null) => {
+        const document = value ? `${value}` : "";
+        
+        setValue('document', document);
+        const type = getValues('document_type');
+        if ((document.length === 8 && type === "DNI") || (document.length === 11 && type === "RUC")) {
+            fetchDocument(type, document).then(res => {
+                if (res) {
+                    const { nombres, apellidoPaterno, apellidoMaterno, razonSocial } = res;
+                    setValue('name', razonSocial || `${nombres} ${apellidoPaterno} ${apellidoMaterno}`);
+                    trigger('name');
+                }
+            })
+        }
+    }
+
     return (
         <Box className="flex max-w-screen-xl mr-auto ml-auto flex-col">
-            <div className="my-3">
-                <Breadcrumbs aria-label="breadcrumb">
-                    <Link color="blue" to={baseUrl}>
-                        <Typography color="secondary" fontWeight={500}>Cliente</Typography>
-                    </Link>
-                    <Typography color="textSecondary">Detalle</Typography>
-                </Breadcrumbs>
-            </div>
+            {!onlyForm &&
+                <div className="my-3">
+                    <Breadcrumbs aria-label="breadcrumb">
+                        <Link color="blue" to={baseUrl}>
+                            <Typography color="secondary" fontWeight={500}>Cliente</Typography>
+                        </Link>
+                        <Typography color="textSecondary">Detalle</Typography>
+                    </Breadcrumbs>
+                </div>
+            }
             <Paper className="w-full mt-6" component={'form'} onSubmit={onSubmit} sx={{ marginTop: 0 }}>
-                <Grid container className="px-6 py-3 border-b">
+                <Grid container className="border-b" paddingLeft={2} paddingRight={2} paddingTop={1} paddingBottom={1}>
                     <Grid item xs={12} sm={6}>
                         <Box>
                             <Typography variant="h5">
-                                {id === 'new' ? 'Nuevo Cliente' : 'Modificar Cliente'}
+                                {(id === 'new' || onlyForm) ? 'Nuevo Cliente' : 'Modificar Cliente'}
                             </Typography>
                         </Box>
                     </Grid>
@@ -97,8 +139,33 @@ export const ManageCustomer: React.FC<IMainProps> = ({ baseUrl }) => {
                         </Button>
                     </Grid>
                 </Grid>
-                <Box className="p-6">
+                <Box padding={2}>
                     <Grid container spacing={2}>
+                        <Grid item xs={12} sm={4}>
+                            <FieldSelect
+                                label={'Tipo de documento'}
+                                variant="outlined"
+                                valueDefault={getValues('document_type')}
+                                onChange={(value) => {
+                                    setValue('document_type', value?.domainvalue as string ?? "");
+                                    trigger('document_type');
+                                }}
+                                error={errors.document_type?.message}
+                                loading={loading}
+                                data={dataAux.listDocumentType}
+                                optionDesc="domainvalue"
+                                optionValue="domainvalue"
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={4}>
+                            <FieldEdit
+                                label={'Documento'}
+                                valueDefault={getValues('document')}
+                                onChange={handlerChangeDocument}
+                                error={errors.document?.message}
+                                variant="outlined"
+                            />
+                        </Grid>
                         <Grid item xs={12} sm={8}>
                             <FieldEdit
                                 label={'Nombre Completo'}
@@ -118,7 +185,7 @@ export const ManageCustomer: React.FC<IMainProps> = ({ baseUrl }) => {
                                 variant="outlined"
                             />
                         </Grid>
-                        <Grid item xs={12} sm={8}>
+                        <Grid item xs={12} sm={4}>
                             <FieldEdit
                                 label={'Dirección'}
                                 valueDefault={getValues('address')}
@@ -136,28 +203,6 @@ export const ManageCustomer: React.FC<IMainProps> = ({ baseUrl }) => {
                                 onChange={(value) => setValue('email', `${value}`)}
                                 error={errors.email?.message}
                                 type='email'
-                                variant="outlined"
-                            />
-                        </Grid>
-                        <Grid item xs={12} sm={4}>
-                            <FieldSelect
-                                label={'Tipo de documento'}
-                                variant="outlined"
-                                valueDefault={getValues('document_type')}
-                                onChange={(value) => setValue('document_type', value?.domainvalue as string ?? "")}
-                                error={errors.document_type?.message}
-                                loading={loading}
-                                data={dataAux.listDocumentType}
-                                optionDesc="domainvalue"
-                                optionValue="domainvalue"
-                            />
-                        </Grid>
-                        <Grid item xs={12} sm={4}>
-                            <FieldEdit
-                                label={'Documento'}
-                                valueDefault={getValues('document')}
-                                onChange={(value) => setValue('document', `${value}`)}
-                                error={errors.document?.message}
                                 variant="outlined"
                             />
                         </Grid>

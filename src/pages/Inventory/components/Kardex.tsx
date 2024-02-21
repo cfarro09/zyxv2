@@ -88,7 +88,7 @@ export const Kardex: React.FC<IMainProps> = ({ baseUrl }) => {
 
 
     useEffect(() => {
-        fetchData()
+        // fetchData()
         // giveMeData();
     }, []);
 

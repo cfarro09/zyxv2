@@ -6,6 +6,8 @@ export interface ObjectZyx {
 
 export interface IMainProps {
     baseUrl: string;
+    onlyForm?: boolean;
+    callback?: () => void
 }
 
 export interface IClasses {

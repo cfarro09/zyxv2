@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, SetStateAction } from 'react';
+import { useEffect, SetStateAction, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { IRequestBody } from '@types';
 import { IRootState } from 'stores';
@@ -17,27 +17,39 @@ interface SendFormApiProps<T extends FieldValues, D> {
 export const useMultiData = <T extends FieldValues, D,>({ registerX, collections, reset, setDataAux }: SendFormApiProps<T, D>) => {
     const dispatch = useDispatch();
     const multiResult = useSelector((state: IRootState) => state.main.multiData);
+    const [waitingUseEffect, setWaitingUseEffect] = useState(false);
 
-    const giveMeData = () => {
+    const giveMeData = (keys?: string[]) => {
+        setWaitingUseEffect(true)
         registerX && registerX();
-        dispatch(getMultiCollection(collections.map(q => q.rb)));
+
+        dispatch(getMultiCollection(collections.filter(q => (!keys || keys.includes(q.key))).map(q => q.rb)));
     };
 
     useEffect(() => {
-        if (!multiResult.loading && !multiResult.error) {
-            setDataAux(collections.reduce((acc, item) => {
-                const collectionFound = multiResult.data.find((f) => f.key === item.key)?.data ?? [];
-                if (item.main) {
-                    reset && reset(collectionFound[0] as T);
-                    registerX && registerX()
-                    return acc;
-                } else {
-                    return {
-                        ...acc,
-                        [item.keyData]: collectionFound
+        if (waitingUseEffect && multiResult.data.length > 0) {
+            if (!multiResult.loading && !multiResult.error) {
+                setWaitingUseEffect(false);
+                const aa = collections.reduce((acc, item) => {
+                    const collectionFound = multiResult.data.find((f) => f.key === item.key)?.data;
+                    if (!collectionFound)
+                        return acc;
+                    if (item.main) {
+                        reset && reset(collectionFound[0] as T);
+                        registerX && registerX()
+                        return acc;
+                    } else {
+                        return {
+                            ...acc,
+                            [item.keyData]: collectionFound
+                        }
                     }
-                }
-            }, {}) as D);
+                }, {}) as D
+                setDataAux(prev => ({
+                    ...prev,
+                    ...aa
+                }));
+            }
         }
     }, [multiResult]);
 

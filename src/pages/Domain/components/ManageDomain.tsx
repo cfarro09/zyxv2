@@ -23,7 +23,6 @@ const columns: ColumnDef<IDomainValue>[] = [
         header: 'DOMINIO',
         accessorKey: 'domainname',
         enableResizing: false,
-        size: 10,
     },
     {
         header: 'DESCRIPCION',

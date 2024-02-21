@@ -8,24 +8,27 @@ import { execute } from 'stores/main/actions';
 interface SendFormApiProps {
     operation: "INSERT" | "DELETE" | "UPDATE";
     onSave: () => void; // Callback al guardar con éxito
+
+    speechConfirmation?: string;
 }
 
-export const useSendFormApi = ({ onSave, operation }: SendFormApiProps) => {
+export const useSendFormApi = ({ onSave, operation, }: SendFormApiProps) => {
     const dispatch = useDispatch();
     const executeResult = useSelector((state: IRootState) => state.main.execute);
     const [waitSave, setWaitSave] = useState(false);
+    const [speechConfirmation1, setspeechConfirmation1] = useState('');
 
     // Función para manejar el envío del formulario
-    const onSubmitData = (requestBody: IRequestBody | ITransaction, transaction: boolean = false) => {
+    const onSubmitData = (requestBody: IRequestBody | ITransaction, transaction: boolean = false, speechQuestion: string = "", speechConfirmation: string = "") => {
         const callback = () => {
             dispatch(showBackdrop(true));
             dispatch(execute(requestBody, transaction));
             setWaitSave(true);
         };
-
+        setspeechConfirmation1(speechConfirmation || operation === "DELETE" ? `Se eliminó satisfactoriamente` : `Guardado satisfactoriamente.`)
         dispatch(manageConfirmation({
             visible: true,
-            question: operation === "DELETE" ? "¿Está seguro de eliminar el registro?" : `¿Está seguro que desea guardar el registro?`,
+            question: speechQuestion || (operation === "DELETE" ? "¿Está seguro de eliminar el registro?" : `¿Está seguro que desea guardar el registro?`),
             callback
         }));
     };
@@ -34,7 +37,7 @@ export const useSendFormApi = ({ onSave, operation }: SendFormApiProps) => {
         if (waitSave) {
             if (!executeResult.loading && !executeResult.error) {
                 dispatch(showBackdrop(false));
-                dispatch(showSnackbar({ show: true, severity: "success", message: operation === "DELETE" ? `Se eliminó satisfactoriamente` : `Guardado satisfactoriamente.` }));
+                dispatch(showSnackbar({ show: true, severity: "success", message: speechConfirmation1 }));
                 onSave();
                 setWaitSave(false); // Asegurar reinicio del estado
             } else if (executeResult.error) {

@@ -1,5 +1,5 @@
 import { Box, Paper, Typography } from '@mui/material';
-import { getSaleOrder, saleOrderIns } from 'common/helpers';
+import { CancelSale, getSaleOrder, initialRange } from 'common/helpers';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from 'stores';
@@ -7,9 +7,10 @@ import { getCollection, resetMain } from 'stores/main/actions';
 import TableSimple from 'components/Controls/TableSimple';
 import type { ColumnDef } from '@tanstack/react-table';
 import { ISale } from '@types';
-import DeleteIcon from '@mui/icons-material/Delete';
 import { useSendFormApi } from 'hooks/useSendFormApi';
 import dayjs from 'dayjs';
+import CloseIcon from '@mui/icons-material/Close';
+import SaleFilters from './FiltersSale';
 
 const columns: ColumnDef<ISale>[] = [
     {
@@ -32,14 +33,21 @@ const columns: ColumnDef<ISale>[] = [
         header: 'PRODUCTOS',
         accessorKey: 'quantity',
     },
+    {
+        header: 'GENERADA POR',
+        accessorKey: 'createby',
+    },
 ];
 
 export const Sale: React.FC = () => {
     const dispatch = useDispatch();
     const mainResult = useSelector((state: IRootState) => state.main.mainData);
     const [mainData, setMainData] = useState<ISale[]>([]);
-    
-    const fetchData = useCallback(() => dispatch(getCollection(getSaleOrder(0))), [dispatch])
+    const [filters, setFilters] = useState<{ startdate: Date; enddate: Date; }>({
+        startdate: initialRange.startDate as Date,
+        enddate: initialRange.endDate as Date,
+    })
+    const fetchData = useCallback(() => dispatch(getCollection(getSaleOrder(0, filters))), [dispatch, filters])
 
     const { onSubmitData } = useSendFormApi({
         operation: "DELETE",
@@ -47,11 +55,14 @@ export const Sale: React.FC = () => {
     });
 
     useEffect(() => {
-        fetchData();
         return () => {
             dispatch(resetMain());
         }
-    }, [dispatch, fetchData]);
+    }, []);
+
+    useEffect(() => {
+        fetchData();
+    }, [filters]);
 
     useEffect(() => {
         if (!mainResult.loading && !mainResult.error && mainResult.key === 'UFN_SALE_ORDER_SEL') {
@@ -59,7 +70,7 @@ export const Sale: React.FC = () => {
         }
     }, [mainResult]);
 
-    const deleteRow = (customer: ISale) => onSubmitData(saleOrderIns({ ...customer, operation: "DELETE" }))
+    const deleteRow = (sale: ISale) => onSubmitData(CancelSale(sale.saleorderid), false, `¿Está seguro de anular la venta ${sale.order_number}?`, `Venta anulada correctametne.`)
 
     return (
         <Box className="flex max-w-screen-xl mr-auto ml-auto flex-col">
@@ -74,10 +85,17 @@ export const Sale: React.FC = () => {
                         showOptions={true}
                         addButton={true}
                         optionsMenu={[{
-                            description: "Eliminar",
-                            Icon: DeleteIcon,
+                            description: "Anular",
+                            Icon: CloseIcon,
                             onClick: (user) => user && deleteRow(user)
                         }]}
+                        filterElement={
+                            <SaleFilters
+                                filters={filters}
+                                setFilters={setFilters}
+                                fetchData={fetchData}
+                            />
+                        }
                         columns={columns}
                         redirectOnSelect={true}
                         columnKey={"saleorderid"}

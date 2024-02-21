@@ -1,7 +1,7 @@
 import { Popover, Typography, Button, Grid, } from "@mui/material";
 import type { ButtonProps } from "@mui/material/Button";
 import React, { useEffect, useState } from "react";
-import { DateRange, Range } from 'react-date-range';
+import { DateRangePicker, Range } from 'react-date-range';
 import { CalendarMonth } from "@mui/icons-material";
 import dayjs from "dayjs";
 
@@ -72,7 +72,7 @@ const CustomDatePicker: React.FC<InputProps> = ({ initialRange, onChange }) => {
                 }}
             >
                 <Grid container flexDirection={'column'}>
-                    <DateRange
+                    <DateRangePicker
                         editableDateInputs={true}
                         onChange={(item) => {
                             setRange([item.selection])

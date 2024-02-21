@@ -12,7 +12,7 @@ type InputProps = {
     onBlur?: (_?: string | null) => void;
 } & Omit<TextFieldProps, 'error' | "onChange">;
 
-const FieldEdit: FC<InputProps> = ({ label, valueDefault = "", onChange, onBlur, error, fregister = {}, variant = "standard", maxLength = 0, ...rest }) => {
+const FieldEdit: FC<InputProps> = ({ label, valueDefault = "", onChange, onBlur, error, fregister = {}, variant = "standard", maxLength = 0, inputProps, type, ...rest }) => {
     const [value, setvalue] = useState("");
     useEffect(() => {
         setvalue(`${valueDefault}`);
@@ -24,6 +24,7 @@ const FieldEdit: FC<InputProps> = ({ label, valueDefault = "", onChange, onBlur,
             fullWidth
             label={label}
             value={value}
+            type={type}
             style={{ marginTop: 0 }}
             variant={variant}
             size="small"
@@ -37,6 +38,16 @@ const FieldEdit: FC<InputProps> = ({ label, valueDefault = "", onChange, onBlur,
             }}
             onBlur={(e: React.FocusEvent<HTMLInputElement>) => {
                 onBlur && onBlur(e.target.value);
+            }}
+            inputProps={{
+                ...inputProps,
+                sx: {
+                    ...inputProps?.sx,
+                    textAlign: type === "number" ? "right" : undefined,
+                    "&::placeholder": {
+                        textAlign: type === "number" ? "right" : undefined,
+                    },
+                },
             }}
             {...rest}
         />

@@ -47,7 +47,7 @@ export const ManageUser: React.FC<IMainProps> = ({ baseUrl }) => {
             password: '',
             lastname: '',
             document: '',
-            document_type: '',
+            document_type: 'DNI',
             email: '',
             status: 'ACTIVO',
         },

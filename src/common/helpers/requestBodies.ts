@@ -145,6 +145,14 @@ export const saleOrderIns = (sale: (ISale & { operation: string })): IRequestBod
     },
 });
 
+export const CancelSale = (saleorderid: number): IRequestBody => ({
+    method: 'UFN_SALE_ORDER_CANCEL',
+    key: 'UFN_SALE_ORDER_CANCEL',
+    parameters: {
+        saleorderid,
+    },
+});
+
 export const saleOrderLineIns = (orderline: (IProductZyx & { operation: string, saleorderlineid: number })): IRequestBody => ({
     method: 'UFN_SALE_ORDER_LINE_OPS',
     key: 'UFN_SALE_ORDER_LINE_OPS',
@@ -163,12 +171,17 @@ export const saleOrderPaymentIns = (orderpayment: (IPayment & { operation: strin
         type: 'NINGUNO'
     },
 });
-
-export const getSaleOrder = (saleorderid: number): IRequestBody => ({
+interface IFilterDate {
+    startdate: Date;
+    enddate: Date;
+}
+export const getSaleOrder = (saleorderid: number, dates: IFilterDate | null = null): IRequestBody => ({
     method: 'UFN_SALE_ORDER_SEL',
     key: 'UFN_SALE_ORDER_SEL',
     parameters: {
         saleorderid,
+        startdate: dates?.startdate || "", 
+        enddate:  dates?.enddate || "", 
     },
 });
 
@@ -186,6 +199,7 @@ export const domainIns = (domainValue: IDomainValue, operation: string): IReques
     key: 'UFN_DOMAIN_INS',
     parameters: {
         ...domainValue,
+        bydefault: domainValue.bydefault ?? false,
         type: 'NINGUNO',
         status: 'ACTIVO',
         operation

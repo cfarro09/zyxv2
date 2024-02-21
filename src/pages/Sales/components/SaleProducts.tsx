@@ -122,7 +122,12 @@ export const SaleProducts: React.FC<{
                                         error={errors.products?.[0]?.quantity?.message}
                                         onChange={(value) => {
                                             const quantity = parseInt(value || "0");
-                                            getValues(`products.${i}.stock`) || 0;
+                                            const stock = getValues(`products.${i}.stock`) || 0;
+                                            if (stock < quantity) {
+                                                setValue(`products.${i}.quantity`, stock);
+                                                trigger(`products.${i}.quantity`);
+                                                return stock;
+                                            }
                                             const price = getValues(`products.${i}.selling_price`) || 0;
                                             setValue(`products.${i}.quantity`, quantity);
                                             trigger(`products.${i}.quantity`);
