@@ -56,10 +56,15 @@ export const Kardex: React.FC<IMainProps> = ({ baseUrl }) => {
                 let url = '';
                 if (document_type === 'compra') url = '/purchase_orders';
                 if (document_type === 'venta') url = '/sale_orders';
-                return (
-                    <Link to={`${url}/${document_id}`}>
-                        <Typography color={'primary'}>{document_type.toUpperCase()}</Typography>
-                    </Link>)
+                if (['compra', 'venta'].includes(document_type)) {
+                    return (
+                        <Link to={`${url}/${document_id}`}>
+                            <Typography color={'primary'}>{document_type.toUpperCase()}</Typography>
+                        </Link>
+                    )
+                } else {
+                    return (<Typography color={'primary'}>{document_type.toUpperCase()}</Typography>)
+                }
             }
         },
         {
