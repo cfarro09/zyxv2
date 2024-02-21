@@ -35,3 +35,27 @@ export interface InventoryDialogUploadProps {
     handleClose: () => void;
     fetchData: () => void;
 }
+
+export interface IKardex {
+    kardexid: number;
+    inventoryid: number;
+    warehouse: string;
+    in_quantity: number;
+    out_quantity: number;
+    document_type: string;
+    document_id: number;
+    stock: number;
+    createdate: string;
+}
+
+export interface IKardexFilter {
+    startdate: Date;
+    enddate: Date;
+    inventoryid: number;
+}
+
+export interface KardexFiltersProps {
+    filters: IKardexFilter;
+    setFilters: React.Dispatch<React.SetStateAction<IKardexFilter>>;
+    fetchData: () => void;
+}

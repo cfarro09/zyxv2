@@ -1,5 +1,5 @@
 import { ICustomer, IDomainValue, IPayment, IProductZyx, IPurchase, IRequestBody, IRequestBodyPaginated, ISale, IUser } from '@types';
-import { IInventoryFilters } from 'pages/Inventory/models';
+import { IInventoryFilters, IKardexFilter } from 'pages/Inventory/models';
 import { IProduct } from 'pages/Product/models';
 
 type IPaginated = {
@@ -46,6 +46,13 @@ export const getInventorySel = (parameters: IInventoryFilters): IRequestBody => 
     },
 });
 
+export const getKardexSel = (parameters: IKardexFilter): IRequestBody => ({
+    method: 'UFN_KARDEX_SEL',
+    key: 'UFN_KARDEX_SEL',
+    parameters: {
+        ...parameters
+    },
+});
 
 export const getCustomerSel = (clientid: number): IRequestBody => ({
     method: 'UFN_CLIENT_SEL',

@@ -9,15 +9,14 @@ import {
     Inventory as InventoryIcon
 } from '@mui/icons-material';
 import { User, ManageUser } from 'pages/User/Index';
-import { Product } from 'pages/Product/Index';
-import ManageProduct from 'pages/Product/components/ManageProduct';
+import { Product, ManageProduct} from 'pages/Product/Index';
 import { Domain, ManageDomain } from "pages/Domain/Index";
 import { Customer, ManageCustomer } from 'pages/Customer/Index';
 import Account from 'pages/Account/components/Account';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import FaceIcon from '@mui/icons-material/Face';
 import { ManagePurchase, Purchase } from 'pages/Purchases/Index';
-import { Inventory } from 'pages/Inventory';
+import { Inventory, Kardex } from 'pages/Inventory';
 import { ManageSale, Sale } from 'pages/Sales/Index';
 
 export const routes: RouteConfig[] = [
@@ -70,6 +69,7 @@ export const routes: RouteConfig[] = [
         tooltip: 'Inventario',
         path: paths.INVENTORY,
         mainView: <Inventory />,
+        manageView: (baseUrl) => <Kardex baseUrl={baseUrl} />,
         icon: () => <InventoryIcon style={{ width: 22, height: 22 }} />,
     },
     {

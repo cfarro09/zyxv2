@@ -20,7 +20,7 @@ interface IDataAux {
     listCategory: ObjectZyx[];
 }
 
-const ManageProduct: React.FC<IMainProps> = ({ baseUrl }) => {
+export const ManageProduct: React.FC<IMainProps> = ({ baseUrl }) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const multiResult = useSelector((state: IRootState) => state.main.multiData);
@@ -252,4 +252,3 @@ const ManageProduct: React.FC<IMainProps> = ({ baseUrl }) => {
     );
 };
 
-export default ManageProduct;

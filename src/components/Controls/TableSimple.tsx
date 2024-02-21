@@ -43,6 +43,7 @@ interface ReactTableProps<T extends object> {
     columnKey?: string;
     filterElement?: React.ReactNode;
     buttonElement?: React.ReactNode;
+    enableGlobalFilter?: boolean;
 }
 
 const LoadingSkeleton: React.FC<{ columns: number }> = ({ columns }) => {
@@ -54,7 +55,7 @@ const LoadingSkeleton: React.FC<{ columns: number }> = ({ columns }) => {
 };
 
 
-const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSelect, loading, showOptions, optionsMenu, addButton, onClickOnRow, filterElement, buttonElement }: ReactTableProps<T>) => {
+const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSelect, loading, showOptions, optionsMenu, addButton, onClickOnRow, filterElement, buttonElement, enableGlobalFilter = true }: ReactTableProps<T>) => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [globalFilter, setGlobalFilter] = useState('');
     const [rowSelected, setRowSelected] = useState<T | null>(null)
@@ -139,41 +140,43 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
                     {filterElement}
                 </Grid>
             )}
-            <Grid className="border-b flex flex-row-reverse py-2 px-6">
-                <Grid className="flex flex-row-reverse gap-4">
-                    {addButton &&
-                        <Button
-                            className="flex gap-1"
-                            id="basic-buttons"
-                            variant="contained"
-                            disabled={loading}
-                            onClick={() => {
-                                if (onClickOnRow) {
-                                    onClickOnRow(null)
-                                } else {
-                                    navigate(`${normalizePathname(location.pathname)}/new`)
-                                }
-                            }}
-                        >
-                            <Add />
-                            Nuevo
-                        </Button>
-                    }
-                    {buttonElement && buttonElement}
-                    {/* <Button id="basic-button" aria-haspopup="true" className="px-4 bg-light-grey text-grey">
-                        Exportar
-                    </Button> */}
-                    <TextField
-                        defaultValue={globalFilter || ''}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setGlobalFilter(String(e.target.value))}
-                        size="small"
-                        id="search-input"
-                        label=""
-                        variant="outlined"
-                        placeholder="Buscar..."
-                    />
+            {enableGlobalFilter && (
+                <Grid className="border-b flex flex-row-reverse py-2 px-6">
+                    <Grid className="flex flex-row-reverse gap-4">
+                        {addButton &&
+                            <Button
+                                className="flex gap-1"
+                                id="basic-buttons"
+                                variant="contained"
+                                disabled={loading}
+                                onClick={() => {
+                                    if (onClickOnRow) {
+                                        onClickOnRow(null)
+                                    } else {
+                                        navigate(`${normalizePathname(location.pathname)}/new`)
+                                    }
+                                }}
+                            >
+                                <Add />
+                                Nuevo
+                            </Button>
+                        }
+                        {buttonElement && buttonElement}
+                        {/* <Button id="basic-button" aria-haspopup="true" className="px-4 bg-light-grey text-grey">
+                            Exportar
+                        </Button> */}
+                        <TextField
+                            defaultValue={globalFilter || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setGlobalFilter(String(e.target.value))}
+                            size="small"
+                            id="search-input"
+                            label=""
+                            variant="outlined"
+                            placeholder="Buscar..."
+                        />
+                    </Grid>
                 </Grid>
-            </Grid>
+            )}
             <Table size='small'>
                 <TableHead>
                     {table.getHeaderGroups().map((headerGroup) => (

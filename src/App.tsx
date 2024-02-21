@@ -2,6 +2,8 @@
 
 import { ThemeProvider, createTheme } from '@mui/material/styles'; // Importa ThemeProvider
 import RouterApp from './routes/AppRoutes'; // Ajusta la ruta según la ubicación de tu archivo de rutas
+import 'react-date-range/dist/styles.css'; // Importa los estilos CSS
+import 'react-date-range/dist/theme/default.css';
 import './App.css';
 
 const theme = createTheme({
