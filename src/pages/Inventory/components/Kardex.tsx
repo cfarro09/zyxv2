@@ -53,7 +53,9 @@ export const Kardex: React.FC<IMainProps> = ({ baseUrl }) => {
             accessorKey: 'document_type',
             cell: (info) => {
                 const { document_type, document_id } = info.row.original;
-                const url = document_type === 'compra' ? '/purchase_orders' : '/sale_orders';
+                let url = '';
+                if (document_type === 'compra') url = '/purchase_orders';
+                if (document_type === 'venta') url = '/sale_orders';
                 return (
                     <Link to={`${url}/${document_id}`}>
                         <Typography color={'primary'}>{document_type.toUpperCase()}</Typography>
