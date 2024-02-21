@@ -1,12 +1,13 @@
+import React, { useMemo, useState } from 'react';
 import { Add, FirstPage, LastPage, MoreVert, NavigateBefore, NavigateNext } from '@mui/icons-material';
 import type { SvgIconComponent } from '@mui/icons-material';
-import { Button, Grid, IconButton, ListItemIcon, Menu, MenuItem, Skeleton, Table, TableBody, TableCell, TableHead, TableRow, TextField, Typography } from '@mui/material';
+import { Button, Checkbox, Grid, IconButton, ListItemIcon, Menu, MenuItem, Skeleton, Table, TableBody, TableCell, TableHead, TableRow, TextField, Typography } from '@mui/material';
+import type { CheckboxProps } from '@mui/material';
 import { Box } from '@mui/system';
 import { flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, useReactTable } from '@tanstack/react-table';
 import { useLocation, useNavigate } from 'react-router-dom';
-import type { ColumnDef, FilterFn } from '@tanstack/react-table';
+import type { ColumnDef, FilterFn, OnChangeFn } from '@tanstack/react-table';
 import { FieldSelect } from './FieldSelect';
-import { useMemo, useState } from 'react';
 import { rankItem } from '@tanstack/match-sorter-utils';
 import { ObjectZyx } from '@types';
 import { normalizePathname } from 'common/helpers';
@@ -44,6 +45,10 @@ interface ReactTableProps<T extends object> {
     filterElement?: React.ReactNode;
     buttonElement?: React.ReactNode;
     enableGlobalFilter?: boolean;
+    selection?: boolean;
+    setRowSelection?: ObjectZyx;
+    rowsSelected?: Record<string, boolean>
+    setRowsSelected?: OnChangeFn<Record<string, boolean>>
 }
 
 const LoadingSkeleton: React.FC<{ columns: number }> = ({ columns }) => {
@@ -54,15 +59,66 @@ const LoadingSkeleton: React.FC<{ columns: number }> = ({ columns }) => {
     return new Array(3).fill(0).map((_, index) => (<TableRow key={index}>{items}</TableRow>))
 };
 
+// Extiende CheckboxProps para incluir la propiedad indeterminate personalizada.
+interface IndeterminateCheckboxProps extends CheckboxProps {
+    indeterminate?: boolean;
+    className?: string;
+}
 
-const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSelect, loading, showOptions, optionsMenu, addButton, onClickOnRow, filterElement, buttonElement, enableGlobalFilter = true }: ReactTableProps<T>) => {
+function IndeterminateCheckbox({ indeterminate, className = '', ...rest }: IndeterminateCheckboxProps) {
+    const ref = React.useRef<HTMLInputElement>(null!);
+
+    React.useEffect(() => {
+        if (ref.current) {
+            ref.current.indeterminate = typeof indeterminate === 'boolean' && indeterminate;
+        }
+    }, [indeterminate]);
+
+    return (
+        <Checkbox
+            size='small'
+            inputRef={ref}
+            color="primary"
+            className={`${className} cursor-pointer`}
+            {...rest}
+        />
+    );
+}
+
+const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSelect, loading, showOptions, optionsMenu, addButton, onClickOnRow, filterElement, buttonElement, enableGlobalFilter = true, selection, rowsSelected, setRowsSelected }: ReactTableProps<T>) => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [globalFilter, setGlobalFilter] = useState('');
-    const [rowSelected, setRowSelected] = useState<T | null>(null)
+    const [rowSelected, setRowSelected] = useState<T>(null!)
     const navigate = useNavigate();
     const location = useLocation();
 
     const columns1 = useMemo(() => [
+        ...((selection) ? [
+            {
+                id: 'selection',
+                size: 50,
+                maxSize: 50,
+                header: ({ table }) => (
+                    <IndeterminateCheckbox
+                        {...{
+                            checked: table.getIsAllRowsSelected(),
+                            indeterminate: table.getIsSomeRowsSelected(),
+                            onChange: table.getToggleAllRowsSelectedHandler(),
+                        }}
+                    />
+                ),
+                cell: ({ row }) => (
+                    <IndeterminateCheckbox
+                        {...{
+                            checked: row.getIsSelected(),
+                            disabled: !row.getCanSelect(),
+                            indeterminate: row.getIsSomeSelected(),
+                            onChange: row.getToggleSelectedHandler(),
+                        }}
+                    />
+                ),
+            },
+        ] as ColumnDef<T>[] : []),
         ...((showOptions && columnKey) ? [{
             accessorKey: columnKey,
             header: "",
@@ -70,9 +126,7 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
             maxSize: 50,
             cell: (info) => {
                 return (
-                    // <div style={{ whiteSpace: 'nowrap', display: 'flex' }}>
                     <IconButton
-                        id={`bott-${info.row.original.userid}`}
                         aria-label="more"
                         aria-controls="long-menu"
                         aria-haspopup="true"
@@ -85,10 +139,9 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
                     >
                         <MoreVert style={{ color: '#B6B4BA' }} />
                     </IconButton>
-                    // </div>
                 );
             },
-        }] : []),
+        } as ColumnDef<T>] : []),
         ...columns,
         // eslint-disable-next-line react-hooks/exhaustive-deps
     ], [])
@@ -106,12 +159,11 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
     const table = useReactTable({
         data,
         columns: columns1,
-        filterFns: {
-            fuzzy: fuzzyFilter,
-        },
-        state: {
-            globalFilter,
-        },
+        enableMultiRowSelection: true,
+        filterFns: { fuzzy: fuzzyFilter },
+        state: { globalFilter, rowSelection: rowsSelected },
+        getRowId: (row, relativeIndex) => columnKey ? `${(row as ObjectZyx)[columnKey]}` : `${relativeIndex}`,
+        onRowSelectionChange: setRowsSelected,
         onGlobalFilterChange: setGlobalFilter,
         globalFilterFn: fuzzyFilter,
         getFilteredRowModel: getFilteredRowModel(),
@@ -157,9 +209,6 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
                             </Button>
                         }
                         {buttonElement && buttonElement}
-                        {/* <Button id="basic-button" aria-haspopup="true" className="px-4 bg-light-grey text-grey">
-                            Exportar
-                        </Button> */}
                         <TextField
                             defaultValue={globalFilter || ''}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setGlobalFilter(String(e.target.value))}
@@ -210,7 +259,6 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
                         {`Página ${table.getState().pagination.pageIndex + 1} de ${table.getPageCount()}`}
                     </Typography>
                 </Box>
-
                 <Box className="flex">
                     <Grid className="w-48 mr-4">
                         <FieldSelect

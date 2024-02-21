@@ -233,8 +233,8 @@ export const ManageUser: React.FC<IMainProps> = ({ baseUrl }) => {
                 </Paper>
             </Box>
             <PasswordDialog
-                openModal={openPasswordDialog}
-                setOpenModal={setOpenPasswordDialog}
+                openDialog={openPasswordDialog}
+                setOpenDialog={setOpenPasswordDialog}
                 parentSetValue={setValue}
             />
         </>

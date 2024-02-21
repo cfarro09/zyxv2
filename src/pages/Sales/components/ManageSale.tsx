@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Box, Breadcrumbs, Button, Grid, Paper, Typography } from '@mui/material';
-import { a11yProps, getCustomerSel, getProductSel, getValuesFromDomain, getSaleOrder, saleOrderIns, saleOrderLineIns, saleOrderPaymentIns, getStockSel } from 'common/helpers';
+import { a11yProps, getCustomerSel, getValuesFromDomain, getSaleOrder, saleOrderIns, saleOrderLineIns, saleOrderPaymentIns, getStockSel } from 'common/helpers';
 import React, { useEffect, useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import FieldEdit from 'components/Controls/FieldEdit';

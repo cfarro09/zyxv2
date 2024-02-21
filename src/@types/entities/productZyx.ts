@@ -2,7 +2,7 @@ export interface IProductZyx {
     productid: number;
     code: string;
     description: string;
-    title: string;
+    title?: string;
     image: string;
     barcode: string;
     purchase_price?: number;

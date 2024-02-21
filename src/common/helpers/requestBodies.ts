@@ -70,6 +70,17 @@ export const customerIns = (customer: ICustomer, operation: string): IRequestBod
         operation
     },
 });
+
+export const transferInventory = (inventoryid: number, warehouse_destiny: string, quantity: number): IRequestBody => ({
+    method: 'UFN_INVENTORY_TRANSFER',
+    key: 'UFN_INVENTORY_TRANSFER',
+    parameters: {
+        inventoryid,
+        warehouse_destiny,
+        quantity
+    },
+});
+
 export const getProductSel = (productid: number, viewpurchase = false): IRequestBody => ({
     method: 'UFN_PRODUCT_SEL',
     key: 'UFN_PRODUCT_SEL',

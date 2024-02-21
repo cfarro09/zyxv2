@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Button, FormControlLabel, Grid } from "@mui/material";
+import type { ModalProps } from '@mui/material';
 import FieldEdit from "components/Controls/FieldEdit";
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -13,18 +14,18 @@ import { useSendFormApi } from "../../../hooks/useSendFormApi";
 import Checkbox from '@mui/material/Checkbox';
 
 interface DomainValueDialogProps {
-    openModal: boolean;
-    setOpenModal: (_: boolean) => void;
+    openDialog: boolean;
+    setOpenDialog: (_: boolean) => void;
     domainValue: IDomainValue;
     onSave: () => void
 }
 
-const DomainValueDialog: React.FC<DomainValueDialogProps> = ({ openModal, setOpenModal, domainValue, onSave }) => {
+const DomainValueDialog: React.FC<DomainValueDialogProps> = ({ openDialog, setOpenDialog, domainValue, onSave }) => {
     const { onSubmitData } = useSendFormApi({
         operation: "INSERT",
         onSave: () => {
             onSave();
-            setOpenModal(false);
+            setOpenDialog(false);
         },
     });
 
@@ -49,22 +50,24 @@ const DomainValueDialog: React.FC<DomainValueDialogProps> = ({ openModal, setOpe
     useEffect(() => {
         reset(domainValue)
         registerX();
-    }, [openModal, setValue, domainValue]);
+    }, [openDialog, setValue, domainValue]);
 
     useEffect(() => {
         registerX();
     }, [getValues, register])
 
-    const handleCancelModal = () => {
-        setOpenModal(false);
-        clearErrors();
+    const handleCancelModal: ModalProps['onClose'] = (_, reason) => {
+        if (reason !== 'backdropClick') {
+            setOpenDialog(false);
+            clearErrors();
+        }
     }
 
     const onSubmitDomain = handleSubmit((data: IDomainValue) => onSubmitData(domainIns(data, data.domainid > 0 ? "UPDATE" : "INSERT")));
 
     return (
         <Dialog
-            open={openModal}
+            open={openDialog}
             maxWidth="sm"
             fullWidth
             onClose={handleCancelModal}
@@ -111,7 +114,7 @@ const DomainValueDialog: React.FC<DomainValueDialogProps> = ({ openModal, setOpe
                 </Grid>
             </DialogContent>
             <DialogActions>
-                <Button onClick={handleCancelModal}>Cancelar</Button>
+                <Button onClick={() => setOpenDialog(false)}>Cancelar</Button>
                 <Button type="submit">Guardar</Button>
             </DialogActions>
         </Dialog>

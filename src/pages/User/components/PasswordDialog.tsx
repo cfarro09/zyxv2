@@ -10,12 +10,12 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { IUser } from "@types";
 
 interface PasswordDialogProps {
-    openModal: boolean;
-    setOpenModal: (_: boolean) => void;
+    openDialog: boolean;
+    setOpenDialog: (_: boolean) => void;
     parentSetValue: UseFormSetValue<IUser>;
 }
 
-const PasswordDialog: React.FC<PasswordDialogProps> = ({ openModal, setOpenModal, parentSetValue }) => {
+const PasswordDialog: React.FC<PasswordDialogProps> = ({ openDialog, setOpenDialog, parentSetValue }) => {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -29,8 +29,8 @@ const PasswordDialog: React.FC<PasswordDialogProps> = ({ openModal, setOpenModal
     useEffect(() => {
         setValue('password', "");
         setValue('confirmpassword', "");
-    }, [openModal, setValue]);
-    
+    }, [openDialog, setValue]);
+
     useEffect(() => {
         register('password', { validate: (value) => Boolean(value?.length) || "El campo es requerido" });
         register('confirmpassword', {
@@ -42,18 +42,18 @@ const PasswordDialog: React.FC<PasswordDialogProps> = ({ openModal, setOpenModal
     }, [getValues, register])
 
     const handleCancelModal = () => {
-        setOpenModal(false);
+        setOpenDialog(false);
         clearErrors();
     }
 
     const onSubmitPassword = handleSubmit((data) => {
         parentSetValue('password', data.password);
-        setOpenModal(false);
+        setOpenDialog(false);
     });
 
     return (
         <Dialog
-            open={openModal}
+            open={openDialog}
             maxWidth="sm"
             fullWidth
             onClose={handleCancelModal}

@@ -7,12 +7,10 @@ import FieldEdit from 'components/Controls/FieldEdit';
 import { FieldSelect } from 'components/Controls/FieldSelect';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { IRootState } from 'stores';
-import { getMultiCollection, resetMultiMain } from 'stores/main/actions';
 import { IProduct } from '../models';
 import { useSendFormApi } from 'hooks/useSendFormApi';
+import { useMultiData } from 'hooks/useMultiData';
 
 interface IDataAux {
     listStatus: ObjectZyx[];
@@ -21,9 +19,7 @@ interface IDataAux {
 }
 
 export const ManageProduct: React.FC<IMainProps> = ({ baseUrl }) => {
-    const dispatch = useDispatch();
     const navigate = useNavigate();
-    const multiResult = useSelector((state: IRootState) => state.main.multiData);
     const [dataAux, setDataAux] = useState<IDataAux>({ listStatus: [], listCategory: [], listUnidad: [] });
     const { id } = useParams<{ id?: string }>();
     const { onSubmitData } = useSendFormApi({
@@ -54,45 +50,26 @@ export const ManageProduct: React.FC<IMainProps> = ({ baseUrl }) => {
         }
     });
 
-    const registerX = () => {
-        register('productid');
-        register('title', { validate: (value) => Boolean(value?.length) || 'El campo es requerido' });
-        register('code', { validate: (value) => Boolean(value?.length) || 'El campo es requerido' });
-    };
-
-    useEffect(() => {
-        registerX();
-        dispatch(
-            getMultiCollection([
-                ...(id !== 'new' ? [getProductSel(parseInt(`${id}`))] : []),
-                getValuesFromDomain('ESTADO'),
-                getValuesFromDomain('UNIDAD'),
-                getValuesFromDomain('CATEGORIA'),
-            ]),
-        );
-
-    }, [dispatch, register, id]);
-
-    useEffect(() => {
-        if (!multiResult.loading && !multiResult.error) {
-            const rows = multiResult.data.find((f) => f.key === `UFN_PRODUCT_SEL`)?.data ?? [];
-            if (rows.length > 0) {
-                reset(rows[0]);
-            }
-            registerX()
-            const listStatus = multiResult.data.find((f) => f.key === `UFN_DOMAIN_VALUES_SEL-ESTADO`)?.data ?? [];
-            const listUnidad = multiResult.data.find((f) => f.key === `UFN_DOMAIN_VALUES_SEL-UNIDAD`)?.data ?? [];
-            const listCategory = multiResult.data.find((f) => f.key === `UFN_DOMAIN_VALUES_SEL-CATEGORIA`)?.data ?? [];
-            setDataAux({ listStatus, listCategory, listUnidad });
-        }
-    }, [multiResult]);
-
-    useEffect(() => {
-        return () => {
-            dispatch(resetMultiMain())
-        }
-    }, []);
-
+    const { giveMeData, loading } = useMultiData<IProduct, IDataAux>({
+        registerX: () => {
+            register('productid');
+            register('title', { validate: (value) => Boolean(value?.length) || 'El campo es requerido' });
+            register('code', { validate: (value) => Boolean(value?.length) || 'El campo es requerido' });
+        },
+        reset,
+        setDataAux,
+        collections: [
+            ...(id !== 'new' ? [{
+                rb: getProductSel(parseInt(`${id}`)),
+                key: 'UFN_PRODUCT_SEL',
+                keyData: "",
+                main: true,
+            }] : []),
+            { rb: getValuesFromDomain('CATEGORIA'), key: 'UFN_DOMAIN_VALUES_SEL-CATEGORIA', keyData: "listCategory" },
+            { rb: getValuesFromDomain('UNIDAD'), key: 'UFN_DOMAIN_VALUES_SEL-UNIDAD', keyData: "listUnidad" },
+            { rb: getValuesFromDomain('ESTADO'), key: 'UFN_DOMAIN_VALUES_SEL-ESTADO', keyData: "listStatus" },
+        ],
+    });
 
     const onSubmit = handleSubmit((data) => onSubmitData(productIns({
         ...data,
@@ -102,6 +79,10 @@ export const ManageProduct: React.FC<IMainProps> = ({ baseUrl }) => {
     const handleFileUpload = (fileUrl: string) => {
         setValue('image', fileUrl);
     };
+
+    useEffect(() => {
+        giveMeData();
+    }, []);
 
     return (
         <Box className="flex max-w-screen-xl mr-auto ml-auto flex-col">
@@ -119,7 +100,7 @@ export const ManageProduct: React.FC<IMainProps> = ({ baseUrl }) => {
                         <Typography variant="h5">{id === 'new' ? 'Nuevo Producto' : 'Modificar Producto'}</Typography>
                     </Grid>
                     <Grid item xs={12} sm={6} container justifyContent={'flex-end'} gap={2}>
-                        <Button color="primary" type="submit" variant="contained" onClick={onSubmit}>
+                        <Button color="primary" type="submit" variant="contained" onClick={onSubmit} disabled={loading}>
                             Guardar
                         </Button>
                     </Grid>
@@ -197,7 +178,7 @@ export const ManageProduct: React.FC<IMainProps> = ({ baseUrl }) => {
                                         valueDefault={getValues('unit')}
                                         onChange={(value) => setValue('unit', value?.domainvalue as string ?? "")}
                                         error={errors.unit?.message}
-                                        loading={multiResult.loading}
+                                        loading={loading}
                                         data={dataAux.listUnidad}
                                         optionDesc="domainvalue"
                                         optionValue="domainvalue"
@@ -219,7 +200,7 @@ export const ManageProduct: React.FC<IMainProps> = ({ baseUrl }) => {
                                         valueDefault={getValues('status')}
                                         onChange={(value) => setValue('status', value?.domainvalue as string ?? "")}
                                         error={errors.status?.message}
-                                        loading={multiResult.loading}
+                                        loading={loading}
                                         data={dataAux.listStatus}
                                         optionDesc="domainvalue"
                                         optionValue="domainvalue"
@@ -232,7 +213,7 @@ export const ManageProduct: React.FC<IMainProps> = ({ baseUrl }) => {
                                         valueDefault={getValues('category')}
                                         onChange={(value) => setValue('category', value?.domainvalue as string ?? "")}
                                         error={errors.category?.message}
-                                        loading={multiResult.loading}
+                                        loading={loading}
                                         data={dataAux.listCategory}
                                         optionDesc="domainvalue"
                                         optionValue="domainvalue"

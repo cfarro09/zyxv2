@@ -115,7 +115,7 @@ const Aside: React.FC<{ open: boolean; handleDrawerClose: () => void }> = ({ ope
             </DrawerHeader>
             <Divider />
             <List>
-                {routes.filter(x => applications[x.path]?.[0]).map((route) => (
+                {routes.filter(x => applications?.[x.path]?.[0]).map((route) => (
                     <ElementMenu
                         key={route.path}
                         route={route}

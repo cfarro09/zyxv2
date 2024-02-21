@@ -112,8 +112,8 @@ export const ManageDomain: React.FC<IMainProps> = ({ baseUrl }) => {
                 </Paper>
             </Box>
             <DomainValueDialog
-                openModal={openDomainValueDialog}
-                setOpenModal={setOpenDomainValueDialog}
+                openDialog={openDomainValueDialog}
+                setOpenDialog={setOpenDomainValueDialog}
                 domainValue={domainValueSelected}
                 onSave={fetchData}
             />

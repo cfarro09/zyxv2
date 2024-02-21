@@ -3,7 +3,7 @@ export interface IInventory {
     productid: number;
     title: string;
     code: string;
-    stock: string;
+    stock: number;
     warehouse: string;
     changedate: string;
 }
@@ -58,4 +58,18 @@ export interface KardexFiltersProps {
     filters: IKardexFilter;
     setFilters: React.Dispatch<React.SetStateAction<IKardexFilter>>;
     fetchData: () => void;
+}
+
+export interface InventoryDialogTransferProps {
+    open: boolean;
+    setOpenDialog: (_: boolean) => void;
+    warehouseSelected: string;
+    listWarehouse: IDomainValue[];
+    products: IInventory[];
+    fetchData?: () => void;
+}
+
+export interface TransferProps {
+    warehouse: string;
+    products: (IInventory & { quantity: number })[]
 }

@@ -1,9 +1,9 @@
 import { useSelector as $useSelector } from 'react-redux';
-import { IRootState } from '../store';
+import { IRootState } from 'stores';
 
 export function useSelector<T>(
-    fn: (state: IRootState) => T,
-    equalityFn?: (left: T, right: T) => boolean,
+    fn: (_: IRootState) => T,
+    equalityFn?: (_: T, _1: T) => boolean,
 ) {
     return $useSelector<IRootState, T>(fn, equalityFn);
 }

@@ -12,110 +12,141 @@ import { useMultiData } from "hooks/useMultiData";
 import { InventoryFilters } from "./InventoryFilters";
 import InventoryDialogUpload from "./InventoryDialogUpload";
 import { FileUpload } from "@mui/icons-material";
+import MoveUpIcon from '@mui/icons-material/MoveUp';
+import InventoryDialogTransfer from "./InventoryDialogTransfer";
 
 const columns: ColumnDef<IInventory>[] = [
-  {
-    header: 'title',
-    accessorKey: 'title'
-  },
-  {
-    header: 'code',
-    accessorKey: 'code'
-  },
-  {
-    header: 'stock',
-    accessorKey: 'stock'
-  },
-  {
-    header: 'warehouse',
-    accessorKey: 'warehouse'
-  },
-  {
-    header: 'FECHA CREACION',
-    accessorFn: (row: IInventory) => dayjs(row.changedate).format('DD/MM/YYYY'),
-  },
+	{
+		header: 'PRODUCTO',
+		accessorKey: 'title'
+	},
+	{
+		header: 'CÓDIGO',
+		accessorKey: 'code'
+	},
+	{
+		header: 'STOCK',
+		accessorKey: 'stock'
+	},
+	{
+		header: 'ALMACEN',
+		accessorKey: 'warehouse'
+	},
+	{
+		header: 'FECHA CREACION',
+		accessorFn: (row: IInventory) => dayjs(row.changedate).format('DD/MM/YYYY'),
+	},
 ]
 
 export const Inventory: React.FC<unknown> = () => {
-  const dispatch = useDispatch();
-  const mainResult = useSelector((state: IRootState) => state.main.mainData);
-  const [mainData, setMainData] = useState<IInventory[]>([]);
-  const [dataAux, setDataAux] = useState<IDataAux>({ listWarehouse: [] });
-  const [filters, setFilters] = useState<IInventoryFilters>({ warehouse: '' })
-  const [openImportDialog, setOpenImportDialog] = React.useState(false);
+	const dispatch = useDispatch();
+	const mainResult = useSelector((state: IRootState) => state.main.mainData);
+	const [mainData, setMainData] = useState<IInventory[]>([]);
+	const [dataAux, setDataAux] = useState<IDataAux>({ listWarehouse: [] });
+	const [filters, setFilters] = useState<IInventoryFilters>({ warehouse: '' })
+	const [openImportDialog, setOpenImportDialog] = React.useState(false);
+	const [openTransferDialog, setOpenTransferDialog] = React.useState(false);
+	const [keysSelected, setKeysSelected] = React.useState({});
+	const [rowsSelected, setRowsSelected] = useState<IInventory[]>([])
 
-  const handleDialogClose = () => {
-    setOpenImportDialog(false);
-  };
+	const handleDialogClose = () => setOpenImportDialog(false)
 
-  const fetchData = () => {
-    dispatch(getCollection(getInventorySel({ ...filters })))
-  }
+	const fetchData = () => {
+		setKeysSelected({});
+		dispatch(getCollection(getInventorySel({ ...filters })));
+	}
 
-  const { giveMeData, loading } = useMultiData<IInventory, IDataAux>({
-    setDataAux,
-    collections: [
-      { rb: getValuesFromDomain('ALMACEN'), key: 'UFN_DOMAIN_VALUES_SEL-ALMACEN', keyData: "listWarehouse" },
-    ],
-  })
+	const { giveMeData, loading } = useMultiData<IInventory, IDataAux>({
+		setDataAux,
+		collections: [
+			{ rb: getValuesFromDomain('ALMACEN'), key: 'UFN_DOMAIN_VALUES_SEL-ALMACEN', keyData: "listWarehouse" },
+		],
+	})
 
-  useEffect(() => {
-    fetchData()
-    giveMeData();
-  }, []);
+	useEffect(() => {
+		giveMeData();
+	}, []);
 
-  useEffect(() => {
-    if (!mainResult.loading && !mainResult.error && mainResult.key === 'UFN_INVENTORY_SEL') {
-      setMainData((mainResult.data as IInventory[]) || []);
-    }
-  }, [mainResult]);
+	useEffect(() => {
+		if (!mainResult.loading && !mainResult.error && mainResult.key === 'UFN_INVENTORY_SEL') {
+			setMainData((mainResult.data as IInventory[]) || []);
+		}
+	}, [mainResult]);
 
-  useEffect(() => {
-    fetchData();
-  }, [filters]);
+	useEffect(() => {
+		fetchData();
+	}, [filters]);
 
-  // const deleteRow = (user: IInventory) => onSubmitData(userIns({ ...user, password: "", operation: "DELETE" }))
+	const handleChange = (newValue: IDomainValue) => {
+		setFilters({ ...filters, warehouse: newValue?.domainvalue || '' })
+	}
 
-  const handleChange = (newValue: IDomainValue) => {
-    setFilters({ ...filters, warehouse: newValue?.domainvalue || '' })
-  }
+	const handlerOpenTransferDialog = () => {
+		console.log("mainData.filter(x => Object.keys(keysSelected).includes(`${x.inventoryid}`))", mainData.filter(x => Object.keys(keysSelected).includes(`${x.inventoryid}`)))
+		setRowsSelected(mainData.filter(x => Object.keys(keysSelected).includes(`${x.inventoryid}`)));
+		setOpenTransferDialog(true)
+	}
 
-  return (
-    <Box className="flex max-w-screen-xl mr-auto ml-auto flex-col">
-      <Paper className="w-full mt-6">
-        <Box className="px-6 py-3 border-b">
-          <Typography variant="h5">Inventario</Typography>
-        </Box>
-        <Box sx={{ '& .MuiTableBody-root .MuiTableCell-root': { padding: '0 16px' } }}>
-          <TableSimple
-            loading={mainResult.loading}
-            data={mainData}
-            showOptions={true}
-            addButton={true}
-            columns={columns}
-            redirectOnSelect={true}
-            columnKey={"inventoryid"}
-            filterElement={
-              <InventoryFilters
-                dataAux={dataAux}
-                filters={filters}
-                loading={loading}
-                handleChange={handleChange}
-              />
-            }
-            buttonElement={
-              <>
-                <Button
-                  className={"bg-light-grey px-4 text-grey flex gap-2"}
-                  onClick={() => setOpenImportDialog(true)}>
-                  <FileUpload fontSize="small" /> Importar
-                </Button>
-              </>
-            }
-          />
-        </Box>
-      </Paper>
-      <InventoryDialogUpload open={openImportDialog} handleClose={handleDialogClose} fetchData={fetchData} />
-    </Box>
-  );
+	console.log("keysSelected", rowsSelected)
+
+	return (
+		<Box className="flex max-w-screen-xl mr-auto ml-auto flex-col">
+			<Paper className="w-full mt-6">
+				<Box className="px-6 py-3 border-b">
+					<Typography variant="h5">Inventario</Typography>
+				</Box>
+				<Box >
+					<TableSimple
+						loading={mainResult.loading}
+						data={mainData}
+						showOptions={false}
+						columns={columns}
+						redirectOnSelect={true}
+						columnKey={"inventoryid"}
+						selection={true}
+						rowsSelected={keysSelected}
+						setRowsSelected={setKeysSelected}
+						filterElement={
+							<InventoryFilters
+								dataAux={dataAux}
+								filters={filters}
+								loading={loading}
+								handleChange={handleChange}
+							/>
+						}
+						buttonElement={
+							<>
+								<Button
+									onClick={() => setOpenImportDialog(true)}
+									variant="outlined"
+								>
+									<FileUpload fontSize="small" /> Importar
+								</Button>
+								<Button
+									onClick={handlerOpenTransferDialog}
+									variant="outlined"
+									disabled={Object.keys(keysSelected).length === 0 || !filters.warehouse}
+								>
+									<MoveUpIcon fontSize="small" /> Transferir
+								</Button>
+							</>
+						}
+					/>
+				</Box>
+			</Paper>
+			<InventoryDialogUpload
+				open={openImportDialog}
+				handleClose={handleDialogClose}
+				fetchData={fetchData}
+			/>
+			<InventoryDialogTransfer
+				open={openTransferDialog}
+				setOpenDialog={setOpenTransferDialog}
+				listWarehouse={dataAux.listWarehouse}
+				warehouseSelected={filters.warehouse}
+				products={rowsSelected}
+				fetchData={fetchData}
+			/>
+		</Box>
+	);
 };
