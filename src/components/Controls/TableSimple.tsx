@@ -66,13 +66,8 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
         ...((showOptions && columnKey) ? [{
             accessorKey: columnKey,
             header: "",
-            enableResizing: false,
-            size: 10,
-            minSize: 10,
-            maxSize: 10,
-            maxWidth: 10,
-            minWidth: 10,
-            width: 10,
+            size: 50,
+            maxSize: 50,
             cell: (info) => {
                 return (
                     // <div style={{ whiteSpace: 'nowrap', display: 'flex' }}>
@@ -94,7 +89,7 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
                 );
             },
         }] : []),
-        ...columns
+        ...columns,
         // eslint-disable-next-line react-hooks/exhaustive-deps
     ], [])
 
@@ -177,12 +172,12 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
                     </Grid>
                 </Grid>
             )}
-            <Table size='small'>
+            <Table size='small' sx={{ tableLayout: "fixed" }}>
                 <TableHead>
                     {table.getHeaderGroups().map((headerGroup) => (
                         <TableRow key={headerGroup.id}>
                             {headerGroup.headers.map((header) => (
-                                <TableCell key={header.id}>
+                                <TableCell key={header.id} sx={{ width: header.column.getSize() }}>
                                     {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                                 </TableCell>
                             ))}
@@ -196,15 +191,14 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
                             {row.getVisibleCells().map((cell) => (
                                 <TableCell
                                     key={cell.id}
+                                    sx={{ width: cell.column.getSize() }}
                                     onClick={() => {
                                         if (cell.column.id !== 'selection') {
                                             (redirectOnSelect && columnKey) && navigate(`${normalizePathname(location.pathname)}/${(row.original as ObjectZyx)[columnKey]}`);
                                             onClickOnRow && onClickOnRow(row.original);
                                         }
                                     }}
-                                >
-                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                </TableCell>
+                                >{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
                             ))}
                         </TableRow>
                     ))}
