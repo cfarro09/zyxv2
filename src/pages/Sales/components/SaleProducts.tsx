@@ -75,36 +75,39 @@ export const SaleProducts: React.FC<{
                                     }
                                 </TableCell>
                                 <TableCell >
-                                    <FieldSelect
-                                        label={"Product"}
-                                        valueDefault={getValues(`products.${i}.productid`)}
-                                        fregister={{
-                                            ...register(`products.${i}.productid`, {
-                                                validate: (value) => (value > 0) || "El campo es requerido"
-                                            })
-                                        }}
-                                        disabled={disabled}
-                                        variant='outlined'
-                                        onChange={(value) => {
-                                            setValue(`products.${i}.productid`, (value?.productid as number) ?? 0);
-                                            setValue(`products.${i}.stock`, (value?.stock as number) ?? 0);
-                                            setValue(`products.${i}.inventoryid`, (value?.inventoryid as number) ?? 0);
-                                            setValue(`products.${i}.selling_price`, (value?.selling_price as number) ?? 0);
-                                            trigger(`products.${i}.selling_price`);
-                                            trigger(`products.${i}.stock`);
-                                            calculateSubtotal(i, getValues(`products.${i}.quantity`), (value?.selling_price as number) ?? 0);
-                                        }}
-                                        renderOption={(option) => (
-                                            <React.Fragment>
-                                                <Avatar alt={`${option.description}`} src={`${option.image}`} sx={{ marginRight: 2 }} />
-                                                {option["description"]}
-                                            </React.Fragment>
-                                        )}
-                                        error={errors?.products?.[i]?.productid?.message}
-                                        data={listProduct}
-                                        optionDesc="description"
-                                        optionValue="productid"
-                                    />
+                                    {disabled && `${item.title} - ${item.barcode}`}
+                                    {!disabled &&
+                                        <FieldSelect
+                                            label={"Product"}
+                                            valueDefault={getValues(`products.${i}.productid`)}
+                                            fregister={{
+                                                ...register(`products.${i}.productid`, {
+                                                    validate: (value) => (value > 0) || "El campo es requerido"
+                                                })
+                                            }}
+                                            disabled={disabled}
+                                            variant='outlined'
+                                            onChange={(value) => {
+                                                setValue(`products.${i}.productid`, (value?.productid as number) ?? 0);
+                                                setValue(`products.${i}.stock`, (value?.stock as number) ?? 0);
+                                                setValue(`products.${i}.inventoryid`, (value?.inventoryid as number) ?? 0);
+                                                setValue(`products.${i}.selling_price`, (value?.selling_price as number) ?? 0);
+                                                trigger(`products.${i}.selling_price`);
+                                                trigger(`products.${i}.stock`);
+                                                calculateSubtotal(i, getValues(`products.${i}.quantity`), (value?.selling_price as number) ?? 0);
+                                            }}
+                                            renderOption={(option) => (
+                                                <React.Fragment>
+                                                    <Avatar alt={`${option.description}`} src={`${option.image}`} sx={{ marginRight: 2 }} />
+                                                    {option["description"]}
+                                                </React.Fragment>
+                                            )}
+                                            error={errors?.products?.[i]?.productid?.message}
+                                            data={listProduct}
+                                            optionDesc="description"
+                                            optionValue="productid"
+                                        />
+                                    }
                                 </TableCell>
                                 <TableCell sx={{ width: 200 }}>
                                     <FieldEdit
