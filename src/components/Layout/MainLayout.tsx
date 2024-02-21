@@ -64,7 +64,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
 
 	return (
 		<React.Fragment>
-			<Box sx={{ display: 'flex', height: '100vh', width: '99vw' }}>
+			<Box sx={{ display: 'flex', minHeight: '100vh', width: '99vw' }}>
 				<CssBaseline />
 				<AppBar position="fixed" color='secondary' open={open}>
 					<Toolbar>
