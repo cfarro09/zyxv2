@@ -201,6 +201,7 @@ export const ManagePurchase: React.FC<IMainProps> = ({ baseUrl }) => {
                             <PurchaseProducts
                                 control={control}
                                 loading={loading}
+                                setDataAux={setDataAux}
                                 listProduct={dataAux.listProduct}
                                 errors={errors}
                             />

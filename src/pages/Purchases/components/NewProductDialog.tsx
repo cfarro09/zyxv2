@@ -1,4 +1,4 @@
-import { Dialog, DialogContent } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import type { ModalProps } from '@mui/material';
 import { ManageProduct } from "pages/Product/Index";
@@ -45,6 +45,9 @@ const NewProductDialog: React.FC<AddProductProps> = ({ open, setOpenDialog, prod
                     }}
                 />
             </DialogContent>
+            <DialogActions>
+                <Button onClick={() => setOpenDialog(false)}>Cancelar</Button>
+            </DialogActions>
         </Dialog>
     );
 };

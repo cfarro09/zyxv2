@@ -1,5 +1,5 @@
 import { Add, Delete } from "@mui/icons-material";
-import { Avatar, Grid, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import { Avatar,  IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { IPurchase, ObjectZyx } from "@types";
 import FieldEdit from "components/Controls/FieldEdit";
 import { FieldSelect } from "components/Controls/FieldSelect";
@@ -12,13 +12,15 @@ export const PurchaseProducts: React.FC<{
     control: Control<IPurchase, object, IPurchase>;
     loading: boolean;
     listProduct: ObjectZyx[];
-    errors: FieldErrors<IPurchase>
-}> = ({ control, loading, listProduct, errors }) => {
+    errors: FieldErrors<IPurchase>;
+    setDataAux: any
+}> = ({ control, loading, listProduct, errors, setDataAux }) => {
     const { setValue, register, getValues, trigger } = useFormContext()
     const { fields, append, remove } = useFieldArray({
         control,
         name: 'products',
     });
+    console.log("listProduct", listProduct)
     const [openNewProductDialog, setOpenNewProductDialog] = useState(false)
     const [newProductTitle, setNewProductTitle] = useState('')
     const [newProductIndex, setNewProductIndex] = useState(0)
@@ -30,16 +32,24 @@ export const PurchaseProducts: React.FC<{
     }
 
     const handleNewProduct = (product: IProduct, index: number) => {
-        console.log({ product, index })
         if (product) {
-            // setValue(`products.${i}`, value);
-            setValue(`products.${index}.quantity`, 1);
-            setValue(`products.${index}.productid`, product.productid);
+            setDataAux(prev => ({
+                ...prev,
+                listProduct: [
+                    ...prev.listProduct,
+                    product
+                ]
+            }))
+
+            setTimeout(() => {
+                setValue(`products.${index}.quantity`, 1);
+                setValue(`products.${index}.productid`, product.productid);
+                setValue(`products.${index}.productid`, (product?.productid as number) ?? 0);
+                setValue(`products.${index}.purchase_price`, (product?.purchase_price as number) ?? 0);
+                trigger(`products.${index}.purchase_price`);
+                calculateSubtotal(index, getValues(`products.${index}.quantity`), (product?.purchase_price as number) ?? 0);
+            }, 100);
         }
-        setValue(`products.${index}.productid`, (product?.productid as number) ?? 0);
-        setValue(`products.${index}.purchase_price`, (product?.purchase_price as number) ?? 0);
-        trigger(`products.${index}.purchase_price`);
-        calculateSubtotal(index, getValues(`products.${index}.quantity`), (product?.purchase_price as number) ?? 0);
     }
 
     return (
@@ -52,18 +62,21 @@ export const PurchaseProducts: React.FC<{
                                 <IconButton
                                     size="small"
                                     disabled={loading}
-                                    onClick={() => append({
-                                        purchaseorderlineid: 0,
-                                        productid: 0,
-                                        barcode: '',
-                                        code: '',
-                                        description: '',
-                                        image: '',
-                                        status: 'ACTIVO',
-                                        quantity: 1,
-                                        purchase_price: 0,
-                                        total: 0
-                                    })}
+                                    onClick={() => {
+                                        console.log("dasdsada")
+                                        append({
+                                            purchaseorderlineid: 0,
+                                            productid: 0,
+                                            barcode: '',
+                                            code: '',
+                                            description: '',
+                                            image: '',
+                                            status: 'ACTIVO',
+                                            quantity: 1,
+                                            purchase_price: 0,
+                                            total: 0
+                                        })
+                                    }}
                                 >
                                     <Add />
                                 </IconButton>
@@ -99,7 +112,6 @@ export const PurchaseProducts: React.FC<{
                                         variant='outlined'
                                         onChange={(value) => {
                                             if (value) {
-                                                // setValue(`products.${i}`, value);
                                                 setValue(`products.${i}.quantity`, 1);
                                                 setValue(`products.${i}.productid`, value.productid);
                                             }
@@ -110,8 +122,8 @@ export const PurchaseProducts: React.FC<{
                                         }}
                                         renderOption={(option) => (
                                             <React.Fragment>
-                                                <Avatar alt={`${option.description}`} src={`${option.image}`} sx={{ marginRight: 2 }} />
-                                                {option["description"]}
+                                                <Avatar alt={`${option.title}`} src={`${option.image}`} sx={{ marginRight: 2 }} />
+                                                {option["title"]}
                                             </React.Fragment>
                                         )}
                                         error={errors?.products?.[i]?.productid?.message}
@@ -122,7 +134,7 @@ export const PurchaseProducts: React.FC<{
                                             setNewProductIndex(i);
                                         }}
                                         data={listProduct}
-                                        optionDesc="description"
+                                        optionDesc="title"
                                         optionValue="productid"
                                     />
                                 </TableCell>

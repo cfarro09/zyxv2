@@ -1,6 +1,6 @@
 import { Add, Delete } from "@mui/icons-material";
 import { Avatar, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
-import { ObjectZyx, ISale, IProductZyx, IPayment } from "@types";
+import { ObjectZyx, ISale, IPayment } from "@types";
 import DropZoneDialog from "components/Controls/DropZoneDialog";
 import FieldEdit from "components/Controls/FieldEdit";
 import { FieldSelect } from "components/Controls/FieldSelect";
@@ -8,6 +8,8 @@ import React, { useState } from "react";
 import { Control, FieldErrors, useFieldArray, useFormContext } from "react-hook-form";
 import { useDispatch } from 'react-redux';
 import { showSnackbar } from "stores/popus/actions";
+
+const round2 = (numbb: number) => Math.round(numbb * 100) / 100
 
 export const SalePayments: React.FC<{
     control: Control<ISale, object, ISale>;
@@ -25,6 +27,7 @@ export const SalePayments: React.FC<{
         name: 'payments',
     });
     const appendProduct = () => {
+        
         const amountPaid = getValues('payments').reduce((acc: number, item: IPayment) => acc + item.payment_amount, 0);
         const amountToPay = getValues('total_amount');
         if (amountPaid < amountToPay) {
@@ -33,7 +36,7 @@ export const SalePayments: React.FC<{
                 payment_method: '',
                 evidence_url: '',
                 status: 'ACTIVO',
-                payment_amount: amountToPay - amountPaid
+                payment_amount: round2(amountToPay - amountPaid)
             })
         } else {
             dispatch(showSnackbar({ show: true, severity: "warning", message: "El monto total a pagar ya fue registrado" }))
@@ -47,7 +50,7 @@ export const SalePayments: React.FC<{
         if (amountPaid + amount > amountToPay) {
             dispatch(showSnackbar({ show: true, severity: "warning", message: "El monto ingresado excede el monto total a pagar." }))
         }
-        const newAmount = amountPaid + amount <= amountToPay ? amount : amountToPay - amountPaid;
+        const newAmount = amountPaid + amount <= amountToPay ? amount : round2(amountToPay - amountPaid);
         setValue(`payments.${position}.payment_amount`, newAmount);
         trigger(`payments.${position}.payment_amount`);
         return newAmount;

@@ -102,7 +102,7 @@ export const ManageSale: React.FC<IMainProps> = ({ baseUrl }) => {
             dispatch(showSnackbar({ show: true, severity: "warning", message: `Debes ingresar al menos un producto` }));
             return;
         }
-        if (totalProducts !== totalPayments) {
+        if (totalProducts.toFixed(2) !== totalPayments.toFixed(2)) {
             dispatch(showSnackbar({ show: true, severity: "warning", message: `La diferencia a pagar es diferente al total de productos.` }));
             return;
         }
