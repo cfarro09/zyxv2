@@ -87,10 +87,6 @@ export const Sale: React.FC = () => {
     }, []);
 
     useEffect(() => {
-        fetchData();
-    }, [filters]);
-
-    useEffect(() => {
         if (!mainResult.loading && !mainResult.error && mainResult.key === 'UFN_SALE_ORDER_SEL') {
             setMainData((mainResult.data as ISale[]) || []);
         }

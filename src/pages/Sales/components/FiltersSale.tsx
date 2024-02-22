@@ -14,7 +14,6 @@ export interface SaleFiltersProps {
     fetchData: () => void;
 }
 
-
 const SaleFilters: React.FC<SaleFiltersProps> = ({ filters, setFilters, fetchData }) => {
     useEffect(() => {
         fetchData()
