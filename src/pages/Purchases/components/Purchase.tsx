@@ -1,5 +1,5 @@
 import { Box, Paper, Typography } from '@mui/material';
-import { getPurchaseOrder, purchaseOrderIns } from 'common/helpers';
+import { cancelPurchaseOrder, getPurchaseOrder } from 'common/helpers';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from 'stores';
@@ -63,7 +63,7 @@ export const Purchase: React.FC = () => {
         }
     }, [mainResult]);
 
-    const deleteRow = (customer: IPurchase) => onSubmitData(purchaseOrderIns({ ...customer, operation: "DELETE" }))
+    const deleteRow = (purchase: IPurchase) => onSubmitData(cancelPurchaseOrder(purchase.purchaseorderid), false, `¿Está seguro de anular la compra ${purchase.order_number}?`, `Compra anulada correctametne.`)
 
     return (
         <Box className="flex max-w-screen-xl mr-auto ml-auto flex-col">
@@ -80,7 +80,8 @@ export const Purchase: React.FC = () => {
                         optionsMenu={[{
                             description: "Eliminar",
                             Icon: DeleteIcon,
-                            onClick: (user) => user && deleteRow(user)
+                            onClick: (purchase) => purchase && deleteRow(purchase),
+                            validation: (purchase) => purchase?.status === 'ACTIVO'
                         }]}
                         columns={columns}
                         redirectOnSelect={true}

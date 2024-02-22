@@ -128,8 +128,7 @@ export const Product: React.FC = () => {
                         optionsMenu={[{
                             description: "Eliminar",
                             Icon: Delete,
-                            onClick: (product) => product && deleteRow(product),
-                            validation: (product) => product?.status === 'ACTIVO'
+                            onClick: (product) => product && deleteRow(product)
                         }]} />
                 </Box>
             </Paper>
