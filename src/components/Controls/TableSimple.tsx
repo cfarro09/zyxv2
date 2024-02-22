@@ -30,6 +30,7 @@ interface ArrayOptionMenu<T> {
     description: string;
     Icon: SvgIconComponent;
     onClick: (_: T | null) => void;
+    validation?: (_: T | null) => boolean;
 }
 
 interface ReactTableProps<T extends object> {
@@ -48,7 +49,7 @@ interface ReactTableProps<T extends object> {
     selection?: boolean;
     setRowSelection?: ObjectZyx;
     rowsSelected?: Record<string, boolean>
-    setRowsSelected?: OnChangeFn<Record<string, boolean>>
+    setRowsSelected?: OnChangeFn<Record<string, boolean>>,
 }
 
 const LoadingSkeleton: React.FC<{ columns: number }> = ({ columns }) => {
@@ -305,14 +306,16 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
                     'aria-labelledby': 'basic-button',
                 }}
             >
-                {optionsMenu?.map(({ description, Icon, onClick }, index) => (
+                {optionsMenu?.map(({ description, Icon, onClick, validation }, index) => (
                     <MenuItem
                         key={index}
+                        disabled={validation && !validation(rowSelected)}
                         onClick={(e) => {
                             e.stopPropagation();
                             setAnchorEl(null);
                             onClick(rowSelected);
-                        }}>
+                        }}
+                    >
                         <ListItemIcon color="inherit">
                             <Icon width={18} />
                         </ListItemIcon>
