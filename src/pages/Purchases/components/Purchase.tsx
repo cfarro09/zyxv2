@@ -78,7 +78,7 @@ export const Purchase: React.FC = () => {
                         showOptions={true}
                         addButton={true}
                         optionsMenu={[{
-                            description: "Eliminar",
+                            description: "Anular",
                             Icon: DeleteIcon,
                             onClick: (purchase) => purchase && deleteRow(purchase),
                             validation: (purchase) => purchase?.status === 'ACTIVO'
