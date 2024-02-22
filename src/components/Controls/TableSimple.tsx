@@ -122,8 +122,8 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
         ...((showOptions && columnKey) ? [{
             accessorKey: columnKey,
             header: "",
-            size: 50,
-            maxSize: 50,
+            size: 40,
+            maxSize: 40,
             cell: (info) => {
                 return (
                     <IconButton
@@ -240,7 +240,7 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
                             {row.getVisibleCells().map((cell) => (
                                 <TableCell
                                     key={cell.id}
-                                    sx={{ width: cell.column.getSize() }}
+                                    sx={{ width: cell.column.getSize(), textAlign: (typeof cell.getValue() === 'number' ? "right" : undefined) }}
                                     onClick={() => {
                                         if (cell.column.id !== 'selection') {
                                             (redirectOnSelect && columnKey) && navigate(`${normalizePathname(location.pathname)}/${(row.original as ObjectZyx)[columnKey]}`);

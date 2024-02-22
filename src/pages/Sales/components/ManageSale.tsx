@@ -21,7 +21,6 @@ import { showSnackbar } from 'stores/popus/actions';
 import TabPanel from 'components/Layout/TabPanel';
 import HelpChangePayment from './HelpChangePayment';
 import AddCustomer from './AddCustomer';
-import { getMultiCollection } from 'stores/main/actions';
 
 interface IDataAux {
     listStatus: ObjectZyx[];

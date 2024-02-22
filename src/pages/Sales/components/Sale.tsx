@@ -1,4 +1,4 @@
-import { Box, Paper, Typography } from '@mui/material';
+import { Box, Chip, Paper, Typography } from '@mui/material';
 import { CancelSale, getSaleOrder, initialRange } from 'common/helpers';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -11,6 +11,8 @@ import { useSendFormApi } from 'hooks/useSendFormApi';
 import dayjs from 'dayjs';
 import CloseIcon from '@mui/icons-material/Close';
 import SaleFilters from './FiltersSale';
+import classes from 'common/constants/classes';
+import clsx from 'clsx';
 
 const columns: ColumnDef<ISale>[] = [
     {
@@ -26,16 +28,40 @@ const columns: ColumnDef<ISale>[] = [
         accessorFn: (row) => dayjs(row.order_date).format('DD/MM/YYYY'),
     },
     {
-        header: 'TOTAL',
-        accessorKey: 'total_amount',
-    },
-    {
         header: 'PRODUCTOS',
         accessorKey: 'quantity',
     },
     {
         header: 'GENERADA POR',
         accessorKey: 'createby',
+    },
+    {
+        id: 'estado',
+        accessorKey: 'status',
+        header: () => "ESTADO",
+        cell: (info) => {
+            const status = info.row.original.status;
+            return (
+                <Box >
+                    <Chip
+                        className={clsx(
+                            status === 'ACTIVO' && classes.successLabel,
+                            status === 'INACTIVO' && classes.suspendLabel,
+                            status === 'PENDIENTE' && classes.successLabel,
+                            status === 'ANULADO' && classes.suspendLabel,
+                            'w-24',
+                            'font-medium',
+                        )}
+                        label={info.row.original.status}
+                    />
+                </Box>
+            );
+        },
+    },
+    {
+        header: 'TOTAL',
+        accessorKey: 'total_amount',
+        accessorFn: (row) => dayjs(row.order_date).format('DD/MM/YYYY'),
     },
 ];
 

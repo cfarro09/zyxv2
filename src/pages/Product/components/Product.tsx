@@ -18,9 +18,9 @@ const columns: ColumnDef<IProduct>[] = [
         accessorKey: 'title',
         enableResizing: true,
         cell: (info) => {
-            const { title, image, description } = info.row.original;
+            const { title, image } = info.row.original;
             return (
-                <Grid container sx={{ gap: '1rem' }}>
+                <Grid container sx={{ gap: "4px" }} alignItems={"center"}>
                     <Grid item>
                         <Box className="flex items-center">
                             <img
@@ -30,31 +30,37 @@ const columns: ColumnDef<IProduct>[] = [
                             />
                         </Box>
                     </Grid>
-                    <Grid item>
-                        <Box>
-                            <Typography variant="subtitle1">{title}</Typography>
-                            <Typography variant="body2">{description}</Typography>
-                        </Box>
+                    <Grid item sx={{ flex: 1, fontSize: "0.875rem" }}>
+                        {title}
                     </Grid>
                 </Grid>
             );
         },
     },
     {
+        header: 'Descripción',
+        accessorKey: 'description',
+        maxSize: 70,
+    },
+    {
         header: 'Categoria',
         accessorKey: 'category',
+        maxSize: 70,
     },
     {
         header: 'Código',
         accessorKey: 'code',
+        maxSize: 70,
     },
     {
         header: 'Cantidad',
         accessorKey: 'stock',
+        maxSize: 70,
     },
     {
         id: 'estado',
         accessorKey: 'status',
+        maxSize: 70,
         header: () => <Box className="text-center">ESTADO</Box>,
         cell: (info) => {
             const status = info.row.original.status;
