@@ -66,6 +66,7 @@ const CustomDatePicker: React.FC<InputProps> = ({ initialRange, onChange }) => {
                 open={open}
                 anchorEl={anchorEl}
                 onClose={handleClose}
+                sx={{ '& .rdrInputRangeInput': { background: 'white' } }}
                 anchorOrigin={{
                     vertical: 'bottom',
                     horizontal: 'left',
