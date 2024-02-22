@@ -6,7 +6,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import FieldEdit from 'components/Controls/FieldEdit';
 import { FieldSelect } from 'components/Controls/FieldSelect';
 import { FormProvider, useForm } from 'react-hook-form';
-import { IMainProps, IPurchase, ObjectZyx } from '@types';
+import { IMainProps, IPurchase } from '@types';
 import SaveIcon from '@mui/icons-material/Save';
 import { useSendFormApi } from 'hooks/useSendFormApi';
 import Tabs from '@mui/material/Tabs';
@@ -18,14 +18,7 @@ import TabPanel from 'components/Layout/TabPanel';
 import dayjs from 'dayjs';
 import { useDispatch } from 'react-redux';
 import { showSnackbar } from 'stores/popus/actions';
-
-interface IDataAux {
-    listStatus: ObjectZyx[];
-    listSupplier: ObjectZyx[];
-    listProduct: ObjectZyx[];
-    listPaymentMethod: ObjectZyx[];
-    listWarehouse: ObjectZyx[];
-}
+import { IDataAux } from '../models';
 
 export const ManagePurchase: React.FC<IMainProps> = ({ baseUrl }) => {
     const navigate = useNavigate();

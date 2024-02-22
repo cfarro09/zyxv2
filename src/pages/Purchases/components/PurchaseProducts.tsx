@@ -1,5 +1,5 @@
 import { Add, Delete } from "@mui/icons-material";
-import { Avatar,  IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import { Avatar, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { IPurchase, ObjectZyx } from "@types";
 import FieldEdit from "components/Controls/FieldEdit";
 import { FieldSelect } from "components/Controls/FieldSelect";
@@ -7,13 +7,14 @@ import React, { useState } from "react";
 import { Control, FieldErrors, useFieldArray, useFormContext } from "react-hook-form";
 import NewProductDialog from "./NewProductDialog";
 import { IProduct } from "pages/Product/models";
+import { IDataAux } from "../models";
 
 export const PurchaseProducts: React.FC<{
     control: Control<IPurchase, object, IPurchase>;
     loading: boolean;
     listProduct: ObjectZyx[];
     errors: FieldErrors<IPurchase>;
-    setDataAux: any
+    setDataAux: React.Dispatch<React.SetStateAction<IDataAux>>
 }> = ({ control, loading, listProduct, errors, setDataAux }) => {
     const { setValue, register, getValues, trigger } = useFormContext()
     const { fields, append, remove } = useFieldArray({
@@ -33,13 +34,16 @@ export const PurchaseProducts: React.FC<{
 
     const handleNewProduct = (product: IProduct, index: number) => {
         if (product) {
-            setDataAux(prev => ({
-                ...prev,
-                listProduct: [
-                    ...prev.listProduct,
-                    product
-                ]
-            }))
+            setDataAux((prev: IDataAux) => {
+                return {
+                    ...prev,
+                    listProduct: [
+                        ...prev.listProduct,
+                        product
+                    ]
+                } as IDataAux;
+            });
+
 
             setTimeout(() => {
                 setValue(`products.${index}.quantity`, 1);
