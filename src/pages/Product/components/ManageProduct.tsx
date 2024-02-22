@@ -18,13 +18,20 @@ interface IDataAux {
     listCategory: ObjectZyx[];
 }
 
-export const ManageProduct: React.FC<IMainProps> = ({ baseUrl }) => {
+export const ManageProduct: React.FC<IMainProps & { newTitle?: string, setNewProduct?: React.Dispatch<React.SetStateAction<IProduct>> }> = ({ baseUrl, onlyForm, newTitle = '', callback, setNewProduct }) => {
     const navigate = useNavigate();
     const [dataAux, setDataAux] = useState<IDataAux>({ listStatus: [], listCategory: [], listUnidad: [] });
+    const [formData, setFormData] = useState<IProduct | null>(null);
     const { id } = useParams<{ id?: string }>();
     const { onSubmitData } = useSendFormApi({
         operation: "INSERT",
-        onSave: () => navigate(baseUrl),
+        onSave: (data) => {
+            if (!onlyForm) {
+                navigate(baseUrl);
+            }
+            callback && callback();
+            setNewProduct && setNewProduct({ ...formData, productid: data?.[0]?.vproductid || 0 } as IProduct)
+        }
     });
     const {
         register,
@@ -39,7 +46,7 @@ export const ManageProduct: React.FC<IMainProps> = ({ baseUrl }) => {
             code: '',
             barcode: '',
             purchase_price: 0,
-            title: '',
+            title: newTitle || '',
             description: '',
             image: '',
             selling_price: 0,
@@ -59,7 +66,7 @@ export const ManageProduct: React.FC<IMainProps> = ({ baseUrl }) => {
         reset,
         setDataAux,
         collections: [
-            ...(id !== 'new' ? [{
+            ...((id !== 'new' && !onlyForm) ? [{
                 rb: getProductSel(parseInt(`${id}`)),
                 key: 'UFN_PRODUCT_SEL',
                 keyData: "",
@@ -71,10 +78,13 @@ export const ManageProduct: React.FC<IMainProps> = ({ baseUrl }) => {
         ],
     });
 
-    const onSubmit = handleSubmit((data) => onSubmitData(productIns({
-        ...data,
-        operation: data.productid > 0 ? "UPDATE" : "INSERT"
-    })));
+    const onSubmit = handleSubmit((data) => {
+        setFormData(data)
+        onSubmitData(productIns({
+            ...data,
+            operation: data.productid > 0 ? "UPDATE" : "INSERT"
+        }))
+    });
 
     const handleFileUpload = (fileUrl: string) => {
         setValue('image', fileUrl);
@@ -86,18 +96,20 @@ export const ManageProduct: React.FC<IMainProps> = ({ baseUrl }) => {
 
     return (
         <Box className="flex max-w-screen-xl mr-auto ml-auto flex-col">
-            <div className="my-3">
-                <Breadcrumbs aria-label="breadcrumb">
-                    <Link color="textPrimary" to={baseUrl}>
-                        <Typography color="secondary" fontWeight={500}>Productos</Typography>
-                    </Link>
-                    <Typography color="textSecondary">Detalle</Typography>
-                </Breadcrumbs>
-            </div>
-            <Paper className="w-full" sx={{ marginTop: 0, marginBottom: 2 }}>
+            {!onlyForm &&
+                <div className="my-3">
+                    <Breadcrumbs aria-label="breadcrumb">
+                        <Link color="textPrimary" to={baseUrl}>
+                            <Typography color="secondary" fontWeight={500}>Productos</Typography>
+                        </Link>
+                        <Typography color="textSecondary">Detalle</Typography>
+                    </Breadcrumbs>
+                </div>
+            }
+            <Paper className="w-full" sx={{ marginTop: 0, marginBottom: 2 }} elevation={onlyForm ? 0 : 1}>
                 <Grid container className="px-6 py-3 border-b">
                     <Grid item xs={12} sm={6}>
-                        <Typography variant="h5">{id === 'new' ? 'Nuevo Producto' : 'Modificar Producto'}</Typography>
+                        <Typography variant="h5">{(id === 'new' || onlyForm) ? 'Nuevo Producto' : 'Modificar Producto'}</Typography>
                     </Grid>
                     <Grid item xs={12} sm={6} container justifyContent={'flex-end'} gap={2}>
                         <Button color="primary" type="submit" variant="contained" onClick={onSubmit} disabled={loading}>
@@ -106,7 +118,7 @@ export const ManageProduct: React.FC<IMainProps> = ({ baseUrl }) => {
                     </Grid>
                 </Grid>
                 <Grid container component={'form'} spacing={2} padding={2} sx={{ pb: 4, pl: 4 }} wrap='nowrap'>
-                    <Grid item sm={12} md={12} lg={8}>
+                    <Grid item sm={12} md={12} lg={onlyForm ? 12 : 8}>
                         <Grid container gap={2}>
                             <Grid item xs={12} display={'flex'} alignItems={'end'} gap={2}>
                                 <Rating name="customized-10" defaultValue={1} max={1} size="large" />
@@ -222,11 +234,13 @@ export const ManageProduct: React.FC<IMainProps> = ({ baseUrl }) => {
                             </Grid>
                         </Grid>
                     </Grid>
-                    <Grid item xs sx={{ display: { xs: 'none', md: 'none', lg: 'flex' }, justifyContent: 'center' }}>
-                        <Box className="px-6 py-6 mb-4 flex">
-                            <DropZone url={getValues('image')} onFileUpload={handleFileUpload} />
-                        </Box>
-                    </Grid>
+                    {!onlyForm &&
+                        <Grid item xs sx={{ display: { xs: 'none', md: 'none', lg: 'flex' }, justifyContent: 'center' }}>
+                            <Box className="px-6 py-6 mb-4 flex">
+                                <DropZone url={getValues('image')} onFileUpload={handleFileUpload} />
+                            </Box>
+                        </Grid>
+                    }
                 </Grid>
             </Paper>
         </Box>

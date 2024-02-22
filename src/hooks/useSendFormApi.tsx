@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { showBackdrop, showSnackbar, manageConfirmation } from 'stores/popus/actions'; // Ajusta las importaciones según tus archivos
-import { IRequestBody, ITransaction } from '@types';
+import { IRequestBody, ITransaction, ObjectZyx } from '@types';
 import { IRootState } from 'stores';
 import { execute } from 'stores/main/actions';
 
 interface SendFormApiProps {
     operation: "INSERT" | "DELETE" | "UPDATE";
-    onSave: () => void; // Callback al guardar con éxito
+    onSave: (_result?: ObjectZyx[]) => void; // Callback al guardar con éxito
 
     speechConfirmation?: string;
 }
@@ -38,7 +38,7 @@ export const useSendFormApi = ({ onSave, operation, }: SendFormApiProps) => {
             if (!executeResult.loading && !executeResult.error) {
                 dispatch(showBackdrop(false));
                 dispatch(showSnackbar({ show: true, severity: "success", message: speechConfirmation1 }));
-                onSave();
+                onSave(executeResult.data as ObjectZyx[]);
                 setWaitSave(false); // Asegurar reinicio del estado
             } else if (executeResult.error) {
                 dispatch(showSnackbar({ show: true, severity: "error", message: executeResult.usererror ? executeResult.usererror : `${executeResult.code}` }));
