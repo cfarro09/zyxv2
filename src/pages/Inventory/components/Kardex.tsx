@@ -86,16 +86,6 @@ export const Kardex: React.FC<IMainProps> = ({ baseUrl }) => {
         }
     }, [mainResult]);
 
-
-    useEffect(() => {
-        // fetchData()
-        // giveMeData();
-    }, []);
-
-    useEffect(() => {
-        fetchData();
-    }, [filters]);
-
     return (
         <Box className="flex max-w-screen-xl mr-auto ml-auto flex-col">
             <div className="mt-3 mx-1">
