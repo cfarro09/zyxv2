@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { Add, FirstPage, LastPage, MoreVert, NavigateBefore, NavigateNext } from '@mui/icons-material';
 import type { SvgIconComponent } from '@mui/icons-material';
-import { Button, Checkbox, Grid, IconButton, ListItemIcon, Menu, MenuItem, Skeleton, Table, TableBody, TableCell, TableHead, TableRow, TextField, Typography } from '@mui/material';
+import { Button, Checkbox, Grid, IconButton, ListItemIcon, Menu, MenuItem, Skeleton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material';
 import type { CheckboxProps } from '@mui/material';
 import { Box } from '@mui/system';
 import { flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, useReactTable } from '@tanstack/react-table';
@@ -221,38 +221,40 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
                     </Grid>
                 </Grid>
             )}
-            <Table size='small' sx={{ tableLayout: "fixed" }}>
-                <TableHead>
-                    {table.getHeaderGroups().map((headerGroup) => (
-                        <TableRow key={headerGroup.id}>
-                            {headerGroup.headers.map((header) => (
-                                <TableCell key={header.id} sx={{ width: header.column.getSize() }}>
-                                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                                </TableCell>
-                            ))}
-                        </TableRow>
-                    ))}
-                </TableHead>
-                <TableBody>
-                    {loading && <LoadingSkeleton columns={table.getHeaderGroups()[0].headers.length} />}
-                    {!loading && table.getRowModel().rows.map((row) => (
-                        <TableRow key={row.id} sx={{ cursor: 'pointer' }} hover>
-                            {row.getVisibleCells().map((cell) => (
-                                <TableCell
-                                    key={cell.id}
-                                    sx={{ width: cell.column.getSize(), textAlign: (typeof cell.getValue() === 'number' ? "right" : undefined) }}
-                                    onClick={() => {
-                                        if (cell.column.id !== 'selection') {
-                                            (redirectOnSelect && columnKey) && navigate(`${normalizePathname(location.pathname)}/${(row.original as ObjectZyx)[columnKey]}`);
-                                            onClickOnRow && onClickOnRow(row.original);
-                                        }
-                                    }}
-                                >{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
-                            ))}
-                        </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
+            <TableContainer>
+                <Table size='small' sx={{ tableLayout: "fixed" }}>
+                    <TableHead>
+                        {table.getHeaderGroups().map((headerGroup) => (
+                            <TableRow key={headerGroup.id}>
+                                {headerGroup.headers.map((header) => (
+                                    <TableCell key={header.id} sx={{ width: header.column.getSize() }}>
+                                        {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                                    </TableCell>
+                                ))}
+                            </TableRow>
+                        ))}
+                    </TableHead>
+                    <TableBody>
+                        {loading && <LoadingSkeleton columns={table.getHeaderGroups()[0].headers.length} />}
+                        {!loading && table.getRowModel().rows.map((row) => (
+                            <TableRow key={row.id} sx={{ cursor: 'pointer' }} hover>
+                                {row.getVisibleCells().map((cell) => (
+                                    <TableCell
+                                        key={cell.id}
+                                        sx={{ width: cell.column.getSize(), textAlign: (typeof cell.getValue() === 'number' ? "right" : undefined) }}
+                                        onClick={() => {
+                                            if (cell.column.id !== 'selection') {
+                                                (redirectOnSelect && columnKey) && navigate(`${normalizePathname(location.pathname)}/${(row.original as ObjectZyx)[columnKey]}`);
+                                                onClickOnRow && onClickOnRow(row.original);
+                                            }
+                                        }}
+                                    >{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+                                ))}
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
             <Box className="flex items-center justify-between p-6">
                 <Box>
                     <Typography component={'span'} className="text-[#a5a3ae]" fontSize={14}>

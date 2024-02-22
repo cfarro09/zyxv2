@@ -17,30 +17,31 @@ const columns: ColumnDef<IProduct>[] = [
         header: 'Producto',
         accessorKey: 'title',
         enableResizing: true,
+        size: 400,
         cell: (info) => {
-            const { title, image } = info.row.original;
+            const { title, image, description } = info.row.original;
             return (
-                <Grid container sx={{ gap: "4px" }} alignItems={"center"}>
+                <Grid container sx={{ gap: "8px" }} alignItems={"center"}>
                     <Grid item>
                         <Box className="flex items-center">
                             <img
                                 src={image || 'https://i.postimg.cc/yYzF74qD/download.jpg'}
                                 alt="product"
-                                className="w-16 h-16"
+                                className="w-14 h-14"
                             />
                         </Box>
                     </Grid>
-                    <Grid item sx={{ flex: 1, fontSize: "0.875rem" }}>
-                        {title}
+                    <Grid container item sx={{
+                        flex: 1, fontSize: "0.875rem", overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap'
+                    }} flexDirection={'column'}>
+                        <Typography>{title}</Typography>
+                        <Typography fontSize={12}>{description}</Typography>
                     </Grid>
                 </Grid>
             );
         },
-    },
-    {
-        header: 'Descripción',
-        accessorKey: 'description',
-        maxSize: 70,
     },
     {
         header: 'Categoria',
@@ -115,7 +116,7 @@ export const Product: React.FC = () => {
                 <Box className="px-6 py-3 border-b">
                     <Typography variant="h5">Productos</Typography>
                 </Box>
-                <Box>
+                <Box sx={{ '& .MuiTableBody-root .MuiTableCell-root': { padding: 1 } }}>
                     <TableSimple
                         data={mainData}
                         loading={mainResult.loading}
