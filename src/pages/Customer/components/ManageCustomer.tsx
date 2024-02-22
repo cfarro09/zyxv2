@@ -94,7 +94,7 @@ export const ManageCustomer: React.FC<IMainProps> = ({ baseUrl, onlyForm, callba
 
     const handlerChangeDocument = (value?: string | null) => {
         const document = value ? `${value}` : "";
-        
+
         setValue('document', document);
         const type = getValues('document_type');
         if ((document.length === 8 && type === "DNI") || (document.length === 11 && type === "RUC")) {
@@ -120,7 +120,7 @@ export const ManageCustomer: React.FC<IMainProps> = ({ baseUrl, onlyForm, callba
                     </Breadcrumbs>
                 </div>
             }
-            <Paper className="w-full mt-6" component={'form'} onSubmit={onSubmit} sx={{ marginTop: 0 }}>
+            <Paper className="w-full mt-6" component={'form'} onSubmit={onSubmit} elevation={onlyForm ? 0 : 1} sx={{ marginTop: 0 }}>
                 <Grid container className="border-b" paddingLeft={2} paddingRight={2} paddingTop={1} paddingBottom={1}>
                     <Grid item xs={12} sm={6}>
                         <Box>

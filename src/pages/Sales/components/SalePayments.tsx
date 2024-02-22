@@ -26,7 +26,7 @@ export const SalePayments: React.FC<{
     });
     const appendProduct = () => {
         const amountPaid = getValues('payments').reduce((acc: number, item: IPayment) => acc + item.payment_amount, 0);
-        const amountToPay = getValues('products').reduce((acc: number, item: IProductZyx) => acc + item.total, 0);
+        const amountToPay = getValues('total_amount');
         if (amountPaid < amountToPay) {
             append({
                 saleorderpaymentid: 0,
@@ -42,7 +42,7 @@ export const SalePayments: React.FC<{
 
     const handleChangeValidateAmount = (value: string, position: number) => {
         const amount = parseFloat(value || "0.0");
-        const amountToPay = getValues('products').reduce((acc: number, item: IProductZyx) => acc + item.total, 0);
+        const amountToPay = getValues('total_amount');
         const amountPaid = getValues('payments').reduce((acc: number, item: IPayment, i: number) => acc + (i === position ? 0 : item.payment_amount), 0);
         if (amountPaid + amount > amountToPay) {
             dispatch(showSnackbar({ show: true, severity: "warning", message: "El monto ingresado excede el monto total a pagar." }))

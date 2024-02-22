@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
-import { Box, Breadcrumbs, Button, Grid, Paper, Typography } from '@mui/material';
+import { Box, Breadcrumbs, Button, Checkbox, FormControlLabel, Grid, Paper, Typography } from '@mui/material';
 import { a11yProps, getCustomerSel, getValuesFromDomain, getSaleOrder, saleOrderIns, saleOrderLineIns, saleOrderPaymentIns, getStockSel } from 'common/helpers';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import FieldEdit from 'components/Controls/FieldEdit';
@@ -50,18 +50,28 @@ export const ManageSale: React.FC<IMainProps> = ({ baseUrl }) => {
             order_date: dayjs().format('YYYY-MM-DD'),
             status: 'ACTIVO',
             total_amount: 0,
+            billing: false,
             sub_total: 0,
             products: [],
             payments: []
         },
     });
 
-    const { control, register, handleSubmit, setValue, getValues, reset, formState: { errors } } = methods;
+    const { control, register, handleSubmit, setValue, getValues, reset, formState: { errors }, trigger, watch } = methods;
+
+    React.useEffect(() => {
+        const subtotal = getValues('products').reduce((acc, item) => acc + item.total, 0);
+        const total = subtotal * (getValues('billing') ? 1.18 : 1);
+        setValue("total_amount", total);
+        setValue("sub_total", subtotal);
+    }, [watch(["products", "billing"])])
 
     const { giveMeData, loading } = useMultiData<ISale, IDataAux>({
         registerX: () => {
             register('saleorderid');
             register('status');
+            register('total_amount');
+            register('sub_total');
             register('customerid', { validate: (value) => Boolean(value > 0) || 'El campo es requerido' });
             register('order_date', { validate: (value) => Boolean(value?.length) || 'El campo es requerido' });
         },
@@ -146,16 +156,6 @@ export const ManageSale: React.FC<IMainProps> = ({ baseUrl }) => {
 
                         <Box className="p-6  border-b">
                             <Grid container spacing={2}>
-                                {getValues('saleorderid') === 0 &&
-                                    <Grid item>
-                                        <Button
-                                            variant='outlined'
-                                            onClick={() => setOpenAddCustomerDialog(true)}
-                                        >
-                                            Nuevo Cliente
-                                        </Button>
-                                    </Grid>
-                                }
                                 <Grid item xs={12} sm={4}>
                                     <FieldSelect
                                         label={'Cliente'}
@@ -168,6 +168,8 @@ export const ManageSale: React.FC<IMainProps> = ({ baseUrl }) => {
                                         data={dataAux.listCustomer}
                                         optionDesc="name"
                                         optionValue="clientid"
+                                        addOption={true}
+                                        addFunction={() => setOpenAddCustomerDialog(true)}
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={4}>
@@ -179,6 +181,18 @@ export const ManageSale: React.FC<IMainProps> = ({ baseUrl }) => {
                                         onChange={(value) => setValue('order_date', `${value}`)}
                                         error={errors.order_date?.message}
                                         variant="outlined"
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={4} textAlign={"right"}>
+                                    <FormControlLabel
+                                        label="¿Factura?"
+                                        control={<Checkbox
+                                            checked={getValues('billing')}
+                                            onChange={(value) => {
+                                                setValue('billing', value.target.checked)
+                                                trigger('billing')
+                                            }}
+                                        />}
                                     />
                                 </Grid>
                             </Grid>
@@ -194,7 +208,7 @@ export const ManageSale: React.FC<IMainProps> = ({ baseUrl }) => {
                                     <Tab label="Productos" {...a11yProps(0)} />
                                     <Tab
                                         label="Pagos" {...a11yProps(1)}
-                                        disabled={getValues('products').reduce((acc, item) => acc + item.total, 0) === 0}
+                                        disabled={getValues('total_amount') === 0}
                                     />
                                 </Tabs>
                             </Box>
@@ -224,13 +238,16 @@ export const ManageSale: React.FC<IMainProps> = ({ baseUrl }) => {
                                 <Grid item xs={6} sm={6}>
                                     {getValues('saleorderid') === 0 &&
                                         <HelpChangePayment
-                                            toPay={(getValues('products').reduce((acc, item) => acc + item.total, 0))}
+                                            toPay={getValues('total_amount')}
                                         />
                                     }
                                 </Grid>
                                 <Grid item xs={6} sm={6}>
                                     <Typography sx={{ fontWeight: "bold", textAlign: "right" }}>
-                                        Total a pagar S/ {(getValues('products').reduce((acc, item) => acc + item.total, 0)).toFixed(2)}
+                                        Total: {getValues('total_amount').toFixed(2)}
+                                    </Typography>
+                                    <Typography sx={{ fontWeight: "bold", textAlign: "right" }}>
+                                        Subtotal: {getValues('sub_total').toFixed(2)}
                                     </Typography>
                                 </Grid>
                             </Grid>
@@ -242,7 +259,6 @@ export const ManageSale: React.FC<IMainProps> = ({ baseUrl }) => {
                 open={openAddCustomerDialog}
                 setOpenDialog={setOpenAddCustomerDialog}
                 fetchData={() => {
-                    // dispatch(getMultiCollection([getCustomerSel(0)]));
                     giveMeData(["UFN_CLIENT_SEL"])
                 }}
             />

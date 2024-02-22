@@ -6,6 +6,7 @@ export interface ISale {
     customerid: number;
     customerdesc?: string;
     order_date: string;
+    billing?: boolean;
     status: string;
     order_number: string;
     products: (IProductZyx & { saleorderlineid: number, inventoryid: number, stock?: number })[];
