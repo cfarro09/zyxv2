@@ -12,7 +12,8 @@ import Aside from './Aside';
 import Popus from './Popus';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import { removeAuthorizationToken } from 'common/helpers';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { Button } from '@mui/material';
 
 const drawerWidth = 240;
 
@@ -80,9 +81,11 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
 						>
 							<MenuIcon />
 						</IconButton>
-						<Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-							Queen Store
-						</Typography>
+						<Box sx={{ flexGrow: 1 }}>
+							<Link to={'/'}>
+								<img src="./horizontal-logo-white.png" width={110} alt="" />
+							</Link>
+						</Box>
 						<IconButton
 							color="inherit"
 							aria-label="logout"
