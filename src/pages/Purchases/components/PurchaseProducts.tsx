@@ -6,6 +6,7 @@ import { FieldSelect } from "components/Controls/FieldSelect";
 import React, { useState } from "react";
 import { Control, FieldErrors, useFieldArray, useFormContext } from "react-hook-form";
 import NewProductDialog from "./NewProductDialog";
+import { IProduct } from "pages/Product/models";
 
 export const PurchaseProducts: React.FC<{
     control: Control<IPurchase, object, IPurchase>;
@@ -20,6 +21,7 @@ export const PurchaseProducts: React.FC<{
     });
     const [openNewProductDialog, setOpenNewProductDialog] = useState(false)
     const [newProductTitle, setNewProductTitle] = useState('')
+    const [newProductIndex, setNewProductIndex] = useState(0)
 
     const calculateSubtotal = (i: number, price: number, quantity: number) => {
         const total = (price || 0) * (quantity || 0);
@@ -27,16 +29,17 @@ export const PurchaseProducts: React.FC<{
         trigger(`products.${i}.total`);
     }
 
-    const handleNewProduct = (value: object, index: number) => {
-        if (value) {
+    const handleNewProduct = (product: IProduct, index: number) => {
+        console.log({ product, index })
+        if (product) {
             // setValue(`products.${i}`, value);
             setValue(`products.${index}.quantity`, 1);
-            setValue(`products.${index}.productid`, value.productid);
+            setValue(`products.${index}.productid`, product.productid);
         }
-        setValue(`products.${index}.productid`, (value?.productid as number) ?? 0);
-        setValue(`products.${index}.purchase_price`, (value?.purchase_price as number) ?? 0);
+        setValue(`products.${index}.productid`, (product?.productid as number) ?? 0);
+        setValue(`products.${index}.purchase_price`, (product?.purchase_price as number) ?? 0);
         trigger(`products.${index}.purchase_price`);
-        calculateSubtotal(index, getValues(`products.${index}.quantity`), (value?.purchase_price as number) ?? 0); 
+        calculateSubtotal(index, getValues(`products.${index}.quantity`), (product?.purchase_price as number) ?? 0);
     }
 
     return (
@@ -116,7 +119,7 @@ export const PurchaseProducts: React.FC<{
                                         addFunction={(value) => {
                                             setNewProductTitle(value as string)
                                             setOpenNewProductDialog(true);
-                                            console.log({ value });
+                                            setNewProductIndex(i);
                                         }}
                                         data={listProduct}
                                         optionDesc="description"
@@ -172,8 +175,9 @@ export const PurchaseProducts: React.FC<{
             <NewProductDialog
                 open={openNewProductDialog}
                 setOpenDialog={setOpenNewProductDialog}
-                setValue={setValue}
                 newProductTitle={newProductTitle}
+                handleNewProduct={handleNewProduct}
+                productIndex={newProductIndex}
             />
         </>
 
