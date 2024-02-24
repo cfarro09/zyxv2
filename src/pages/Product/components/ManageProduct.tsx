@@ -137,7 +137,7 @@ export const ManageProduct: React.FC<IMainProps & { newTitle?: string, setNewPro
                                     Informacion del producto
                                 </Typography>
                             </Grid>
-                            <Grid container xs={12} spacing={2}>
+                            <Grid container spacing={2}>
                                 <Grid item xs={12}>
                                     <FieldEdit
                                         label={'Descripcion'}

@@ -14,7 +14,7 @@ export const SaleProducts: React.FC<{
     disabled?: boolean;
 }> = ({ control, loading, listProduct, errors, disabled }) => {
 
-    const { setValue, register, getValues, trigger } = useFormContext()
+    const { setValue, register, getValues, trigger, watch } = useFormContext()
     const { fields, append, remove } = useFieldArray({
         control,
         name: 'products',
@@ -25,6 +25,12 @@ export const SaleProducts: React.FC<{
         setValue(`products.${i}.total`, total);
         trigger(`products.${i}.total`);
     }
+
+    const cleanProducts = React.useCallback((position: number) => {
+        const productidSelected = getValues(`products.${position}.productid`);
+        const productSelected = getValues("products").map(p => p.productid === productidSelected ? 0 : p.productid);
+        return listProduct.filter(p => !productSelected?.includes(p.productid as number));
+    }, [watch["products"], listProduct]) 
 
     return (
         <div>
@@ -104,7 +110,7 @@ export const SaleProducts: React.FC<{
                                                 </React.Fragment>
                                             )}
                                             error={errors?.products?.[i]?.productid?.message}
-                                            data={listProduct}
+                                            data={cleanProducts(i)}
                                             optionDesc="description"
                                             optionValue="productid"
                                         />
