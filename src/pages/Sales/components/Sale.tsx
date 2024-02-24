@@ -18,7 +18,7 @@ import { Print } from '@mui/icons-material';
 
 const fetchPrint = async (sale: ISale) => {
     try {
-        const response = await axios.post('http://localhost:7065/api/drawpdf', sale, {
+        const response = await axios.post('http://127.0.0.1:7065/api/drawpdf', sale, {
             headers: {
                 'Accept': 'application/json',
                 'Authorization': 'Bearer apis-token-7495.Up1n8BkaSNJc-6yGe2hUo9Ez6032xzHl'
