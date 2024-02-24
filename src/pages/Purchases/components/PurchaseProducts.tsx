@@ -44,7 +44,6 @@ export const PurchaseProducts: React.FC<{
                 } as IDataAux;
             });
 
-
             setTimeout(() => {
                 setValue(`products.${index}.quantity`, 1);
                 setValue(`products.${index}.productid`, product.productid);

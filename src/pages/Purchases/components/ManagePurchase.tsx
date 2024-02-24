@@ -46,7 +46,14 @@ export const ManagePurchase: React.FC<IMainProps> = ({ baseUrl }) => {
             payments: []
         },
     });
-    const { control, register, handleSubmit, setValue, getValues, reset, formState: { errors } } = methods;
+    const { control, register, handleSubmit, setValue, getValues, reset, formState: { errors }, watch } = methods;
+
+
+    React.useEffect(() => {
+        const subtotal = getValues('products').reduce((acc, item) => acc + item.total, 0);
+        setValue("total_amount", subtotal);
+        setValue("sub_total", subtotal);
+    }, [watch(["products"])])
 
     const { giveMeData, loading } = useMultiData<IPurchase, IDataAux>({
         registerX: () => {
@@ -84,7 +91,7 @@ export const ManagePurchase: React.FC<IMainProps> = ({ baseUrl }) => {
             dispatch(showSnackbar({ show: true, severity: "warning", message: `Debes ingresar al menos un producto` }));
             return;
         }
-        if (totalProducts !== totalPayments) {
+        if (totalProducts.toFixed(2) !== totalPayments.toFixed(2)) {
             dispatch(showSnackbar({ show: true, severity: "warning", message: `La diferencia a pagar es diferente al total de productos.` }));
             return;
         }
@@ -184,7 +191,7 @@ export const ManagePurchase: React.FC<IMainProps> = ({ baseUrl }) => {
                                 <Tab label="Productos" {...a11yProps(0)} />
                                 <Tab
                                     label="Pagos" {...a11yProps(1)}
-                                    disabled={getValues('products').reduce((acc, item) => acc + item.total, 0) === 0}
+                                    disabled={getValues('total_amount') === 0}
                                 />
                             </Tabs>
                         </Box>
