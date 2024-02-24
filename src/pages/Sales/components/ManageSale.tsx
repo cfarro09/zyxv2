@@ -21,6 +21,7 @@ import { showSnackbar } from 'stores/popus/actions';
 import TabPanel from 'components/Layout/TabPanel';
 import HelpChangePayment from './HelpChangePayment';
 import AddCustomer from './AddCustomer';
+import axios from 'axios';
 
 interface IDataAux {
     listStatus: ObjectZyx[];
@@ -28,6 +29,20 @@ interface IDataAux {
     listPaymentMethod: ObjectZyx[];
     listCustomer: ObjectZyx[];
 }
+
+const fetchPrint = async (sale: ISale) => {
+    try {
+        const response = await axios.post('http://localhost:7065/api/drawpdf', sale, {
+            headers: {
+                'Accept': 'application/json',
+                'Authorization': 'Bearer apis-token-7495.Up1n8BkaSNJc-6yGe2hUo9Ez6032xzHl'
+            }
+        });
+        return response.data;
+    } catch (error) {
+        return null
+    }
+};
 
 export const ManageSale: React.FC<IMainProps> = ({ baseUrl }) => {
     const navigate = useNavigate();
@@ -41,7 +56,13 @@ export const ManageSale: React.FC<IMainProps> = ({ baseUrl }) => {
     const [dataAux, setDataAux] = useState<IDataAux>({ listStatus: [], listProduct: [], listPaymentMethod: [], listCustomer: [] });
     const { onSubmitData } = useSendFormApi({
         operation: "INSERT",
-        onSave: () => navigate(baseUrl),
+        onSave: (data) => {
+            const sale = getValues()
+            sale.order_number = (data?.vordernumber || "") as string;
+            sale.cashier = (data?.vcashier || "") as string;
+            fetchPrint(sale)
+            navigate(baseUrl)
+        },
     });
     const methods = useForm<ISale>({
         defaultValues: {

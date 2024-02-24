@@ -27,7 +27,7 @@ export const SalePayments: React.FC<{
         name: 'payments',
     });
     const appendProduct = () => {
-        
+
         const amountPaid = getValues('payments').reduce((acc: number, item: IPayment) => acc + item.payment_amount, 0);
         const amountToPay = getValues('total_amount');
         if (amountPaid < amountToPay) {
@@ -45,6 +45,11 @@ export const SalePayments: React.FC<{
 
     const handleChangeValidateAmount = (value: string, position: number) => {
         const amount = parseFloat(value || "0.0");
+        if (amount < 0) {
+            setValue(`payments.${position}.payment_amount`, 0);
+            trigger(`payments.${position}.payment_amount`);
+            return 0;
+        }
         const amountToPay = getValues('total_amount');
         const amountPaid = getValues('payments').reduce((acc: number, item: IPayment, i: number) => acc + (i === position ? 0 : item.payment_amount), 0);
         if (amountPaid + amount > amountToPay) {
@@ -74,7 +79,7 @@ export const SalePayments: React.FC<{
                                 }
                             </TableCell>
                             <TableCell>{"Método"}</TableCell>
-                            <TableCell>{"Cantidad"}</TableCell>
+                            <TableCell>{"Monto"}</TableCell>
                             <TableCell>{"Evidencia"}</TableCell>
                         </TableRow>
                     </TableHead>

@@ -89,6 +89,7 @@ export const SaleProducts: React.FC<{
                                             variant='outlined'
                                             onChange={(value) => {
                                                 setValue(`products.${i}.productid`, (value?.productid as number) ?? 0);
+                                                setValue(`products.${i}.title`, (value?.title) ?? "");
                                                 setValue(`products.${i}.stock`, (value?.stock as number) ?? 0);
                                                 setValue(`products.${i}.inventoryid`, (value?.inventoryid as number) ?? 0);
                                                 setValue(`products.${i}.selling_price`, (value?.selling_price as number) ?? 0);
@@ -149,6 +150,11 @@ export const SaleProducts: React.FC<{
                                         onChange={(value) => {
                                             const quantity = getValues(`products.${i}.quantity`) || 0;
                                             const price = parseFloat(value || "0.0");
+                                            if (price < 0) {
+                                                setValue(`products.${i}.selling_price`, 0);
+                                                trigger(`products.${i}.selling_price`);
+                                                return 0;
+                                            }
                                             setValue(`products.${i}.selling_price`, price);
                                             trigger(`products.${i}.selling_price`);
                                             calculateSubtotal(i, price, quantity)

@@ -13,6 +13,22 @@ import CloseIcon from '@mui/icons-material/Close';
 import SaleFilters from './FiltersSale';
 import classes from 'common/constants/classes';
 import clsx from 'clsx';
+import axios from 'axios';
+import { Print } from '@mui/icons-material';
+
+const fetchPrint = async (sale: ISale) => {
+    try {
+        const response = await axios.post('http://localhost:7065/api/drawpdf', sale, {
+            headers: {
+                'Accept': 'application/json',
+                'Authorization': 'Bearer apis-token-7495.Up1n8BkaSNJc-6yGe2hUo9Ez6032xzHl'
+            }
+        });
+        return response.data;
+    } catch (error) {
+        return null
+    }
+};
 
 const columns: ColumnDef<ISale>[] = [
     {
@@ -106,11 +122,20 @@ export const Sale: React.FC = () => {
                         data={mainData}
                         showOptions={true}
                         addButton={true}
-                        optionsMenu={[{
-                            description: "Anular",
-                            Icon: CloseIcon,
-                            onClick: (user) => user && deleteRow(user)
-                        }]}
+                        optionsMenu={[
+                            {
+                                description: "Imprimir",
+                                Icon: Print,
+                                onClick: (sale) => sale && fetchPrint(sale),
+                                validation: (sale) => sale?.status === 'ACTIVO'
+                            },
+                            {
+                                description: "Anular",
+                                Icon: CloseIcon,
+                                onClick: (user) => user && deleteRow(user),
+                                validation: (sale) => sale?.status === 'ACTIVO'
+                            }
+                        ]}
                         filterElement={
                             <SaleFilters
                                 filters={filters}

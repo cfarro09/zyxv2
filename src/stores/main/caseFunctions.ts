@@ -410,7 +410,7 @@ export const executeSuccess = (state: IState, action: IAction): IState => {
     return {
         ...state,
         execute: {
-            data: action.payload.data || [],
+            data: action.payload.resultHeader || action.payload.data || [],
             key: action.payload.key,
             count: 0,
             loading: false,

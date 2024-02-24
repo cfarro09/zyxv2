@@ -5,5 +5,9 @@ import svgrPlugin from "vite-plugin-svgr";
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  build: {
+    outDir: 'build', // Cambia 'dist' por el nombre de la carpeta que quieras
+    // otras opciones de compilación...
+  },
   plugins: [react(), viteTsconfigPaths(), svgrPlugin()],
 })

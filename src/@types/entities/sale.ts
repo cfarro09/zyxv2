@@ -9,6 +9,7 @@ export interface ISale {
     billing?: boolean;
     status: string;
     order_number: string;
+    cashier?: string;
     products: (IProductZyx & { saleorderlineid: number, inventoryid: number, stock?: number })[];
     payments: (IPayment & { saleorderpaymentid: number })[]
     total_amount: number;

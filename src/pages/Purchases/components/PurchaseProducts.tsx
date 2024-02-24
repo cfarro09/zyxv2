@@ -155,6 +155,11 @@ export const PurchaseProducts: React.FC<{
                                         onChange={(value) => {
                                             const quantity = parseInt(value || "0");
                                             const price = getValues(`products.${i}.purchase_price`) || 0;
+                                            if (quantity < 0) {
+                                                setValue(`products.${i}.quantity`, 0);
+                                                trigger(`products.${i}.quantity`);
+                                                return 0;
+                                            }
                                             setValue(`products.${i}.quantity`, quantity);
                                             trigger(`products.${i}.quantity`);
                                             calculateSubtotal(i, price, quantity);
@@ -174,6 +179,11 @@ export const PurchaseProducts: React.FC<{
                                         onChange={(value) => {
                                             const quantity = getValues(`products.${i}.quantity`) || 0;
                                             const price = parseFloat(value || "0.0");
+                                            if (price < 0) {
+                                                setValue(`products.${i}.purchase_price`, 0);
+                                                trigger(`products.${i}.purchase_price`);
+                                                return 0;
+                                            }
                                             setValue(`products.${i}.purchase_price`, price);
                                             trigger(`products.${i}.purchase_price`);
                                             calculateSubtotal(i, price, quantity)
