@@ -90,12 +90,9 @@ export const Inventory: React.FC<unknown> = () => {
 	}
 
 	const handlerOpenTransferDialog = () => {
-		console.log("mainData.filter(x => Object.keys(keysSelected).includes(`${x.inventoryid}`))", mainData.filter(x => Object.keys(keysSelected).includes(`${x.inventoryid}`)))
 		setRowsSelected(mainData.filter(x => Object.keys(keysSelected).includes(`${x.inventoryid}`)));
 		setOpenTransferDialog(true)
 	}
-
-	console.log("keysSelected", rowsSelected)
 
 	return (
 		<Box className="flex max-w-screen-xl mr-auto ml-auto flex-col">

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Add, FirstPage, LastPage, MoreVert, NavigateBefore, NavigateNext } from '@mui/icons-material';
 import type { SvgIconComponent } from '@mui/icons-material';
 import { Button, Checkbox, Grid, IconButton, ListItemIcon, Menu, MenuItem, Skeleton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material';
@@ -170,8 +170,16 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
         getFilteredRowModel: getFilteredRowModel(),
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
-        debugTable: true,
+        autoResetPageIndex: false
     });
+
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const f = params.get('f');
+        const page = params.get('page');
+        f && setGlobalFilter(f);
+        page && table.setPageIndex(Number(page));
+    }, [table])
 
     const handlePageSizeChange = (e: IPageSizes) => {
         if (!e) {
@@ -180,6 +188,27 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
         }
         table.setPageSize(Number(e.value));
     };
+
+    const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const url = new URL(window.location.href);
+        if ((e.target.value).trim() !== '') {
+            url.searchParams.set('f', e.target.value);
+        } else {
+            url.searchParams.delete('f');
+        }
+        window.history.pushState({}, '', url.toString());
+    }
+
+    const handleChangePage = (pageIndex: number) => {
+        const url = new URL(window.location.href);
+        if (pageIndex !== 0) {
+            url.searchParams.set('page', String(pageIndex));
+            window.history.pushState({}, '', url.toString());
+        } else {
+            url.searchParams.delete('page');
+            window.history.pushState({}, '', url.toString());
+        }
+    }
 
     return (
         <>
@@ -211,8 +240,10 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
                         }
                         {buttonElement && buttonElement}
                         <TextField
-                            defaultValue={globalFilter || ''}
+                            value={globalFilter}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setGlobalFilter(String(e.target.value))}
+                            onBlur={handleBlur}
+                            disabled={loading}
                             size="small"
                             id="search-input"
                             label=""
@@ -276,22 +307,34 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
                         />
                     </Grid>
                     <IconButton
-                        onClick={() => table.setPageIndex(0)}
+                        onClick={() => {
+                            table.setPageIndex(0);
+                            handleChangePage(0);
+                        }}
                         disabled={loading || !table.getCanPreviousPage()}>
                         <FirstPage />
                     </IconButton>
                     <IconButton
-                        onClick={() => table.previousPage()}
+                        onClick={() => {
+                            table.previousPage();
+                            handleChangePage(table.getState().pagination.pageIndex - 1);
+                        }}
                         disabled={loading || !table.getCanPreviousPage()}>
                         <NavigateBefore />
                     </IconButton>
                     <IconButton
-                        onClick={() => table.nextPage()}
+                        onClick={() => {
+                            table.nextPage();
+                            handleChangePage(table.getState().pagination.pageIndex + 1);
+                        }}
                         disabled={loading || !table.getCanNextPage()}>
                         <NavigateNext />
                     </IconButton>
                     <IconButton
-                        onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+                        onClick={() => {
+                            table.setPageIndex(table.getPageCount() - 1);
+                            handleChangePage(table.getPageCount() - 1);
+                        }}
                         disabled={loading || !table.getCanNextPage()}
                     >
                         <LastPage />
