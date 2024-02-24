@@ -33,6 +33,14 @@ const columns: ColumnDef<IInventory>[] = [
 		accessorKey: 'warehouse'
 	},
 	{
+		header: 'COD BARRAS',
+		accessorKey: 'barcode'
+	},
+	{
+		header: 'CATEGORIA',
+		accessorKey: 'category'
+	},
+	{
 		header: 'FECHA CREACION',
 		accessorFn: (row: IInventory) => dayjs(row.changedate).format('DD/MM/YYYY'),
 	},
