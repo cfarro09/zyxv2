@@ -14,14 +14,14 @@ export const PurchaseProducts: React.FC<{
     loading: boolean;
     listProduct: ObjectZyx[];
     errors: FieldErrors<IPurchase>;
+    disabled?: boolean;
     setDataAux: React.Dispatch<React.SetStateAction<IDataAux>>
-}> = ({ control, loading, listProduct, errors, setDataAux }) => {
+}> = ({ control, loading, listProduct, errors, setDataAux, disabled }) => {
     const { setValue, register, getValues, trigger } = useFormContext()
     const { fields, append, remove } = useFieldArray({
         control,
         name: 'products',
     });
-    console.log("listProduct", listProduct)
     const [openNewProductDialog, setOpenNewProductDialog] = useState(false)
     const [newProductTitle, setNewProductTitle] = useState('')
     const [newProductIndex, setNewProductIndex] = useState(0)
@@ -62,27 +62,28 @@ export const PurchaseProducts: React.FC<{
                     <TableHead>
                         <TableRow>
                             <TableCell>
-                                <IconButton
-                                    size="small"
-                                    disabled={loading}
-                                    onClick={() => {
-                                        console.log("dasdsada")
-                                        append({
-                                            purchaseorderlineid: 0,
-                                            productid: 0,
-                                            barcode: '',
-                                            code: '',
-                                            description: '',
-                                            image: '',
-                                            status: 'ACTIVO',
-                                            quantity: 1,
-                                            purchase_price: 0,
-                                            total: 0
-                                        })
-                                    }}
-                                >
-                                    <Add />
-                                </IconButton>
+                                {!disabled &&
+                                    <IconButton
+                                        size="small"
+                                        disabled={loading}
+                                        onClick={() => {
+                                            append({
+                                                purchaseorderlineid: 0,
+                                                productid: 0,
+                                                barcode: '',
+                                                code: '',
+                                                description: '',
+                                                image: '',
+                                                status: 'ACTIVO',
+                                                quantity: 1,
+                                                purchase_price: 0,
+                                                total: 0
+                                            })
+                                        }}
+                                    >
+                                        <Add />
+                                    </IconButton>
+                                }
                             </TableCell>
                             <TableCell>{"Producto"}</TableCell>
                             <TableCell>{"Cantidad"}</TableCell>
@@ -94,55 +95,59 @@ export const PurchaseProducts: React.FC<{
                         {fields.map((item, i: number) =>
                             <TableRow key={item.id}>
                                 <TableCell width={30}>
-                                    <div style={{ display: 'flex' }}>
+                                    {!disabled &&
                                         <IconButton
                                             size="small"
                                             onClick={() => { remove(i) }}
                                         >
                                             <Delete style={{ color: '#777777' }} />
                                         </IconButton>
-                                    </div>
+                                    }
                                 </TableCell>
                                 <TableCell >
-                                    <FieldSelect
-                                        label={"Product"}
-                                        valueDefault={getValues(`products.${i}.productid`)}
-                                        fregister={{
-                                            ...register(`products.${i}.productid`, {
-                                                validate: (value) => (value > 0) || "El campo es requerido"
-                                            })
-                                        }}
-                                        variant='outlined'
-                                        onChange={(value) => {
-                                            if (value) {
-                                                setValue(`products.${i}.quantity`, 1);
-                                                setValue(`products.${i}.productid`, value.productid);
-                                            }
-                                            setValue(`products.${i}.productid`, (value?.productid as number) ?? 0);
-                                            setValue(`products.${i}.purchase_price`, (value?.purchase_price as number) ?? 0);
-                                            trigger(`products.${i}.purchase_price`);
-                                            calculateSubtotal(i, getValues(`products.${i}.quantity`), (value?.purchase_price as number) ?? 0);
-                                        }}
-                                        renderOption={(option) => (
-                                            <React.Fragment>
-                                                <Avatar alt={`${option.title}`} src={`${option.image}`} sx={{ marginRight: 2 }} />
-                                                {option["title"]}
-                                            </React.Fragment>
-                                        )}
-                                        error={errors?.products?.[i]?.productid?.message}
-                                        addOption={true}
-                                        addFunction={(value) => {
-                                            setNewProductTitle(value as string)
-                                            setOpenNewProductDialog(true);
-                                            setNewProductIndex(i);
-                                        }}
-                                        data={listProduct}
-                                        optionDesc="title"
-                                        optionValue="productid"
-                                    />
+                                    {disabled && `${item.title} - ${item.barcode}`}
+                                    {!disabled &&
+                                        <FieldSelect
+                                            label={"Product"}
+                                            valueDefault={getValues(`products.${i}.productid`)}
+                                            fregister={{
+                                                ...register(`products.${i}.productid`, {
+                                                    validate: (value) => (value > 0) || "El campo es requerido"
+                                                })
+                                            }}
+                                            variant='outlined'
+                                            onChange={(value) => {
+                                                if (value) {
+                                                    setValue(`products.${i}.quantity`, 1);
+                                                    setValue(`products.${i}.productid`, value.productid);
+                                                }
+                                                setValue(`products.${i}.productid`, (value?.productid as number) ?? 0);
+                                                setValue(`products.${i}.purchase_price`, (value?.purchase_price as number) ?? 0);
+                                                trigger(`products.${i}.purchase_price`);
+                                                calculateSubtotal(i, getValues(`products.${i}.quantity`), (value?.purchase_price as number) ?? 0);
+                                            }}
+                                            renderOption={(option) => (
+                                                <React.Fragment>
+                                                    <Avatar alt={`${option.title}`} src={`${option.image}`} sx={{ marginRight: 2 }} />
+                                                    {option["title"]}
+                                                </React.Fragment>
+                                            )}
+                                            error={errors?.products?.[i]?.productid?.message}
+                                            addOption={true}
+                                            addFunction={(value) => {
+                                                setNewProductTitle(value as string)
+                                                setOpenNewProductDialog(true);
+                                                setNewProductIndex(i);
+                                            }}
+                                            data={listProduct}
+                                            optionDesc="title"
+                                            optionValue="productid"
+                                        />
+                                    }
                                 </TableCell>
                                 <TableCell sx={{ width: 200 }}>
                                     <FieldEdit
+                                        disabled={disabled}
                                         fregister={{
                                             ...register(`products.${i}.quantity`, {
                                                 validate: (value) => (value > 0) || "Debe ser mayor de 0"
@@ -167,6 +172,7 @@ export const PurchaseProducts: React.FC<{
                                 </TableCell>
                                 <TableCell style={{ width: 200 }}>
                                     <FieldEdit
+                                        disabled={disabled}
                                         fregister={{
                                             ...register(`products.${i}.purchase_price`, {
                                                 validate: (value) => (value > 0) || "Debe ser mayor de 0"

@@ -3,6 +3,7 @@ import { Autocomplete, Button, CircularProgress, Paper, TextField, Typography } 
 import type { FormControlProps } from "@mui/material";
 import { ObjectZyx } from "@types";
 import React, { useEffect, useState } from "react";
+import { VariableSizeList, ListChildComponentProps } from 'react-window';
 
 type TemplateAutocompleteProps<T> = {
     label?: string;
@@ -24,6 +25,30 @@ type TemplateAutocompleteProps<T> = {
     addOption?: boolean;
     addFunction?: (_?: string | null) => void;
 } & Omit<FormControlProps, 'onChange' | 'error'>;
+
+function renderRow(props: ListChildComponentProps) {
+    const { data, index, style } = props;
+    const dataSet = data[index];
+    const inlineStyle = {
+        ...style,
+        top: (style.top as number) + LISTBOX_PADDING,
+    };
+
+    if (dataSet.hasOwnProperty('group')) {
+        return (
+            <ListSubheader key={dataSet.key} component="div" style={inlineStyle}>
+                {dataSet.group}
+            </ListSubheader>
+        );
+    }
+
+    return (
+        <Typography component="li" {...dataSet[0]} noWrap style={inlineStyle}>
+            {`#${dataSet[2] + 1} - ${dataSet[1]}`}
+        </Typography>
+    );
+}
+
 
 export const FieldSelect = <T,>({ multiline = false, error, label, data = [], optionValue, optionDesc, valueDefault = "", onChange, disabled = false, triggerOnChangeOnFirst = false, loading = false, fregister = {}, variant = "standard", readOnly = false, orderbylabel = false, renderOption, addOption = false, addFunction, placeholder = '' }: TemplateAutocompleteProps<T>) => {
     const [value, setValue] = useState<T>(null!);

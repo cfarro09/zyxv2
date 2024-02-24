@@ -1,6 +1,7 @@
 import { Add, Delete } from "@mui/icons-material";
 import { Avatar, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { ObjectZyx, ISale, IPayment } from "@types";
+import { round2 } from "common/helpers";
 import DropZoneDialog from "components/Controls/DropZoneDialog";
 import FieldEdit from "components/Controls/FieldEdit";
 import { FieldSelect } from "components/Controls/FieldSelect";
@@ -8,8 +9,6 @@ import React, { useState } from "react";
 import { Control, FieldErrors, useFieldArray, useFormContext } from "react-hook-form";
 import { useDispatch } from 'react-redux';
 import { showSnackbar } from "stores/popus/actions";
-
-const round2 = (numbb: number) => Math.round(numbb * 100) / 100
 
 export const SalePayments: React.FC<{
     control: Control<ISale, object, ISale>;

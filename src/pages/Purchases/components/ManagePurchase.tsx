@@ -130,13 +130,15 @@ export const ManagePurchase: React.FC<IMainProps> = ({ baseUrl }) => {
                             </Box>
                         </Grid>
                         <Grid item xs={12} sm={6} container justifyContent={'flex-end'} gap={2}>
-                            <Button
-                                color='primary'
-                                type='submit'
-                                startIcon={<SaveIcon />}
-                                disabled={loading}
-                                variant="contained">Guardar
-                            </Button>
+                            {getValues('purchaseorderid') === 0 &&
+                                <Button
+                                    color='primary'
+                                    type='submit'
+                                    startIcon={<SaveIcon />}
+                                    disabled={loading}
+                                    variant="contained">Guardar
+                                </Button>
+                            }
                         </Grid>
                     </Grid>
 
@@ -149,6 +151,7 @@ export const ManagePurchase: React.FC<IMainProps> = ({ baseUrl }) => {
                                     valueDefault={getValues('supplier')}
                                     onChange={(value) => setValue('supplier', value?.domainvalue as string ?? "")}
                                     error={errors?.supplier?.message}
+                                    disabled={getValues('purchaseorderid') > 0}
                                     loading={loading}
                                     data={dataAux.listSupplier}
                                     optionDesc="domainvalue"
@@ -160,6 +163,7 @@ export const ManagePurchase: React.FC<IMainProps> = ({ baseUrl }) => {
                                     label={'Almacén'}
                                     variant="outlined"
                                     valueDefault={getValues('warehouse')}
+                                    disabled={getValues('purchaseorderid') > 0}
                                     onChange={(value) => setValue('warehouse', value?.domainvalue as string ?? "")}
                                     error={errors?.warehouse?.message}
                                     loading={loading}
@@ -172,6 +176,7 @@ export const ManagePurchase: React.FC<IMainProps> = ({ baseUrl }) => {
                                 <FieldEdit
                                     label={'Fecha'}
                                     type="date"
+                                    disabled={getValues('purchaseorderid') > 0}
                                     valueDefault={getValues('order_date')?.split(" ")[0]}
                                     onChange={(value) => setValue('order_date', `${value}`)}
                                     error={errors.order_date?.message}
@@ -202,6 +207,7 @@ export const ManagePurchase: React.FC<IMainProps> = ({ baseUrl }) => {
                                 control={control}
                                 loading={loading}
                                 setDataAux={setDataAux}
+                                disabled={getValues('purchaseorderid') > 0}
                                 listProduct={dataAux.listProduct}
                                 errors={errors}
                             />
@@ -209,6 +215,7 @@ export const ManagePurchase: React.FC<IMainProps> = ({ baseUrl }) => {
                         <TabPanel value={tab} index={1}>
                             <PurchasePayments
                                 control={control}
+                                disabled={getValues('purchaseorderid') > 0}
                                 loading={loading}
                                 listPaymentMethod={dataAux.listPaymentMethod}
                                 errors={errors}

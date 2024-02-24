@@ -919,3 +919,5 @@ export const formatMoney = (amount: string) => (
         useGrouping: true,
     })
 )
+
+export const round2 = (numbb: number) => Math.round(numbb * 100) / 100

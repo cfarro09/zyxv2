@@ -1,6 +1,7 @@
 import { Add, Delete } from "@mui/icons-material";
 import { Avatar, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
-import { ObjectZyx, IPurchase, IProductZyx, IPayment } from "@types";
+import { ObjectZyx, IPurchase, IPayment } from "@types";
+import { round2 } from "common/helpers";
 import DropZoneDialog from "components/Controls/DropZoneDialog";
 import FieldEdit from "components/Controls/FieldEdit";
 import { FieldSelect } from "components/Controls/FieldSelect";
@@ -9,14 +10,13 @@ import { Control, FieldErrors, useFieldArray, useFormContext } from "react-hook-
 import { useDispatch } from 'react-redux';
 import { showSnackbar } from "stores/popus/actions";
 
-const round2 = (numbb: number) => Math.round(numbb * 100) / 100
-
 export const PurchasePayments: React.FC<{
     control: Control<IPurchase, object, IPurchase>;
     loading: boolean;
     listPaymentMethod: ObjectZyx[];
+    disabled?: boolean;
     errors: FieldErrors<IPurchase>;
-}> = ({ control, loading, listPaymentMethod, errors }) => {
+}> = ({ control, loading, listPaymentMethod, errors, disabled }) => {
     const dispatch = useDispatch();
     const [openDialogEvidence, setOpenDialogEvidence] = useState(false);
     const { setValue, register, getValues, trigger } = useFormContext();
@@ -26,7 +26,7 @@ export const PurchasePayments: React.FC<{
         name: 'payments',
     });
     const appendProduct = () => {
-         const amountPaid = getValues('payments').reduce((acc: number, item: IPayment) => acc + item.payment_amount, 0);
+        const amountPaid = getValues('payments').reduce((acc: number, item: IPayment) => acc + item.payment_amount, 0);
         const amountToPay = getValues('total_amount');
         if (amountPaid < amountToPay) {
             append({
@@ -61,13 +61,15 @@ export const PurchasePayments: React.FC<{
                     <TableHead>
                         <TableRow>
                             <TableCell>
-                                <IconButton
-                                    size="small"
-                                    disabled={loading}
-                                    onClick={appendProduct}
-                                >
-                                    <Add />
-                                </IconButton>
+                                {!disabled &&
+                                    <IconButton
+                                        size="small"
+                                        disabled={loading}
+                                        onClick={appendProduct}
+                                    >
+                                        <Add />
+                                    </IconButton>
+                                }
                             </TableCell>
                             <TableCell>{"Método"}</TableCell>
                             <TableCell>{"Cantidad"}</TableCell>
@@ -78,14 +80,14 @@ export const PurchasePayments: React.FC<{
                         {fields.map((item, i: number) =>
                             <TableRow key={item.id}>
                                 <TableCell width={30}>
-                                    <div style={{ display: 'flex' }}>
+                                    {!disabled &&
                                         <IconButton
                                             size="small"
                                             onClick={() => { remove(i) }}
                                         >
                                             <Delete style={{ color: '#777777' }} />
                                         </IconButton>
-                                    </div>
+                                    }
                                 </TableCell>
                                 <TableCell >
                                     <FieldSelect
@@ -96,6 +98,7 @@ export const PurchasePayments: React.FC<{
                                                 validate: (value) => Boolean(value?.length) || "El campo es requerido"
                                             })
                                         }}
+                                        disabled={disabled}
                                         variant='outlined'
                                         onChange={(value) => {
                                             setValue(`payments.${i}.payment_method`, (value?.domainvalue as string) ?? "");
@@ -114,6 +117,7 @@ export const PurchasePayments: React.FC<{
                                             })
                                         }}
                                         type="number"
+                                        disabled={disabled}
                                         valueDefault={getValues(`payments.${i}.payment_amount`)}
                                         error={errors.payments?.[i]?.payment_amount?.message}
                                         onChange={(value) => handleChangeValidateAmount(value as string, i)}
@@ -121,6 +125,7 @@ export const PurchasePayments: React.FC<{
                                 </TableCell>
                                 <TableCell style={{ width: 200 }}>
                                     <IconButton
+                                        disabled={disabled}
                                         onClick={() => {
                                             setPosition(i);
                                             setOpenDialogEvidence(true);
