@@ -1,9 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Autocomplete, Button, CircularProgress, Paper, TextField, Typography } from "@mui/material";
+import { Autocomplete, Button, CircularProgress, ListSubheader, Paper, TextField, Typography } from "@mui/material";
 import type { FormControlProps } from "@mui/material";
 import { ObjectZyx } from "@types";
 import React, { useEffect, useState } from "react";
-import { VariableSizeList, ListChildComponentProps } from 'react-window';
+import { VariableSizeList } from 'react-window';
+import type { ListChildComponentProps } from 'react-window';
 
 type TemplateAutocompleteProps<T> = {
     label?: string;
@@ -26,28 +27,78 @@ type TemplateAutocompleteProps<T> = {
     addFunction?: (_?: string | null) => void;
 } & Omit<FormControlProps, 'onChange' | 'error'>;
 
-function renderRow(props: ListChildComponentProps) {
+const LISTBOX_PADDING_MultiSelect = 8;
+
+const renderRow = (props: ListChildComponentProps) => {
     const { data, index, style } = props;
-    const dataSet = data[index];
-    const inlineStyle = {
-        ...style,
-        top: (style.top as number) + LISTBOX_PADDING,
+    return React.cloneElement(data[index], {
+        style: {
+            ...style,
+            top: (style.top as number) + LISTBOX_PADDING_MultiSelect,
+        },
+    });
+}
+
+const OuterElementContextMultiSelect = React.createContext({});
+
+const OuterElementTypeMultiSelect = React.forwardRef<HTMLDivElement>((props, ref) => {
+    const outerProps = React.useContext(OuterElementContextMultiSelect);
+    return <div ref={ref} {...props} {...outerProps} />;
+});
+
+OuterElementTypeMultiSelect.displayName = "OuterElementTypeMultiSelect";
+
+const useResetCacheMultiSelect = (data: any) => {
+    const ref = React.useRef<VariableSizeList>(null);
+    React.useEffect(() => {
+        if (ref.current != null) {
+            ref.current.resetAfterIndex(0, true);
+        }
+    }, [data]);
+    return ref;
+}
+const ListboxComponent = React.forwardRef<HTMLDivElement,  React.HTMLAttributes<HTMLElement>>(function ListboxComponent(props, ref) {
+    const { children, ...other } = props;
+    const itemData = React.Children.toArray(children);
+    const itemCount = itemData.length;
+    const itemSize = 48;
+
+    const getChildSize = (child: React.ReactNode) => {
+        if (React.isValidElement(child) && child.type === ListSubheader) {
+            return 48;
+        }
+
+        return itemSize;
     };
 
-    if (dataSet.hasOwnProperty('group')) {
-        return (
-            <ListSubheader key={dataSet.key} component="div" style={inlineStyle}>
-                {dataSet.group}
-            </ListSubheader>
-        );
-    }
+    const getHeight = () => {
+        if (itemCount > 8) {
+            return 8 * itemSize;
+        }
+        return itemData.map(getChildSize).reduce((a, b) => a + b, 0);
+    };
+
+    const gridRef = useResetCacheMultiSelect(itemCount);
 
     return (
-        <Typography component="li" {...dataSet[0]} noWrap style={inlineStyle}>
-            {`#${dataSet[2] + 1} - ${dataSet[1]}`}
-        </Typography>
+        <div ref={ref}>
+            <OuterElementContextMultiSelect.Provider value={other}>
+                <VariableSizeList
+                    itemData={itemData}
+                    height={getHeight()}
+                    width="100%"
+                    ref={gridRef}
+                    outerElementType={OuterElementTypeMultiSelect}
+                    itemSize={(index) => getChildSize(itemData[index])}
+                    overscanCount={5}
+                    itemCount={itemCount}
+                >
+                    {renderRow}
+                </VariableSizeList>
+            </OuterElementContextMultiSelect.Provider>
+        </div>
     );
-}
+});
 
 
 export const FieldSelect = <T,>({ multiline = false, error, label, data = [], optionValue, optionDesc, valueDefault = "", onChange, disabled = false, triggerOnChangeOnFirst = false, loading = false, fregister = {}, variant = "standard", readOnly = false, orderbylabel = false, renderOption, addOption = false, addFunction, placeholder = '' }: TemplateAutocompleteProps<T>) => {
@@ -122,6 +173,7 @@ export const FieldSelect = <T,>({ multiline = false, error, label, data = [], op
             getOptionLabel={option => option ? `${(option as ObjectZyx)[optionDesc]}` : ''}
             options={dataG}
             loading={loading}
+            ListboxComponent={ListboxComponent}
             size="small"
             renderInput={(params) => (
                 <TextField
