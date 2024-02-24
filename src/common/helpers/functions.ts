@@ -911,3 +911,11 @@ export const initialRange: Range = {
     endDate: dayjs().add(1, 'day').toDate(),
     key: 'selection',
 }
+
+export const formatMoney = (amount: string) => (
+    parseFloat(amount).toLocaleString("es-ES", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+        useGrouping: true,
+    })
+)

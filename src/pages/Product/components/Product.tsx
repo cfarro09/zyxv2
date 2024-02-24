@@ -1,7 +1,7 @@
 import { Box, Chip, Grid, Paper, Typography } from '@mui/material';
 import type { ColumnDef } from '@tanstack/react-table';
 import clsx from 'clsx';
-import { getProductSel, productIns } from 'common/helpers';
+import { formatMoney, getProductSel, productIns } from 'common/helpers';
 import TableSimple from 'components/Controls/TableSimple';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -17,7 +17,7 @@ const columns: ColumnDef<IProduct>[] = [
         header: 'Producto',
         accessorKey: 'title',
         enableResizing: true,
-        size: 400,
+        size: 350,
         cell: (info) => {
             const { title, image, description } = info.row.original;
             return (
@@ -54,9 +54,21 @@ const columns: ColumnDef<IProduct>[] = [
         maxSize: 70,
     },
     {
+        header: 'Cod. Barra',
+        accessorKey: 'barcode',
+        maxSize: 70,
+    },
+    {
+        header: 'Precio Venta',
+        accessorKey: 'selling_price',
+        maxSize: 70,
+        cell: (info) => <span>S/ {formatMoney(`${info.row.original.selling_price}`)}</span>
+    },
+    {
         header: 'Cantidad',
         accessorKey: 'stock',
         maxSize: 70,
+        cell: (info) => <Typography textAlign={"center"}>{info.row.original.stock}</Typography>
     },
     {
         id: 'estado',
