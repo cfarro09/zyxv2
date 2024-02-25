@@ -88,8 +88,8 @@ export const Sale: React.FC = () => {
     const mainResult = useSelector((state: IRootState) => state.main.mainData);
     const [mainData, setMainData] = useState<ISale[]>([]);
     const [filters, setFilters] = useState<{ startdate: Date; enddate: Date; }>({
-        startdate: initialRange.startDate as Date,
-        enddate: initialRange.endDate as Date,
+        startdate: new Date() as Date,
+        enddate: dayjs().add(1, 'day').startOf('day').subtract(1, 'millisecond').toDate() as Date,
     })
     const fetchData = useCallback(() => dispatch(getCollection(getSaleOrder(0, filters))), [dispatch, filters])
 
