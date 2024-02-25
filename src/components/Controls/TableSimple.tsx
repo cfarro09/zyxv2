@@ -181,6 +181,10 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
         page && table.setPageIndex(Number(page));
     }, [table])
 
+    useEffect(() => {
+        if (table.getState().pagination.pageIndex !== 0) table.setPageIndex(0);
+    }, [globalFilter])
+
     const handlePageSizeChange = (e: IPageSizes) => {
         if (!e) {
             table.setPageSize(Number(10));
