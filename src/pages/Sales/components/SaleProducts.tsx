@@ -1,9 +1,9 @@
+import React, { useEffect } from "react";
 import { Add, Delete } from "@mui/icons-material";
 import { Avatar, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { ISale, ObjectZyx } from "@types";
 import FieldEdit from "components/Controls/FieldEdit";
 import { FieldSelect } from "components/Controls/FieldSelect";
-import React from "react";
 import { Control, FieldErrors, useFieldArray, useFormContext } from "react-hook-form";
 
 export const SaleProducts: React.FC<{
@@ -26,11 +26,28 @@ export const SaleProducts: React.FC<{
         trigger(`products.${i}.total`);
     }
 
+    useEffect(() => {
+        append({
+            saleorderlineid: 0,
+            productid: 0,
+            inventoryid: 0,
+            barcode: '',
+            code: '',
+            description: '',
+            image: '',
+            status: 'ACTIVO',
+            quantity: 1,
+            selling_price: 0,
+            total: 0
+        })
+    }, [])
+
+
     const cleanProducts = React.useCallback((position: number) => {
         const productidSelected = getValues(`products.${position}.productid`);
         const productSelected = getValues("products").map(p => p.productid === productidSelected ? 0 : p.productid);
         return listProduct.filter(p => !productSelected?.includes(p.productid as number));
-    }, [watch["products"], listProduct]) 
+    }, [watch["products"], listProduct])
 
     return (
         <div>
