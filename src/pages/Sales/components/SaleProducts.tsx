@@ -91,6 +91,7 @@ export const SaleProducts: React.FC<{
                                                     validate: (value) => (value > 0) || "El campo es requerido"
                                                 })
                                             }}
+                                            virtualize={true}
                                             disabled={disabled}
                                             variant='outlined'
                                             onChange={(value) => {

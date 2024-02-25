@@ -59,7 +59,7 @@ export const PurchaseProducts: React.FC<{
         const productidSelected = getValues(`products.${position}.productid`);
         const productSelected = getValues("products").map(p => p.productid === productidSelected ? 0 : p.productid);
         return listProduct.filter(p => !productSelected?.includes(p.productid as number));
-    }, [watch["products"], listProduct]) 
+    }, [watch["products"], listProduct])
 
     return (
         <>
@@ -132,6 +132,7 @@ export const PurchaseProducts: React.FC<{
                                                 trigger(`products.${i}.purchase_price`);
                                                 calculateSubtotal(i, getValues(`products.${i}.quantity`), (value?.purchase_price as number) ?? 0);
                                             }}
+                                            virtualize={true}
                                             renderOption={(option) => (
                                                 <React.Fragment>
                                                     <Avatar alt={`${option.title}`} src={`${option.image}`} sx={{ marginRight: 2 }} />

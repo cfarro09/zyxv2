@@ -18,6 +18,7 @@ type TemplateAutocompleteProps<T> = {
     renderOption?: (_: T) => JSX.Element;
     onChange?: (_: ObjectZyx | null | T) => void;
     readOnly?: boolean;
+    virtualize?: boolean;
     limitTags?: number;
     error?: string;
     multiline?: boolean;
@@ -57,7 +58,7 @@ const useResetCacheMultiSelect = (data: any) => {
     }, [data]);
     return ref;
 }
-const ListboxComponent = React.forwardRef<HTMLDivElement,  React.HTMLAttributes<HTMLElement>>(function ListboxComponent(props, ref) {
+const ListboxComponent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLElement>>(function ListboxComponent(props, ref) {
     const { children, ...other } = props;
     const itemData = React.Children.toArray(children);
     const itemCount = itemData.length;
@@ -101,7 +102,7 @@ const ListboxComponent = React.forwardRef<HTMLDivElement,  React.HTMLAttributes<
 });
 
 
-export const FieldSelect = <T,>({ multiline = false, error, label, data = [], optionValue, optionDesc, valueDefault = "", onChange, disabled = false, triggerOnChangeOnFirst = false, loading = false, fregister = {}, variant = "standard", readOnly = false, orderbylabel = false, renderOption, addOption = false, addFunction, placeholder = '' }: TemplateAutocompleteProps<T>) => {
+export const FieldSelect = <T,>({ multiline = false, error, label, data = [], optionValue, optionDesc, valueDefault = "", onChange, disabled = false, triggerOnChangeOnFirst = false, loading = false, fregister = {}, variant = "standard", readOnly = false, orderbylabel = false, renderOption, addOption = false, addFunction, placeholder = '', virtualize }: TemplateAutocompleteProps<T>) => {
     const [value, setValue] = useState<T>(null!);
     const [dataG, setDataG] = useState<T[]>([]);
     const [inputValue, setInputValue] = useState('');
@@ -173,7 +174,7 @@ export const FieldSelect = <T,>({ multiline = false, error, label, data = [], op
             getOptionLabel={option => option ? `${(option as ObjectZyx)[optionDesc]}` : ''}
             options={dataG}
             loading={loading}
-            ListboxComponent={ListboxComponent}
+            ListboxComponent={virtualize ? ListboxComponent : undefined}
             size="small"
             renderInput={(params) => (
                 <TextField
