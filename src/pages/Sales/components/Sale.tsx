@@ -1,5 +1,5 @@
 import { Box, Chip, Paper, Typography } from '@mui/material';
-import { CancelSale, getSaleOrder, initialRange } from 'common/helpers';
+import { CancelSale, formatMoney, getSaleOrder, initialRange } from 'common/helpers';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from 'stores';
@@ -77,7 +77,7 @@ const columns: ColumnDef<ISale>[] = [
     {
         header: 'TOTAL',
         accessorKey: 'total_amount',
-        accessorFn: (row) => dayjs(row.order_date).format('DD/MM/YYYY'),
+        cell: (info) => <Typography textAlign={'center'}>S/ {formatMoney(`${info.row.original.total_amount}`)}</Typography>,
     },
 ];
 
