@@ -208,6 +208,15 @@ export const getSaleOrder = (saleorderid: number, dates: IFilterDate | null = nu
     },
 });
 
+export const getSalePaymentsResume = ( dates: IFilterDate | null = null): IRequestBody => ({
+    method: 'UFN_SALE_PAYMENTS_RESUME',
+    key: 'UFN_SALE_PAYMENTS_RESUME',
+    parameters: {
+        startdate: dates?.startdate || '',
+        enddate: dates?.enddate || '',
+    },
+});
+
 export const getDomainSel = (): IRequestBody => ({
     method: 'UFN_DOMAIN_SEL',
     key: 'UFN_DOMAIN_SEL',

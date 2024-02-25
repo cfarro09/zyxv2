@@ -1,4 +1,4 @@
-import { Box, Chip, Paper, Typography } from '@mui/material';
+import { Box, Button, Chip, Paper, Typography } from '@mui/material';
 import { CancelSale, formatMoney, getSaleOrder, initialRange } from 'common/helpers';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -14,7 +14,8 @@ import SaleFilters from './FiltersSale';
 import classes from 'common/constants/classes';
 import clsx from 'clsx';
 import axios from 'axios';
-import { Print } from '@mui/icons-material';
+import { PointOfSale, Print } from '@mui/icons-material';
+import SalePaymentsResumeDialog from './SalePaymentsResumeDialog';
 
 const fetchPrint = async (sale: ISale) => {
     try {
@@ -83,6 +84,7 @@ const columns: ColumnDef<ISale>[] = [
 
 export const Sale: React.FC = () => {
     const dispatch = useDispatch();
+    const [openPaymentResumeDialog, setOpenPaymentResumeDialog] = useState(false)
     const mainResult = useSelector((state: IRootState) => state.main.mainData);
     const [mainData, setMainData] = useState<ISale[]>([]);
     const [filters, setFilters] = useState<{ startdate: Date; enddate: Date; }>({
@@ -146,9 +148,24 @@ export const Sale: React.FC = () => {
                         columns={columns}
                         redirectOnSelect={true}
                         columnKey={"saleorderid"}
+                        buttonElement={
+                            <>
+                                <Button
+                                    onClick={() => setOpenPaymentResumeDialog(true)}
+                                    variant="outlined"
+                                >
+                                    <PointOfSale fontSize="small" sx={{ marginRight: '4px' }} /> Resume ventas
+                                </Button>
+                            </>
+                        }
                     />
                 </Box>
             </Paper>
+            <SalePaymentsResumeDialog
+                open={openPaymentResumeDialog}
+                handleClose={() => setOpenPaymentResumeDialog(false)}
+                filters={filters}
+            />
         </Box>
     );
 };
