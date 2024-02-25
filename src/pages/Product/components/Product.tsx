@@ -51,23 +51,29 @@ const columns: ColumnDef<IProduct>[] = [
     {
         header: 'Código',
         accessorKey: 'code',
-        maxSize: 70,
+        maxSize: 100,
     },
     {
         header: 'Cod. Barra',
         accessorKey: 'barcode',
-        maxSize: 70,
+        maxSize: 100,
+    },
+    {
+        header: 'Precio Compra',
+        accessorKey: 'purchase_price',
+        maxSize: 100,
+        cell: (info) => <span>S/ {formatMoney(`${info.row.original.purchase_price}`)}</span>
     },
     {
         header: 'Precio Venta',
         accessorKey: 'selling_price',
-        maxSize: 70,
+        maxSize: 100,
         cell: (info) => <span>S/ {formatMoney(`${info.row.original.selling_price}`)}</span>
     },
     {
         header: 'Cantidad',
         accessorKey: 'stock',
-        maxSize: 70,
+        maxSize: 100,
         cell: (info) => <Typography textAlign={"center"}>{info.row.original.stock}</Typography>
     },
     {

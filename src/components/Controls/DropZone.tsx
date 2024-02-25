@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from 'stores';
 import { uploadFile } from 'stores/main/actions';
 import { showBackdrop, showSnackbar } from 'stores/popus/actions';
+import TakePhoto from './TakePhoto';
 
 interface IFile {
     name?: string;
@@ -93,14 +94,16 @@ interface DropZoneProps {
     onFileUpload?: (_fileUrl: string) => void;
     accept?: Accept;
     dispatchUpload?: boolean;
+    takePhoto?: boolean;
     handleLoadFile?: (_file: File) => void;
 }
 
-const DropZone: React.FC<DropZoneProps> = ({ url, dispatchUpload = true, onFileUpload, handleLoadFile, accept = { 'image/*': ['.png'] } }) => {
+const DropZone: React.FC<DropZoneProps> = ({ url, takePhoto = false, dispatchUpload = true, onFileUpload, handleLoadFile, accept = { 'image/*': ['.png'] } }) => {
     const dispatch = useDispatch();
     const [waitUpload, setWaitUpload] = useState(false)
     const uploadResult = useSelector((state: IRootState) => state.main.uploadFile);
     const [files, setFiles] = useState<IFile[]>([]);
+    const [openModalCamara, setOpenModalCamara] = useState(false);
 
     useEffect(() => {
         if (url) setFiles([{ name: url.split('/').pop(), preview: url }])
@@ -182,10 +185,28 @@ const DropZone: React.FC<DropZoneProps> = ({ url, dispatchUpload = true, onFileU
 
     return (
         <Grid container>
+            <TakePhoto
+                openModal={openModalCamara}
+                handleUpload={file => {
+                    handleFileUpload(file);
+                    setWaitUpload(true);
+                    dispatch(showBackdrop(true));
+                }}
+                setOpenModal={setOpenModalCamara}
+            />
             {!files.length && (
-                <Grid container item {...getRootProps({ style: style as React.CSSProperties })} alignContent={'center'}>
+                <Grid container item {...getRootProps({ style: style as React.CSSProperties })} alignContent={'center'} sx={{ cursor: "pointer" }}>
                     <input {...getInputProps()} />
                     <p style={{ textAlign: 'center' }}>Arrastra y suelta algunos archivos aquí, o haz clic para seleccionar archivos</p>
+                    {takePhoto &&
+                        <>
+                            <p>ó</p>
+                            <Button variant="contained" onClick={(e) => {
+                                e.stopPropagation();
+                                setOpenModalCamara(true)
+                            }}>Tomar una foto</Button>
+                        </>
+                    }
                 </Grid>
             )}
             {files.length > 0 && (

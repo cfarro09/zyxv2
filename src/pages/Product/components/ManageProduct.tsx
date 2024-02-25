@@ -122,8 +122,8 @@ export const ManageProduct: React.FC<IMainProps & { newTitle?: string, setNewPro
                         </Button>
                     </Grid>
                 </Grid>
-                <Grid container component={'form'} spacing={2} padding={2} sx={{ pb: 4, pl: 4 }} wrap='nowrap'>
-                    <Grid item sm={12} md={12} lg={onlyForm ? 12 : 8}>
+                <Grid container component={'form'} spacing={2} padding={2} sx={{ flexDirection: { xs: "column-reverse", md: "row", lg: "row" } }}>
+                    <Grid item sm={12} md={8} lg={onlyForm ? 12 : 8}>
                         <Grid container gap={2}>
                             <Grid item xs={12} display={'flex'} alignItems={'end'} gap={2}>
                                 <Rating name="customized-10" defaultValue={1} max={1} size="large" />
@@ -240,9 +240,9 @@ export const ManageProduct: React.FC<IMainProps & { newTitle?: string, setNewPro
                         </Grid>
                     </Grid>
                     {!onlyForm &&
-                        <Grid item xs sx={{ display: { xs: 'none', md: 'none', lg: 'flex' }, justifyContent: 'center' }}>
+                        <Grid item justifyContent={"center"} lg={4} md={4} sm={12}>
                             <Box className="px-6 py-6 mb-4 flex">
-                                <DropZone url={getValues('image')} onFileUpload={handleFileUpload} />
+                                <DropZone url={getValues('image')} onFileUpload={handleFileUpload} takePhoto={true} />
                             </Box>
                         </Grid>
                     }

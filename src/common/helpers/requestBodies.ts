@@ -123,6 +123,7 @@ export const purchaseOrderLineIns = (
     key: 'UFN_PURCHASE_ORDER_LINE_OPS',
     parameters: {
         ...orderline,
+        purchaseorderlineid: orderline.purchaseorderlineid || 0,
         type: 'NINGUNO',
     },
 });
@@ -134,6 +135,7 @@ export const purchaseOrderPaymentIns = (
     key: 'UFN_PURCHASE_ORDER_PAYMENT_OPS',
     parameters: {
         ...orderpayment,
+        purchaseorderpaymentid: orderpayment.purchaseorderpaymentid,
         type: 'NINGUNO',
     },
 });
