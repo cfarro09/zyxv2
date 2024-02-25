@@ -210,6 +210,11 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
         }
     }
 
+    const handleNavigate = (url: string) => {
+        const urlSearchParams = window.location.search
+        navigate(url + urlSearchParams)
+    }
+
     return (
         <>
             {filterElement && (
@@ -276,7 +281,7 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
                                         sx={{ width: cell.column.getSize(), textAlign: (typeof cell.getValue() === 'number' ? "right" : undefined) }}
                                         onClick={() => {
                                             if (cell.column.id !== 'selection') {
-                                                (redirectOnSelect && columnKey) && navigate(`${normalizePathname(location.pathname)}/${(row.original as ObjectZyx)[columnKey]}`);
+                                                (redirectOnSelect && columnKey) && handleNavigate(`${normalizePathname(location.pathname)}/${(row.original as ObjectZyx)[columnKey]}`);
                                                 onClickOnRow && onClickOnRow(row.original);
                                             }
                                         }}
