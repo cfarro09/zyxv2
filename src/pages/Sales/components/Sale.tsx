@@ -42,7 +42,7 @@ const columns: ColumnDef<ISale>[] = [
     },
     {
         header: 'FECHA',
-        accessorFn: (row) => dayjs(row.order_date).format('DD/MM/YYYY'),
+        accessorFn: (row) => row.order_date.substring(0, 10),
     },
     {
         header: 'PRODUCTOS',
