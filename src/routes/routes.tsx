@@ -31,8 +31,8 @@ export const routes: RouteConfig[] = [
     },
     {
         key: 'reports',
-        description: 'Reporte de Caja',
-        tooltip: 'Reporte de Caja',
+        description: 'Indicadores',
+        tooltip: 'Indicadores',
         path: paths.REPORTS,
         mainView: <Reports />,
         manageView: (baseUrl) => <ManageReport baseUrl={baseUrl} />,
