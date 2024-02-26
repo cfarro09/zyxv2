@@ -139,7 +139,7 @@ export const Sale: React.FC = () => {
                             }
                         ]}
                         filterElement={
-                            <SaleFilters
+                            <ReportFilters
                                 filters={filters}
                                 setFilters={setFilters}
                                 fetchData={fetchData}
@@ -154,7 +154,7 @@ export const Sale: React.FC = () => {
                                     onClick={() => setOpenPaymentResumeDialog(true)}
                                     variant="outlined"
                                 >
-                                    <PointOfSale fontSize="small" sx={{ marginRight: '4px' }} /> Resume ventas
+                                    <PointOfSale fontSize="small" sx={{ marginRight: '4px' }} /> Resumen ventas
                                 </Button>
                             </>
                         }

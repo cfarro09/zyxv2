@@ -9,7 +9,7 @@ import {
     Inventory as InventoryIcon
 } from '@mui/icons-material';
 import { User, ManageUser } from 'pages/User/Index';
-import { Product, ManageProduct} from 'pages/Product/Index';
+import { Product, ManageProduct } from 'pages/Product/Index';
 import { Domain, ManageDomain } from "pages/Domain/Index";
 import { Customer, ManageCustomer } from 'pages/Customer/Index';
 import Account from 'pages/Account/components/Account';
@@ -18,6 +18,7 @@ import FaceIcon from '@mui/icons-material/Face';
 import { ManagePurchase, Purchase } from 'pages/Purchases/Index';
 import { Inventory, Kardex } from 'pages/Inventory';
 import { ManageSale, Sale } from 'pages/Sales/Index';
+import { ManageReport, Reports } from 'pages/Reports/Index';
 
 export const routes: RouteConfig[] = [
     {
@@ -26,6 +27,15 @@ export const routes: RouteConfig[] = [
         tooltip: 'Indicadores',
         path: paths.DASHBOARD,
         mainView: <User />,
+        icon: () => <Dashboard style={{ width: 22, height: 22 }} />,
+    },
+    {
+        key: 'reports',
+        description: 'Reporte de Caja',
+        tooltip: 'Reporte de Caja',
+        path: paths.REPORTS,
+        mainView: <Reports />,
+        manageView: (baseUrl) => <ManageReport baseUrl={baseUrl} />,
         icon: () => <Dashboard style={{ width: 22, height: 22 }} />,
     },
     {

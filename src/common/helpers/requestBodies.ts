@@ -200,6 +200,33 @@ interface IFilterDate {
     startdate: Date;
     enddate: Date;
 }
+export const getSalePayment = (dates: IFilterDate | null = null): IRequestBody => ({
+    method: 'UFN_SALE_PAYMENTS_RESUME_REPORT',
+    key: 'UFN_SALE_PAYMENTS_RESUME_REPORT',
+    parameters: {
+        startdate: dates?.startdate || '',
+        enddate: dates?.enddate || '',
+    },
+});
+
+export const getPaymentsByDateAndMethod = (date: string, payment_method: string): IRequestBody => ({
+    method: 'UFN_SALE_PAYMENTS_BY_DATE_METHOD',
+    key: 'UFN_SALE_PAYMENTS_BY_DATE_METHOD',
+    parameters: {
+        date,
+        payment_method,
+    },
+});
+
+export const SummaryProfit = ( dates: IFilterDate | null = null): IRequestBody => ({
+    method: 'UFN_SALES_SUMMARY_PROFITABILITY',
+    key: 'UFN_SALES_SUMMARY_PROFITABILITY',
+    parameters: { 
+        startdate: dates?.startdate || '',
+        enddate: dates?.enddate || '',
+     },
+});
+
 export const getSaleOrder = (saleorderid: number, dates: IFilterDate | null = null): IRequestBody => ({
     method: 'UFN_SALE_ORDER_SEL',
     key: 'UFN_SALE_ORDER_SEL',

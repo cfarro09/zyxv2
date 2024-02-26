@@ -1,6 +1,7 @@
 const paths = {
     ACCOUNT: '/',
     DASHBOARD: '/dashboard',
+    REPORTS: '/reports',
     CUSTOMERS: '/clients',
     PRODUCTS: '/products',
     INVENTORY: '/inventory',

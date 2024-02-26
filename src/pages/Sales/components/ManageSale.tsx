@@ -58,7 +58,7 @@ export const ManageSale: React.FC<IMainProps> = ({ baseUrl }) => {
         operation: "INSERT",
         onSave: (data) => {
             const sale = getValues()
-            sale.order_number = (data?.vordernumber || "") as string;
+            sale.order_number = (data?.vordernumber as string || "") as string;
             sale.cashier = (data?.vcashier || "") as string;
             fetchPrint(sale)
             navigate(baseUrl)
