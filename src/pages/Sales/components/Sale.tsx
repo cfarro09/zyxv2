@@ -139,7 +139,7 @@ export const Sale: React.FC = () => {
                             }
                         ]}
                         filterElement={
-                            <ReportFilters
+                            <SaleFilters
                                 filters={filters}
                                 setFilters={setFilters}
                                 fetchData={fetchData}
