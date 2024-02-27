@@ -1,12 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Add, FirstPage, LastPage, MoreVert, NavigateBefore, NavigateNext } from '@mui/icons-material';
 import type { SvgIconComponent } from '@mui/icons-material';
-import { Button, Checkbox, Grid, IconButton, ListItemIcon, Menu, MenuItem, Skeleton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material';
+import { Button, Checkbox, Grid, IconButton, ListItemIcon, Menu, MenuItem, Skeleton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel, TextField, Typography } from '@mui/material';
 import type { CheckboxProps } from '@mui/material';
 import { Box } from '@mui/system';
-import { flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, useReactTable } from '@tanstack/react-table';
+import { flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
 import { useLocation, useNavigate } from 'react-router-dom';
-import type { ColumnDef, FilterFn, OnChangeFn } from '@tanstack/react-table';
+import type { ColumnDef, FilterFn, OnChangeFn, SortingState, SortDirection } from '@tanstack/react-table';
 import { FieldSelect } from './FieldSelect';
 import { rankItem } from '@tanstack/match-sorter-utils';
 import { ObjectZyx } from '@types';
@@ -87,6 +87,7 @@ function IndeterminateCheckbox({ indeterminate, className = '', ...rest }: Indet
 }
 
 const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSelect, loading, showOptions, optionsMenu, addButton, onClickOnRow, filterElement, buttonElement, enableGlobalFilter = true, selection, rowsSelected, setRowsSelected }: ReactTableProps<T>) => {
+    const [sorting, setSorting] = useState<SortingState>([])
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [globalFilter, setGlobalFilter] = useState('');
     const [rowSelected, setRowSelected] = useState<T>(null!)
@@ -162,7 +163,7 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
         columns: columns1,
         enableMultiRowSelection: true,
         filterFns: { fuzzy: fuzzyFilter },
-        state: { globalFilter, rowSelection: rowsSelected },
+        state: { globalFilter, rowSelection: rowsSelected, sorting, },
         getRowId: (row, relativeIndex) => columnKey ? `${(row as ObjectZyx)[columnKey]}` : `${relativeIndex}`,
         onRowSelectionChange: setRowsSelected,
         onGlobalFilterChange: setGlobalFilter,
@@ -170,6 +171,8 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
         getFilteredRowModel: getFilteredRowModel(),
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
+        onSortingChange: setSorting,
+        getSortedRowModel: getSortedRowModel(),
         autoResetPageIndex: false
     });
 
@@ -268,8 +271,18 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => (
-                                    <TableCell key={header.id} sx={{ width: header.column.getSize() }}>
-                                        {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                                    <TableCell
+                                        key={header.id}
+                                        sortDirection={false}
+                                        sx={{ width: header.column.getSize() }}
+                                    >
+                                        <TableSortLabel
+                                            active={!!header.column.getIsSorted()}
+                                            direction={(header.column.getIsSorted() as SortDirection) || 'asc'}
+                                            onClick={header.column.getToggleSortingHandler()}
+                                        >
+                                            {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                                        </TableSortLabel>
                                     </TableCell>
                                 ))}
                             </TableRow>
