@@ -39,7 +39,7 @@ export default function SignIn() {
 
     React.useEffect(() => {
         if (!resLogin.error && resLogin.user && getAccessToken()) {
-            window.open("users", "_self");
+            window.open("/", "_self");
         }
     }, [resLogin]);
 
