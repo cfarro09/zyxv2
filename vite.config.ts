@@ -9,5 +9,8 @@ export default defineConfig({
     outDir: 'build', // Cambia 'dist' por el nombre de la carpeta que quieras
     // otras opciones de compilación...
   },
-  plugins: [react(), viteTsconfigPaths(), svgrPlugin()],
+  plugins: [react(), viteTsconfigPaths(), svgrPlugin({
+    svgrOptions: { exportType: 'named', ref: true, svgo: false, titleProp: true },
+    include: '**/*.svg',
+  })],
 })

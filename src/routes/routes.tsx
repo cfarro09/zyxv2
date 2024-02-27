@@ -2,11 +2,8 @@ import { RouteConfig } from '@types';
 import paths from 'common/constants/paths';
 import {
     Dashboard,
-    ShoppingCart,
     FormatListNumberedRtlSharp,
-    Receipt,
-    Assignment,
-    Inventory as InventoryIcon
+    Inventory2,
 } from '@mui/icons-material';
 import { User, ManageUser } from 'pages/User/Index';
 import { Product, ManageProduct } from 'pages/Product/Index';
@@ -19,6 +16,7 @@ import { ManagePurchase, Purchase } from 'pages/Purchases/Index';
 import { Inventory, Kardex } from 'pages/Inventory';
 import { ManageSale, Sale } from 'pages/Sales/Index';
 import { ManageReport, Reports } from 'pages/Reports/Index';
+import { CajaIcon, ProductIcon, PurchaseIcon, SaleIcon } from 'assets/icons';
 
 export const routes: RouteConfig[] = [
     {
@@ -31,12 +29,12 @@ export const routes: RouteConfig[] = [
     },
     {
         key: 'reports',
-        description: 'Indicadores',
-        tooltip: 'Indicadores',
+        description: 'Caja',
+        tooltip: 'Caja',
         path: paths.REPORTS,
         mainView: <Reports />,
         manageView: (baseUrl) => <ManageReport baseUrl={baseUrl} />,
-        icon: () => <Dashboard style={{ width: 22, height: 22 }} />,
+        icon: () => <CajaIcon style={{ width: 22, height: 22 }} />,
     },
     {
         key: 'account',
@@ -71,7 +69,7 @@ export const routes: RouteConfig[] = [
         path: paths.PRODUCTS,
         mainView: <Product />,
         manageView: (baseUrl) => <ManageProduct baseUrl={baseUrl} />,
-        icon: () => <ShoppingCart style={{ width: 22, height: 22 }} />,
+        icon: () => <ProductIcon style={{ width: 22, height: 22 }} />,
     },
     {
         key: 'inventory',
@@ -80,7 +78,7 @@ export const routes: RouteConfig[] = [
         path: paths.INVENTORY,
         mainView: <Inventory />,
         manageView: (baseUrl) => <Kardex baseUrl={baseUrl} />,
-        icon: () => <InventoryIcon style={{ width: 22, height: 22 }} />,
+        icon: () => <Inventory2 style={{ width: 22, height: 22 }} />,
     },
     {
         key: 'domains',
@@ -98,7 +96,7 @@ export const routes: RouteConfig[] = [
         path: paths.PURCHASE_ORDERS,
         mainView: <Purchase />,
         manageView: (baseUrl) => <ManagePurchase baseUrl={baseUrl} />,
-        icon: () => <Assignment style={{ width: 22, height: 22 }} />,
+        icon: () => <PurchaseIcon style={{ width: 22, height: 22 }} />,
     },
     {
         key: 'sale_orders',
@@ -107,7 +105,7 @@ export const routes: RouteConfig[] = [
         path: paths.SALE_ORDERS,
         mainView: <Sale />,
         manageView: (baseUrl) => <ManageSale baseUrl={baseUrl} />,
-        icon: () => <Receipt style={{ width: 22, height: 22 }} />,
+        icon: () => <SaleIcon style={{ width: 22, height: 22 }} />,
     },
 ];
 
