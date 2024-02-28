@@ -14,7 +14,6 @@ import Tab from '@mui/material/Tab';
 import { useMultiData } from 'hooks/useMultiData';
 import { SaleProducts } from './SaleProducts';
 import { SalePayments } from './SalePayments';
-
 import dayjs from 'dayjs';
 import { useDispatch } from 'react-redux';
 import { showSnackbar } from 'stores/popus/actions';
@@ -58,8 +57,8 @@ export const ManageSale: React.FC<IMainProps> = ({ baseUrl }) => {
         operation: "INSERT",
         onSave: (data) => {
             const sale = getValues()
-            sale.order_number = (data?.vordernumber as string || "") as string;
-            sale.cashier = (data?.vcashier || "") as string;
+            sale.order_number = ((data as ObjectZyx)?.vordernumber as string || "") as string;
+            sale.cashier = ((data as ObjectZyx)?.vcashier || "") as string;
             fetchPrint(sale)
             navigate(baseUrl)
         },

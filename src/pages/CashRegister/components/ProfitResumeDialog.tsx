@@ -37,7 +37,7 @@ const ProfitResumeDialog: React.FC<ProfitResumeDialogProps> = ({ open, handleClo
             fullWidth
             onClose={handleClose}
         >
-            <DialogTitle id="alert-dialog-title">
+            <DialogTitle>
                 {`Resume de Profit`}
                 <Typography component={'span'} fontSize={14}> ({dayjs(filters?.startdate).format('DD-MM-YYYY')} a {dayjs(filters?.enddate).format('DD-MM-YYYY')})</Typography>
             </DialogTitle>

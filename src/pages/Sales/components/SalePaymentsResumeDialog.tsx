@@ -41,7 +41,7 @@ const SalePaymentsResumeDialog: React.FC<SalePaymentsResumeDialogProps> = ({ ope
             fullWidth
             onClose={handleClose}
         >
-            <DialogTitle id="alert-dialog-title">
+            <DialogTitle>
                 {`Resume de pagos de las ventas`}
                 <Typography component={'span'} fontSize={14}> ({dayjs(filters?.startdate).format('DD-MM-YYYY')} a {dayjs(filters?.enddate).format('DD-MM-YYYY')})</Typography>
             </DialogTitle>

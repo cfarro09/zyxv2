@@ -15,7 +15,7 @@ import FaceIcon from '@mui/icons-material/Face';
 import { ManagePurchase, Purchase } from 'pages/Purchases/Index';
 import { Inventory, Kardex } from 'pages/Inventory';
 import { ManageSale, Sale } from 'pages/Sales/Index';
-import { ManageReport, Reports } from 'pages/Reports/Index';
+import { ManageReport, Reports } from 'pages/CashRegister/Index';
 import { CajaIcon, ProductIcon, PurchaseIcon, SaleIcon } from 'assets/icons';
 
 export const routes: RouteConfig[] = [

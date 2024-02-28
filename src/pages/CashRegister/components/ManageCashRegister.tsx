@@ -12,8 +12,6 @@ import dayjs from 'dayjs';
 interface IDataAux {
     listPayment: ObjectZyx[];
 }
-// interface ReportDetail { saleorderpaymentid: number; order_number: string; saleorderid: number; evidence_url: string; createdby: string; createdate: string; payment_amount: number; }
-
 
 const columns: ColumnDef<ObjectZyx>[] = [
     {

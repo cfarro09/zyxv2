@@ -1,6 +1,7 @@
 import {
     ICustomer,
     IDomainValue,
+    IExpense,
     IPayment,
     IProductZyx,
     IPurchase,
@@ -207,6 +208,20 @@ export const getSalePayment = (dates: IFilterDate | null = null): IRequestBody =
         startdate: dates?.startdate || '',
         enddate: dates?.enddate || '',
     },
+});
+
+export const getExpenses = (expenseid: number = 0): IRequestBody => ({
+    method: 'UFN_EXPENSE_SEL',
+    key: 'UFN_EXPENSE_SEL',
+    parameters: {
+        expenseid
+    },
+});
+
+export const expenseIns = (parameters: { operation: string } & IExpense): IRequestBody => ({
+    method: 'UFN_EXPENSE_INS',
+    key: 'UFN_EXPENSE_INS',
+    parameters,
 });
 
 export const getPaymentsByDateAndMethod = (date: string, payment_method: string): IRequestBody => ({

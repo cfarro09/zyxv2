@@ -16,3 +16,12 @@ export interface ISale {
     sub_total: number;
     total_quantity?: number;
 }
+
+export interface IExpense {
+    expenseid: number;
+    description: string;
+    expense_amount: number;
+    expense_date: string;
+    evidence_url: string;
+    status?: string;
+}

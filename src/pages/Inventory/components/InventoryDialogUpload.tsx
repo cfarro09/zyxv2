@@ -123,7 +123,7 @@ const InventoryDialogUpload: React.FC<InventoryDialogUploadProps> = ({ open, han
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
         >
-            <DialogTitle id="alert-dialog-title">
+            <DialogTitle>
                 {"Importa tu archivo de inventario"}
             </DialogTitle>
             <DialogContent>

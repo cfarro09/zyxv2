@@ -67,7 +67,7 @@ const InventoryDialogTransfer: React.FC<InventoryDialogTransferProps> = ({ open,
                 onSubmit: onSubmitDomain,
             }}
         >
-            <DialogTitle id="alert-dialog-title">
+            <DialogTitle>
                 {"Transferir productos entre almacenes"}
             </DialogTitle>
             <DialogContent>

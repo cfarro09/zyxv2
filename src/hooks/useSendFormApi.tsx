@@ -7,7 +7,7 @@ import { execute } from 'stores/main/actions';
 
 interface SendFormApiProps {
     operation: "INSERT" | "DELETE" | "UPDATE";
-    onSave: (_result?: ObjectZyx[]) => void; // Callback al guardar con éxito
+    onSave: (_result?: ObjectZyx[] | ObjectZyx) => void; // Callback al guardar con éxito
 
     speechConfirmation?: string;
 }
