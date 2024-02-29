@@ -78,7 +78,7 @@ export const Kardex: React.FC<IMainProps> = ({ baseUrl }) => {
         {
             header: 'BALANCE',
             accessorKey: 'final_stock',
-            cell: (info) => (<Typography align="center">{info.row.original.stock}</Typography>),
+            cell: (info) => (<Typography align="center">{info.row.original.final_stock}</Typography>),
             meta: {
                 align: 'center'
             }
