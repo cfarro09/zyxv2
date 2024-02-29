@@ -37,16 +37,24 @@ export const Kardex: React.FC<IMainProps> = ({ baseUrl }) => {
             cell: (info) => (<span>{dayjs(info.row.original.createdate).format('DD/MM/YYYY HH:mm:ss')}</span>)
         },
         {
-            header: 'ALMACEN',
-            accessorKey: 'warehouse'
+            header: 'PRODUCTO',
+            accessorKey: 'title'
         },
         {
             header: 'ENTRADA',
-            accessorKey: 'in_quantity'
+            accessorKey: 'in_quantity',
+            cell: (info) => (<Typography align="center">{info.row.original.in_quantity}</Typography>),
+            meta: {
+                align: 'center'
+            }
         },
         {
             header: 'SALIDA',
-            accessorKey: 'out_quantity'
+            accessorKey: 'out_quantity',
+            cell: (info) => (<Typography align="center">{info.row.original.out_quantity}</Typography>),
+            meta: {
+                align: 'center'
+            }
         },
         {
             header: 'DOCUMENTO',
@@ -69,7 +77,11 @@ export const Kardex: React.FC<IMainProps> = ({ baseUrl }) => {
         },
         {
             header: 'BALANCE',
-            accessorKey: 'final_stock'
+            accessorKey: 'final_stock',
+            cell: (info) => (<Typography align="center">{info.row.original.stock}</Typography>),
+            meta: {
+                align: 'center'
+            }
         },
     ]
 
