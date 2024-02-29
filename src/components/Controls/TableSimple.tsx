@@ -177,11 +177,13 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
     });
 
     useEffect(() => {
-        const params = new URLSearchParams(location.search);
-        const f = params.get('f');
-        const page = params.get('page');
-        f && setGlobalFilter(f);
-        page && table.setPageIndex(Number(page));
+        if (enableGlobalFilter) {
+            const params = new URLSearchParams(location.search);
+            const f = params.get('f');
+            const page = params.get('page');
+            f && setGlobalFilter(f);
+            page && table.setPageIndex(Number(page));
+        }
     }, [table])
 
     useEffect(() => {
@@ -274,7 +276,7 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
                                     <TableCell
                                         key={header.id}
                                         sortDirection={false}
-                                        sx={{ width: header.column.getSize() }}
+                                        sx={{ width: header.column.getSize(), textAlign: header.column.columnDef.meta?.align || 'left' }}
                                     >
                                         <TableSortLabel
                                             active={!!header.column.getIsSorted()}

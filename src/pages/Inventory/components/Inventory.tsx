@@ -18,7 +18,8 @@ import InventoryDialogTransfer from "./InventoryDialogTransfer";
 const columns: ColumnDef<IInventory>[] = [
 	{
 		header: 'PRODUCTO',
-		accessorKey: 'title'
+		accessorKey: 'title',
+		size: 300,
 	},
 	{
 		header: 'CÓDIGO',
@@ -26,11 +27,16 @@ const columns: ColumnDef<IInventory>[] = [
 	},
 	{
 		header: 'STOCK',
-		accessorKey: 'stock'
+		accessorKey: 'stock',
+		cell: (info) => <Typography textAlign={"center"}>{info.row.original.stock}</Typography>,
+		meta: {
+			align: 'center'
+		}
 	},
 	{
 		header: 'ALMACEN',
-		accessorKey: 'warehouse'
+		accessorKey: 'warehouse',
+		size: 200,
 	},
 	{
 		header: 'COD BARRAS',

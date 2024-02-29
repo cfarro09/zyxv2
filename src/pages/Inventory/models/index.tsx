@@ -46,6 +46,8 @@ export interface IKardex {
     document_id: number;
     stock: number;
     createdate: string;
+    title: string;
+    final_stock: number;
 }
 
 export interface IKardexFilter {
