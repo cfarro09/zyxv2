@@ -28,7 +28,7 @@ const Filters: React.FC<FiltersProps> = ({ filters, setFilters, fetchData }) => 
             <Grid item>
                 <Typography>Filtros</Typography>
             </Grid>
-            <Grid item xs={4}>
+            <Grid item xs={12} sm={6}>
                 <CustomDatePicker
                     onChange={(newDate) => handleDateChange(newDate as Range)}
                     variant="outlined"

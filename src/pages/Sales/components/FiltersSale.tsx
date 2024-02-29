@@ -28,10 +28,11 @@ const SaleFilters: React.FC<SaleFiltersProps> = ({ filters, setFilters, fetchDat
             <Grid item>
                 <Typography>Filtros</Typography>
             </Grid>
-            <Grid item xs={4}>
+            <Grid item xs={12} sm={6}>
                 <CustomDatePicker
                     onChange={(newDate) => handleDateChange(newDate as Range)}
                     variant="outlined"
+                    fullWidth
                     initialRange={[
                         {
                             startDate: filters.startdate,

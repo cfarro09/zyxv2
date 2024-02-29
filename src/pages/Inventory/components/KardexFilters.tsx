@@ -19,7 +19,7 @@ const KardexFilters: React.FC<KardexFiltersProps> = ({ filters, setFilters, fetc
             <Grid item>
                 <Typography>Filtros</Typography>
             </Grid>
-            <Grid item xs={4}>
+            <Grid item xs={12} sm={6}>
                 <CustomDatePicker
                     onChange={(newDate) => handleDateChange(newDate as Range)}
                     variant="outlined"

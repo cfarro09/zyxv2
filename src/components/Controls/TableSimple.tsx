@@ -232,12 +232,13 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
                 </Grid>
             )}
             {enableGlobalFilter && (
-                <Grid className="border-b flex flex-row-reverse py-2 px-6">
-                    <Grid className="flex flex-row-reverse gap-4">
-                        {addButton &&
+                <Grid container className="border-b flex-row-reverse py-2 px-6" gap={2}>
+                    {addButton &&
+                        <Grid item xs={12} sm={4} md={3} lg={3}>
                             <Button
                                 className="flex gap-1"
                                 id="basic-buttons"
+                                fullWidth
                                 variant="contained"
                                 disabled={loading}
                                 onClick={() => {
@@ -251,10 +252,13 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
                                 <Add />
                                 Nuevo
                             </Button>
-                        }
-                        {buttonElement && buttonElement}
+                        </Grid>
+                    }
+                    {buttonElement && buttonElement}
+                    <Grid item xs={12} sm={4} md={3} lg={3}>
                         <TextField
                             value={globalFilter}
+                            fullWidth
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setGlobalFilter(String(e.target.value))}
                             onBlur={handleBlur}
                             disabled={loading}
