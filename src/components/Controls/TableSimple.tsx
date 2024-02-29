@@ -265,7 +265,7 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
                     </Grid>
                 </Grid>
             )}
-            <TableContainer>
+            <TableContainer style={{ position: "relative", flex: 1, display: "flex", flexDirection: "column", overflowY: "auto" }}>
                 <Table size='small' sx={{ tableLayout: "fixed" }}>
                     <TableHead>
                         {table.getHeaderGroups().map((headerGroup) => (
@@ -295,7 +295,13 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
                                 {row.getVisibleCells().map((cell) => (
                                     <TableCell
                                         key={cell.id}
-                                        sx={{ width: cell.column.getSize(), textAlign: (typeof cell.getValue() === 'number' ? "right" : undefined) }}
+                                        sx={{
+                                            width: cell.column.getSize(),
+                                            textAlign: (typeof cell.getValue() === 'number' ? "right" : undefined),
+                                            overflow: 'hidden',
+                                            textOverflow: 'ellipsis',
+                                            whiteSpace: 'nowrap',
+                                        }}
                                         onClick={() => {
                                             if (cell.column.id !== 'selection') {
                                                 (redirectOnSelect && columnKey) && handleNavigate(`${normalizePathname(location.pathname)}/${(row.original as ObjectZyx)[columnKey]}`);
@@ -309,13 +315,13 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
                     </TableBody>
                 </Table>
             </TableContainer>
-            <Box className="flex items-center justify-between p-6">
+            <Box className="flex items-center justify-between p-6 flex-wrap">
                 <Box>
                     <Typography component={'span'} className="text-[#a5a3ae]" fontSize={14}>
                         {`Página ${table.getState().pagination.pageIndex + 1} de ${table.getPageCount()}`}
                     </Typography>
                 </Box>
-                <Box className="flex">
+                <Box className="flex flex-wrap">
                     <Grid className="w-48 mr-4">
                         <FieldSelect
                             label={''}
@@ -328,39 +334,41 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
                             optionValue="value"
                         />
                     </Grid>
-                    <IconButton
-                        onClick={() => {
-                            table.setPageIndex(0);
-                            handleChangePage(0);
-                        }}
-                        disabled={loading || !table.getCanPreviousPage()}>
-                        <FirstPage />
-                    </IconButton>
-                    <IconButton
-                        onClick={() => {
-                            table.previousPage();
-                            handleChangePage(table.getState().pagination.pageIndex - 1);
-                        }}
-                        disabled={loading || !table.getCanPreviousPage()}>
-                        <NavigateBefore />
-                    </IconButton>
-                    <IconButton
-                        onClick={() => {
-                            table.nextPage();
-                            handleChangePage(table.getState().pagination.pageIndex + 1);
-                        }}
-                        disabled={loading || !table.getCanNextPage()}>
-                        <NavigateNext />
-                    </IconButton>
-                    <IconButton
-                        onClick={() => {
-                            table.setPageIndex(table.getPageCount() - 1);
-                            handleChangePage(table.getPageCount() - 1);
-                        }}
-                        disabled={loading || !table.getCanNextPage()}
-                    >
-                        <LastPage />
-                    </IconButton>
+                    <Box className="flex">
+                        <IconButton
+                            onClick={() => {
+                                table.setPageIndex(0);
+                                handleChangePage(0);
+                            }}
+                            disabled={loading || !table.getCanPreviousPage()}>
+                            <FirstPage />
+                        </IconButton>
+                        <IconButton
+                            onClick={() => {
+                                table.previousPage();
+                                handleChangePage(table.getState().pagination.pageIndex - 1);
+                            }}
+                            disabled={loading || !table.getCanPreviousPage()}>
+                            <NavigateBefore />
+                        </IconButton>
+                        <IconButton
+                            onClick={() => {
+                                table.nextPage();
+                                handleChangePage(table.getState().pagination.pageIndex + 1);
+                            }}
+                            disabled={loading || !table.getCanNextPage()}>
+                            <NavigateNext />
+                        </IconButton>
+                        <IconButton
+                            onClick={() => {
+                                table.setPageIndex(table.getPageCount() - 1);
+                                handleChangePage(table.getPageCount() - 1);
+                            }}
+                            disabled={loading || !table.getCanNextPage()}
+                        >
+                            <LastPage />
+                        </IconButton>
+                    </Box>
                 </Box>
             </Box>
             <Menu

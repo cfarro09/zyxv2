@@ -96,7 +96,7 @@ export const Inventory: React.FC<unknown> = () => {
 
 	return (
 		<Box className="flex max-w-screen-xl mr-auto ml-auto flex-col">
-			<Paper className="w-full mt-6">
+			<Paper className="w-full mt-3">
 				<Box className="px-6 py-3 border-b">
 					<Typography variant="h5">Inventario</Typography>
 				</Box>

@@ -46,7 +46,6 @@ const columns: ColumnDef<IProduct>[] = [
     {
         header: 'Categoria',
         accessorKey: 'category',
-        maxSize: 70,
     },
     {
         header: 'Código',
@@ -79,7 +78,7 @@ const columns: ColumnDef<IProduct>[] = [
     {
         id: 'estado',
         accessorKey: 'status',
-        maxSize: 70,
+        maxSize: 80,
         header: () => <Box className="text-center">ESTADO</Box>,
         cell: (info) => {
             const status = info.row.original.status;
@@ -129,12 +128,12 @@ export const Product: React.FC = () => {
     const deleteRow = (product: IProduct) => onSubmitData(productIns({ ...product, operation: "DELETE" }))
 
     return (
-        <Box className="flex max-w-screen-xl mr-auto ml-auto flex-col">
-            <Paper className="w-full mt-6">
+        <Box className="flex max-w-screen-xl mr-auto ml-auto flex-col" sx={{ flex: 1 }}>
+            <Paper className="w-full mt-3" sx={{ display: "flex", flexDirection: "column", flex: 1 }}>
                 <Box className="px-6 py-3 border-b">
                     <Typography variant="h5">Productos</Typography>
                 </Box>
-                <Box sx={{ '& .MuiTableBody-root .MuiTableCell-root': { padding: 1 } }}>
+                <Box sx={{ '& .MuiTableBody-root .MuiTableCell-root': { padding: 1 }, flex: 1, display: "flex", flexDirection: "column" }}>
                     <TableSimple
                         data={mainData}
                         loading={mainResult.loading}

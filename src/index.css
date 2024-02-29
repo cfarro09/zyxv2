@@ -19,7 +19,8 @@ form {
 }
 
 #root {
-    width: 100%;
+    width: 100vw;
+    overflow: overlay;
     background: #f6f5f8;
 }
 

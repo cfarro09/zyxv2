@@ -30,6 +30,7 @@ export const Kardex: React.FC<IMainProps> = ({ baseUrl }) => {
         inventoryid: parseInt(id as string)
     })
 
+    console.log("mainData", mainData)
     const columns: ColumnDef<IKardex>[] = [
         {
             header: 'FECHA',
@@ -73,15 +74,14 @@ export const Kardex: React.FC<IMainProps> = ({ baseUrl }) => {
         },
     ]
 
-
-    console.log({ now: dayjs().toDate() })
-
     const fetchData = () => {
         dispatch(getCollection(getKardexSel({ ...filters })))
     }
 
     useEffect(() => {
+        console.log("mainResult", mainResult)
         if (!mainResult.loading && !mainResult.error && mainResult.key === 'UFN_KARDEX_SEL') {
+            console.log("232322")
             setMainData((mainResult.data as IKardex[]) || []);
         }
     }, [mainResult]);
@@ -96,7 +96,7 @@ export const Kardex: React.FC<IMainProps> = ({ baseUrl }) => {
                     <Typography color="textSecondary">Kardex</Typography>
                 </Breadcrumbs>
             </div>
-            <Paper className="w-full mt-6">
+            <Paper className="w-full mt-3">
                 <Box className="px-6 py-3 border-b">
                     <Typography variant="h5">
                         Kardex

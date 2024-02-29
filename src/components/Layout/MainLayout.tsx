@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { styled } from '@mui/material/styles';
-import Box from '@mui/material/Box';
+import Box, { BoxProps } from '@mui/material/Box';
 import MuiAppBar from '@mui/material/AppBar';
 import type { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
@@ -48,6 +48,16 @@ const AppBar = styled(MuiAppBar, {
 	}),
 }));
 
+const BoxMain = styled(Box, {
+	shouldForwardProp: (prop) => prop !== 'open',
+})<BoxProps>(({ open }) => ({
+	flexGrow: 1,
+	display: 'flex',
+	overflow: "overlay",
+	flexDirection: 'column',
+	width: `calc(100% - ${open ? drawerWidth : 56}px)`,
+}));
+
 interface MainLayoutProps {
 	children: React.ReactNode;
 }
@@ -65,7 +75,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
 
 	return (
 		<React.Fragment>
-			<Box sx={{ display: 'flex', minHeight: '100vh', width: '99vw' }}>
+			<Box sx={{ display: 'flex', minHeight: '100vh' }}>
 				<CssBaseline />
 				<AppBar position="fixed" color='secondary' open={open}>
 					<Toolbar>
@@ -102,12 +112,12 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
 					open={open}
 					handleDrawerClose={handleDrawerClose}
 				/>
-				<Box component="main" sx={{ flexGrow: 1, p: 1, display: 'flex', flexDirection: 'column' }}>
+				<BoxMain component="main" open={open} p={2}>
 					<DrawerHeader />
 					<div style={{ width: '100%', flex: 1 }}>
 						{children}
 					</div>
-				</Box>
+				</BoxMain>
 			</Box>
 			<Popus />
 		</React.Fragment>

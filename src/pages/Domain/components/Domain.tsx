@@ -62,12 +62,12 @@ export const Domain: React.FC = () => {
     }, [mainResult]);
 
     return (
-        <Box className="flex max-w-screen-xl mr-auto ml-auto flex-col">
-            <Paper className="w-full mt-6">
+        <Box className="flex max-w-screen-xl mr-auto ml-auto flex-col" sx={{ height: '100%' }}>
+            <Paper className="w-full mt-3" sx={{ height: '100%', display: "flex", flexDirection: "column" }}>
                 <Box className="px-6 py-3 border-b">
                     <Typography variant="h5">Dominios</Typography>
                 </Box>
-                <Box>
+                <Box sx={{ flex: 1, flexDirection: "Column", display: "flex" }}>
                     <TableSimple
                         loading={mainResult.loading}
                         data={mainData}
