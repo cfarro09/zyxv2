@@ -1,10 +1,15 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Add, Delete } from "@mui/icons-material";
 import { Avatar, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { ISale, ObjectZyx } from "@types";
 import FieldEdit from "components/Controls/FieldEdit";
 import { FieldSelect } from "components/Controls/FieldSelect";
 import { Control, FieldErrors, useFieldArray, useFormContext } from "react-hook-form";
+import { useDispatch } from "react-redux";
+import { showSnackbar } from "stores/popus/actions";
+
+const regexOnlyNumber = /^\d+$/;
+
 
 export const SaleProducts: React.FC<{
     control: Control<ISale, object, ISale>;
@@ -13,7 +18,8 @@ export const SaleProducts: React.FC<{
     errors: FieldErrors<ISale>;
     disabled?: boolean;
 }> = ({ control, loading, listProduct, errors, disabled }) => {
-
+    const dispatch = useDispatch();
+    const [barcode, setBarcode] = useState('');
     const { setValue, register, getValues, trigger, watch } = useFormContext()
     const { fields, append, remove } = useFieldArray({
         control,
@@ -26,21 +32,79 @@ export const SaleProducts: React.FC<{
         trigger(`products.${i}.total`);
     }
 
+    const newFieldBlank = () => append({
+        saleorderlineid: 0,
+        productid: 0,
+        inventoryid: 0,
+        barcode: '',
+        code: '',
+        description: '',
+        image: '',
+        status: 'ACTIVO',
+        quantity: 0,
+        selling_price: 0,
+        total: 0
+    });
+
     useEffect(() => {
+        newFieldBlank();
+    }, []);
+
+    const insertProductFromReader = (barcode: string) => {
+        const products = cleanProducts(-1);
+        const productFound = products.find(product => `${product.barcode}`.includes(barcode));
+        if (!productFound) {
+            dispatch(showSnackbar({ show: true, severity: "warning", message: `El producto leido no existe.` }));
+            return;
+        }
         append({
             saleorderlineid: 0,
-            productid: 0,
-            inventoryid: 0,
-            barcode: '',
-            code: '',
-            description: '',
-            image: '',
+            productid: productFound.productid as number,
+            inventoryid: productFound.inventoryid as number,
+            barcode: productFound.barcode as string,
+            code: productFound.code as string,
+            description: productFound.description as string,
+            image: productFound.image as string,
             status: 'ACTIVO',
             quantity: 1,
-            selling_price: 0,
+            stock: productFound.stock as number,
+            selling_price: productFound.selling_price as number,
             total: 0
-        })
-    }, [])
+        });
+        setTimeout(() => {
+            trigger(`products.${fields.length}.selling_price`);
+            trigger(`products.${fields.length}.productid`);
+            trigger(`products.${fields.length}.stock`);
+
+            calculateSubtotal(fields.length, getValues(`products.${fields.length}.quantity`), (productFound.selling_price as number) ?? 0);
+            document?.activeElement?.blur();
+        }, 200);
+    }
+
+    useEffect(() => {
+        const handleKeyPress = (e: KeyboardEvent) => {
+            if (e.key !== 'Enter') {
+                e.stopPropagation();
+                setBarcode(regexOnlyNumber.test(barcode + e.key) ? barcode + e.key : '');
+                return;
+            } else if (barcode !== '') {
+                if (barcode.length >= 6) {
+                    insertProductFromReader(barcode);
+                }
+                // Resetea el código de barras para la próxima lectura
+                setBarcode('');
+                return;
+            }
+        };
+
+        // Agrega el event listener
+        window.addEventListener('keypress', handleKeyPress);
+
+        // Limpieza al desmontar el componente
+        return () => {
+            window.removeEventListener('keypress', handleKeyPress);
+        };
+    }, [barcode]);
 
 
     const cleanProducts = React.useCallback((position: number) => {
@@ -60,19 +124,7 @@ export const SaleProducts: React.FC<{
                                     <IconButton
                                         size="small"
                                         disabled={loading}
-                                        onClick={() => append({
-                                            saleorderlineid: 0,
-                                            productid: 0,
-                                            inventoryid: 0,
-                                            barcode: '',
-                                            code: '',
-                                            description: '',
-                                            image: '',
-                                            status: 'ACTIVO',
-                                            quantity: 1,
-                                            selling_price: 0,
-                                            total: 0
-                                        })}
+                                        onClick={newFieldBlank}
                                     >
                                         <Add />
                                     </IconButton>
@@ -105,7 +157,7 @@ export const SaleProducts: React.FC<{
                                             valueDefault={getValues(`products.${i}.productid`)}
                                             fregister={{
                                                 ...register(`products.${i}.productid`, {
-                                                    validate: (value) => (value > 0) || "El campo es requerido"
+                                                    // validate: (value) => (value > 0) || "El campo es requerido"
                                                 })
                                             }}
                                             virtualize={true}
@@ -113,13 +165,17 @@ export const SaleProducts: React.FC<{
                                             variant='outlined'
                                             onChange={(value) => {
                                                 setValue(`products.${i}.productid`, (value?.productid as number) ?? 0);
+                                                trigger(`products.${i}.productid`);
+                                                setValue(`products.${i}.quantity`, 1);
                                                 setValue(`products.${i}.title`, (value?.title) ?? "");
                                                 setValue(`products.${i}.stock`, (value?.stock as number) ?? 0);
                                                 setValue(`products.${i}.inventoryid`, (value?.inventoryid as number) ?? 0);
                                                 setValue(`products.${i}.selling_price`, (value?.selling_price as number) ?? 0);
                                                 trigger(`products.${i}.selling_price`);
                                                 trigger(`products.${i}.stock`);
+                                                trigger(`products.${i}.quantity`);
                                                 calculateSubtotal(i, getValues(`products.${i}.quantity`), (value?.selling_price as number) ?? 0);
+                                                newFieldBlank();
                                             }}
                                             renderOption={(option) => (
                                                 <React.Fragment>
@@ -139,12 +195,12 @@ export const SaleProducts: React.FC<{
                                         disabled={disabled}
                                         fregister={{
                                             ...register(`products.${i}.quantity`, {
-                                                validate: (value) => (value > 0) ? (value <= getValues(`products.${i}.stock`) || `La cantidad debe ser menor a la del stock: ${getValues(`products.${i}.stock`)}`) : "Debe ser mayor de 0"
+                                                validate: (value) => getValues(`products.${i}.productid`) === 0 || ((value > 0) ? (value <= getValues(`products.${i}.stock`) || `La cantidad debe ser menor a la del stock: ${getValues(`products.${i}.stock`)}`) : "Debe ser mayor de 0")
                                             }),
                                         }}
                                         type="number"
                                         valueDefault={getValues(`products.${i}.quantity`)}
-                                        error={errors.products?.[0]?.quantity?.message}
+                                        error={errors.products?.[i]?.quantity?.message}
                                         onChange={(value) => {
                                             const quantity = parseInt(value || "0");
                                             const stock = getValues(`products.${i}.stock`) || 0;
@@ -162,15 +218,16 @@ export const SaleProducts: React.FC<{
                                 </TableCell>
                                 <TableCell style={{ width: 200 }}>
                                     <FieldEdit
-                                        disabled={disabled}
+                                        disabled={true}
                                         fregister={{
                                             ...register(`products.${i}.selling_price`, {
-                                                validate: (value) => (value > 0) || "Debe ser mayor de 0"
+                                                validate: (value) => (getValues(`products.${i}.productid`) === 0 || value > 0) || "Debe ser mayor de 0"
                                             })
                                         }}
                                         type="number"
                                         valueDefault={getValues(`products.${i}.selling_price`)}
                                         error={errors?.products?.[i]?.selling_price?.message}
+                                        
                                         onChange={(value) => {
                                             const quantity = getValues(`products.${i}.quantity`) || 0;
                                             const price = parseFloat(value || "0.0");

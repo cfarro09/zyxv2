@@ -116,7 +116,8 @@ export const ManageSale: React.FC<IMainProps> = ({ baseUrl }) => {
     }, []);
 
     const onSubmit = handleSubmit((data) => {
-        const totalProducts = data.products.reduce((acc, item) => acc + item.total, 0);
+        const products = data.products.filter(x => x.productid > 0);
+        const totalProducts = products.reduce((acc, item) => acc + item.total, 0);
         const totalPayments = data.payments.reduce((acc, item) => acc + item.payment_amount, 0);
         if (totalProducts === 0) {
             dispatch(showSnackbar({ show: true, severity: "warning", message: `Debes ingresar al menos un producto` }));
@@ -134,7 +135,7 @@ export const ManageSale: React.FC<IMainProps> = ({ baseUrl }) => {
                 sub_total: totalProducts
             }),
             detail: [
-                ...data.products.map(product => saleOrderLineIns({ ...product, operation: product.saleorderlineid > 0 ? "UPDATE" : "INSERT" })),
+                ...products.map(product => saleOrderLineIns({ ...product, operation: product.saleorderlineid > 0 ? "UPDATE" : "INSERT" })),
                 ...data.payments.map(payment => saleOrderPaymentIns({ ...payment, operation: payment.saleorderpaymentid > 0 ? "UPDATE" : "INSERT" })),
             ]
         }, true)

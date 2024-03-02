@@ -162,7 +162,7 @@ export const PurchaseProducts: React.FC<{
                                         }}
                                         type="number"
                                         valueDefault={getValues(`products.${i}.quantity`)}
-                                        error={errors.products?.[0]?.quantity?.message}
+                                        error={errors.products?.[i]?.quantity?.message}
                                         onChange={(value) => {
                                             const quantity = parseInt(value || "0");
                                             const price = getValues(`products.${i}.purchase_price`) || 0;

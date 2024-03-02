@@ -21,14 +21,12 @@ const SalePaymentsResumeDialog: React.FC<SalePaymentsResumeDialogProps> = ({ ope
 
     useEffect(() => {
         if (open) {
-            console.log({ filters })
             dispatch(getCollectionAux(getSalePaymentsResume(filters)))
         }
     }, [open])
 
     useEffect(() => {
         if (!mainResultAux.loading && !mainResultAux.error && mainResultAux.key === 'UFN_SALE_PAYMENTS_RESUME') {
-            console.log('mainResultAux.data', mainResultAux.data)
             setData((mainResultAux.data as ObjectZyx[]) || []);
         }
     }, [mainResultAux])

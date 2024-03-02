@@ -30,7 +30,6 @@ export const Kardex: React.FC<IMainProps> = ({ baseUrl }) => {
         inventoryid: parseInt(id as string)
     })
 
-    console.log("mainData", mainData)
     const columns: ColumnDef<IKardex>[] = [
         {
             header: 'FECHA',
@@ -91,9 +90,7 @@ export const Kardex: React.FC<IMainProps> = ({ baseUrl }) => {
     }
 
     useEffect(() => {
-        console.log("mainResult", mainResult)
         if (!mainResult.loading && !mainResult.error && mainResult.key === 'UFN_KARDEX_SEL') {
-            console.log("232322")
             setMainData((mainResult.data as IKardex[]) || []);
         }
     }, [mainResult]);

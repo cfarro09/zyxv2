@@ -38,7 +38,6 @@ export const ManageReport: React.FC<IMainProps> = ({ baseUrl }) => {
     const { id } = useParams<{ id?: string }>();
     const [dataAux, setDataAux] = useState<IDataAux>({ listPayment: [] });
 
-    console.log('sss', id)
     const { giveMeData, loading } = useMultiData<ISale, IDataAux>({
         setDataAux,
         collections: [
