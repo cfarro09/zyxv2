@@ -57,6 +57,8 @@ export const ManageSale: React.FC<IMainProps> = ({ baseUrl }) => {
         operation: "INSERT",
         onSave: (data) => {
             const sale = getValues()
+            sale.products = sale.products.filter(x => x.productid > 0);
+
             sale.order_number = ((data as ObjectZyx)?.vordernumber as string || "") as string;
             sale.cashier = ((data as ObjectZyx)?.vcashier || "") as string;
             fetchPrint(sale)
