@@ -137,6 +137,7 @@ export const ManageSale: React.FC<IMainProps> = ({ baseUrl }) => {
             dispatch(showSnackbar({ show: true, severity: "warning", message: `La diferencia a pagar es diferente al total de productos.` }));
             return;
         }
+        console.log("data", data)
         onSubmitData({
             header: saleOrderIns({
                 ...data,

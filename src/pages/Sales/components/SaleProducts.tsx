@@ -67,6 +67,7 @@ export const SaleProducts: React.FC<{
             code: productFound.code as string,
             description: productFound.description as string,
             image: productFound.image as string,
+            title: productFound.title as string,
             status: 'ACTIVO',
             quantity: 1,
             stock: productFound.stock as number,
