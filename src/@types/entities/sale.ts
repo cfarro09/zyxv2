@@ -14,6 +14,7 @@ export interface ISale {
     payments: (IPayment & { saleorderpaymentid: number })[]
     total_amount: number;
     sub_total: number;
+    moneyFromCustomer: number;
     total_quantity?: number;
 }
 

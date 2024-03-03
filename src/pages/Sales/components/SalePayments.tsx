@@ -19,14 +19,14 @@ export const SalePayments: React.FC<{
 }> = ({ control, loading, listPaymentMethod, errors, disabled }) => {
     const dispatch = useDispatch();
     const [openDialogEvidence, setOpenDialogEvidence] = useState(false);
-    const { setValue, register, getValues, trigger } = useFormContext();
+    const { setValue, register, getValues, trigger, watch } = useFormContext<ISale>();
     const [position, setPosition] = useState<number>(0)
     const { fields, append, remove } = useFieldArray({
         control,
         name: 'payments',
     });
-    const appendProduct = () => {
 
+    const appendProduct = () => {
         const amountPaid = getValues('payments').reduce((acc: number, item: IPayment) => acc + item.payment_amount, 0);
         const amountToPay = getValues('total_amount');
         if (amountPaid < amountToPay) {
@@ -42,8 +42,28 @@ export const SalePayments: React.FC<{
         }
     }
 
-    const handleChangeValidateAmount = (value: string, position: number) => {
-        const amount = parseFloat(value || "0.0");
+    React.useEffect(() => {
+        const position = fields.findIndex(p => p.payment_method === 'EFECTIVO');
+        const amountPaid = getValues('payments').filter((p, index) => index !== position).reduce((acc: number, item: IPayment) => acc + item.payment_amount, 0);
+        const amountToPay = getValues('total_amount');
+
+        if (amountToPay > 0) {
+            if (position < 0) {
+                append({
+                    saleorderpaymentid: 0,
+                    payment_method: 'EFECTIVO',
+                    evidence_url: '',
+                    status: 'ACTIVO',
+                    payment_amount: round2(amountToPay - amountPaid)
+                })
+            } else {
+                setValue(`payments.${position}.payment_amount`, round2(amountToPay - amountPaid));
+            }
+        }
+    }, [watch("total_amount")])
+
+    const handleChangeValidateAmount = (value: string | number, position: number) => {
+        const amount = typeof value === "number" ? value : parseFloat(value || "0.0");
         if (amount < 0) {
             setValue(`payments.${position}.payment_amount`, 0);
             trigger(`payments.${position}.payment_amount`);

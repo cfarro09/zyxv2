@@ -5,7 +5,7 @@ import { a11yProps, getCustomerSel, getValuesFromDomain, getSaleOrder, saleOrder
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import FieldEdit from 'components/Controls/FieldEdit';
 import { FieldSelect } from 'components/Controls/FieldSelect';
-import { FormProvider, useForm } from 'react-hook-form';
+import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { IMainProps, ISale, ObjectZyx } from '@types';
 import SaveIcon from '@mui/icons-material/Save';
 import { useSendFormApi } from 'hooks/useSendFormApi';
@@ -69,6 +69,7 @@ export const ManageSale: React.FC<IMainProps> = ({ baseUrl }) => {
         defaultValues: {
             saleorderid: 0,
             customerid: 2,
+            customerdesc: "CLIENTE",
             order_date: dayjs().format('YYYY-MM-DD'),
             status: 'ACTIVO',
             total_amount: 0,
@@ -81,17 +82,24 @@ export const ManageSale: React.FC<IMainProps> = ({ baseUrl }) => {
 
     const { control, register, handleSubmit, setValue, getValues, reset, formState: { errors }, trigger, watch } = methods;
 
+    const watches = useWatch({
+        control,
+        name: ["products", "billing"],
+    });
+
     React.useEffect(() => {
         const subtotal = getValues('products').reduce((acc, item) => acc + item.total, 0);
         const total = subtotal * (getValues('billing') ? 1.18 : 1);
         setValue("total_amount", total);
         setValue("sub_total", subtotal);
-    }, [watch(["products", "billing"])])
+    }, [watches])
 
     const { giveMeData, loading } = useMultiData<ISale, IDataAux>({
         registerX: () => {
             register('saleorderid');
             register('status');
+            register('moneyFromCustomer');
+            register('customerdesc');
             register('total_amount');
             register('sub_total');
             register('customerid', { validate: (value) => Boolean(value > 0) || 'El campo es requerido' });
@@ -184,7 +192,10 @@ export const ManageSale: React.FC<IMainProps> = ({ baseUrl }) => {
                                         label={'Cliente'}
                                         variant="outlined"
                                         valueDefault={getValues('customerid')}
-                                        onChange={(value) => setValue('customerid', value?.clientid as number ?? 0)}
+                                        onChange={(value) => {
+                                            setValue('customerid', value?.clientid as number ?? 0)
+                                            setValue('customerdesc', value?.name as string ?? "")
+                                        }}
                                         error={errors?.customerid?.message}
                                         loading={loading}
                                         disabled={getValues('saleorderid') > 0}

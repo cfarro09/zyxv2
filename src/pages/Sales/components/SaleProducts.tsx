@@ -20,16 +20,18 @@ export const SaleProducts: React.FC<{
 }> = ({ control, loading, listProduct, errors, disabled }) => {
     const dispatch = useDispatch();
     const [barcode, setBarcode] = useState('');
-    const { setValue, register, getValues, trigger, watch } = useFormContext()
+    const { setValue, register, getValues, trigger, watch } = useFormContext<ISale>()
     const { fields, append, remove } = useFieldArray({
         control,
         name: 'products',
     });
 
-    const calculateSubtotal = (i: number, price: number, quantity: number) => {
+    const calculateSubtotal = (i: number, price: number, quantity: number, goTrigger: boolean = true) => {
         const total = (price || 0) * (quantity || 0);
         setValue(`products.${i}.total`, total);
-        trigger(`products.${i}.total`);
+        if (goTrigger) {
+            trigger(`products.${i}.total`);
+        }
     }
 
     const newFieldBlank = () => append({
@@ -72,11 +74,9 @@ export const SaleProducts: React.FC<{
             total: 0
         });
         setTimeout(() => {
-            trigger(`products.${fields.length}.selling_price`);
-            trigger(`products.${fields.length}.productid`);
-            trigger(`products.${fields.length}.stock`);
-
-            calculateSubtotal(fields.length, getValues(`products.${fields.length}.quantity`), (productFound.selling_price as number) ?? 0);
+            const position = fields.length;
+            calculateSubtotal(position, getValues(`products.${position}.quantity`), (productFound.selling_price as number) ?? 0, false);
+            trigger([`products.${position}.selling_price`, `products.${position}.productid`, `products.${position}.stock`, `products.${position}.total`]);
             document?.activeElement?.blur();
         }, 200);
     }
@@ -97,10 +97,8 @@ export const SaleProducts: React.FC<{
             }
         };
 
-        // Agrega el event listener
         window.addEventListener('keypress', handleKeyPress);
 
-        // Limpieza al desmontar el componente
         return () => {
             window.removeEventListener('keypress', handleKeyPress);
         };
@@ -111,7 +109,7 @@ export const SaleProducts: React.FC<{
         const productidSelected = getValues(`products.${position}.productid`);
         const productSelected = getValues("products").map(p => p.productid === productidSelected ? 0 : p.productid);
         return listProduct.filter(p => !productSelected?.includes(p.productid as number));
-    }, [watch["products"], listProduct])
+    }, [watch("products"), listProduct])
 
     return (
         <div>
@@ -165,16 +163,13 @@ export const SaleProducts: React.FC<{
                                             variant='outlined'
                                             onChange={(value) => {
                                                 setValue(`products.${i}.productid`, (value?.productid as number) ?? 0);
-                                                trigger(`products.${i}.productid`);
                                                 setValue(`products.${i}.quantity`, 1);
-                                                setValue(`products.${i}.title`, (value?.title) ?? "");
+                                                setValue(`products.${i}.title`, (value?.title as string) ?? "");
                                                 setValue(`products.${i}.stock`, (value?.stock as number) ?? 0);
                                                 setValue(`products.${i}.inventoryid`, (value?.inventoryid as number) ?? 0);
                                                 setValue(`products.${i}.selling_price`, (value?.selling_price as number) ?? 0);
-                                                trigger(`products.${i}.selling_price`);
-                                                trigger(`products.${i}.stock`);
-                                                trigger(`products.${i}.quantity`);
-                                                calculateSubtotal(i, getValues(`products.${i}.quantity`), (value?.selling_price as number) ?? 0);
+                                                calculateSubtotal(i, getValues(`products.${i}.quantity`), (value?.selling_price as number) ?? 0, false);
+                                                trigger([`products.${i}.productid`, `products.${i}.selling_price`, `products.${i}.stock`, `products.${i}.quantity`, `products.${i}.total`]);
                                                 newFieldBlank();
                                             }}
                                             renderOption={(option) => (
@@ -195,7 +190,7 @@ export const SaleProducts: React.FC<{
                                         disabled={disabled}
                                         fregister={{
                                             ...register(`products.${i}.quantity`, {
-                                                validate: (value) => getValues(`products.${i}.productid`) === 0 || ((value > 0) ? (value <= getValues(`products.${i}.stock`) || `La cantidad debe ser menor a la del stock: ${getValues(`products.${i}.stock`)}`) : "Debe ser mayor de 0")
+                                                validate: (value) => getValues(`products.${i}.productid`) === 0 || ((value > 0) ? (value <= getValues(`products.${i}.stock`)! || `La cantidad debe ser menor a la del stock: ${getValues(`products.${i}.stock`)}`) : "Debe ser mayor de 0")
                                             }),
                                         }}
                                         type="number"
@@ -211,8 +206,8 @@ export const SaleProducts: React.FC<{
                                             }
                                             const price = getValues(`products.${i}.selling_price`) || 0;
                                             setValue(`products.${i}.quantity`, quantity);
-                                            trigger(`products.${i}.quantity`);
-                                            calculateSubtotal(i, price, quantity);
+                                            calculateSubtotal(i, price, quantity, false);
+                                            trigger([`products.${i}.quantity`, `products.${i}.total`]);
                                         }}
                                     />
                                 </TableCell>
@@ -221,13 +216,13 @@ export const SaleProducts: React.FC<{
                                         disabled={true}
                                         fregister={{
                                             ...register(`products.${i}.selling_price`, {
-                                                validate: (value) => (getValues(`products.${i}.productid`) === 0 || value > 0) || "Debe ser mayor de 0"
+                                                validate: (value) => (getValues(`products.${i}.productid`) === 0 || value! > 0) || "Debe ser mayor de 0"
                                             })
                                         }}
                                         type="number"
                                         valueDefault={getValues(`products.${i}.selling_price`)}
                                         error={errors?.products?.[i]?.selling_price?.message}
-                                        
+
                                         onChange={(value) => {
                                             const quantity = getValues(`products.${i}.quantity`) || 0;
                                             const price = parseFloat(value || "0.0");
@@ -237,8 +232,8 @@ export const SaleProducts: React.FC<{
                                                 return 0;
                                             }
                                             setValue(`products.${i}.selling_price`, price);
-                                            trigger(`products.${i}.selling_price`);
-                                            calculateSubtotal(i, price, quantity)
+                                            calculateSubtotal(i, price, quantity, false);
+                                            trigger([`products.${i}.selling_price`, `products.${i}.total`]);
                                         }}
                                     />
                                 </TableCell>
