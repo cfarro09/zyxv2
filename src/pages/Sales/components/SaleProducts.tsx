@@ -201,8 +201,9 @@ export const SaleProducts: React.FC<{
                                             const quantity = parseInt(value || "0");
                                             const stock = getValues(`products.${i}.stock`) || 0;
                                             if (quantity < 0 || stock < quantity) {
-                                                setValue(`products.${i}.quantity`, quantity < 0 ? 0 : stock);
-                                                trigger(`products.${i}.quantity`);
+                                                setValue(`products.${i}.quantity`, 0);
+                                                setValue(`products.${i}.total`, 0);
+                                                trigger([`products.${i}.quantity`, `products.${i}.total`]);
                                                 return 0;
                                             }
                                             const price = getValues(`products.${i}.selling_price`) || 0;

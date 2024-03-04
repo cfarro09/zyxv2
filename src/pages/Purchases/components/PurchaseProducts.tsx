@@ -59,7 +59,7 @@ export const PurchaseProducts: React.FC<{
         const productidSelected = getValues(`products.${position}.productid`);
         const productSelected = getValues("products").map(p => p.productid === productidSelected ? 0 : p.productid);
         return listProduct.filter(p => !productSelected?.includes(p.productid as number));
-    }, [watch["products"], listProduct])
+    }, [watch("products"), listProduct])
 
     return (
         <>
@@ -168,7 +168,8 @@ export const PurchaseProducts: React.FC<{
                                             const price = getValues(`products.${i}.purchase_price`) || 0;
                                             if (quantity < 0) {
                                                 setValue(`products.${i}.quantity`, 0);
-                                                trigger(`products.${i}.quantity`);
+                                                setValue(`products.${i}.total`, 0);
+                                                trigger([`products.${i}.quantity`, `products.${i}.total`]);
                                                 return 0;
                                             }
                                             setValue(`products.${i}.quantity`, quantity);
@@ -193,7 +194,8 @@ export const PurchaseProducts: React.FC<{
                                             const price = parseFloat(value || "0.0");
                                             if (price < 0) {
                                                 setValue(`products.${i}.purchase_price`, 0);
-                                                trigger(`products.${i}.purchase_price`);
+                                                setValue(`products.${i}.total`, 0);
+                                                trigger([`products.${i}.purchase_price`, `products.${i}.total`]);
                                                 return 0;
                                             }
                                             setValue(`products.${i}.purchase_price`, price);
