@@ -70,7 +70,13 @@ const columns: ColumnDef<IProduct>[] = [
         cell: (info) => <span>S/ {formatMoney(`${info.row.original.selling_price}`)}</span>
     },
     {
-        header: 'Cantidad',
+        header: 'En Stock',
+        accessorKey: 'store_stock',
+        maxSize: 100,
+        cell: (info) => <Typography textAlign={"center"}>{info.row.original.store_stock}</Typography>
+    },
+    {
+        header: 'En Almacen',
         accessorKey: 'stock',
         maxSize: 100,
         cell: (info) => <Typography textAlign={"center"}>{info.row.original.stock}</Typography>

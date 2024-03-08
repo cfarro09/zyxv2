@@ -12,4 +12,5 @@ export interface IProduct {
     status: string;
     category: string;
     stock?: number;
+    store_stock?: number;
 }
