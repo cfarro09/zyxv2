@@ -9,7 +9,7 @@ import type { ColumnDef } from '@tanstack/react-table';
 import { IExpense, ISale } from '@types';
 import dayjs from 'dayjs';
 import Filters from './FiltersReport';
-import { Delete, PointOfSale } from '@mui/icons-material';
+import { Delete, Money } from '@mui/icons-material';
 import ProfitResumeDialog from './ProfitResumeDialog';
 import TabPanel from 'components/Layout/TabPanel';
 import ExpenseDialog from './ExpenseDialog';
@@ -47,6 +47,19 @@ const columnsExpense: ColumnDef<IExpense>[] = [
         header: 'MONTO',
         accessorKey: 'expense_amount',
     },
+    {
+        header: 'TIPO',
+        accessorKey: 'type',
+    },
+    {
+        header: 'REGISTRADO POR',
+        accessorKey: 'changeby',
+    },
+    {
+        header: 'FECHA REGISTRO',
+        accessorKey: 'createdate',
+        cell: (info) => new Date(info.row.original.createdate ?? "").toLocaleString()
+    },
 ];
 
 export const Reports: React.FC = () => {
@@ -68,7 +81,7 @@ export const Reports: React.FC = () => {
 
     const fetchDataIncome = useCallback(() => dispatch(getCollection(getSalePayment(filters))), [dispatch, filters]);
 
-    const fetchDataExpenses = useCallback(() => dispatch(getCollection(getExpenses())), [dispatch]);
+    const fetchDataExpenses = useCallback(() => dispatch(getCollection(getExpenses(0, filters, ''))), [dispatch, filters]);
 
     const { onSubmitData } = useSendFormApi({
         operation: "DELETE",
@@ -94,7 +107,7 @@ export const Reports: React.FC = () => {
 
     const selectExpense = (row: IExpense | null) => {
         setOpenExpenseDialog(true);
-        setExpenseSelected(row ?? { expenseid: 0, description: '', expense_amount: 0, evidence_url: '', expense_date: dayjs().format('YYYY-MM-DD'), status: "ACTIVO" })
+        setExpenseSelected(row ?? { expenseid: 0, description: '', expense_amount: 0, evidence_url: '', expense_date: dayjs().format('YYYY-MM-DD'), status: "ACTIVO", type: 'ADMIN' })
     }
 
     return (
@@ -124,7 +137,7 @@ export const Reports: React.FC = () => {
                             <TableSimple
                                 loading={mainResult.loading}
                                 data={mainData}
-                                addButton={true}
+                                addButton={false}
                                 filterElement={
                                     <Filters
                                         filters={filters}
@@ -139,7 +152,7 @@ export const Reports: React.FC = () => {
                                     <Button
                                         onClick={() => setOpenProfitResumeDialog(true)}
                                         variant="outlined">
-                                        <PointOfSale fontSize="small" sx={{ marginRight: '4px' }} />PROFIT
+                                        <Money fontSize="small" sx={{ marginRight: '4px' }} />PROFIT
                                     </Button>
                                 }
                             />
@@ -150,6 +163,13 @@ export const Reports: React.FC = () => {
                                 addButton={true}
                                 showOptions={true}
                                 columnKey={"expenseid"}
+                                filterElement={
+                                    <Filters
+                                        filters={filters}
+                                        setFilters={setFilters}
+                                        fetchData={fetchDataExpenses}
+                                    />
+                                }
                                 optionsMenu={[{
                                     description: "Eliminar",
                                     Icon: Delete,

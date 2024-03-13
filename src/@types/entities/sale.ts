@@ -21,8 +21,10 @@ export interface ISale {
 export interface IExpense {
     expenseid: number;
     description: string;
+    createdate?: string;
     expense_amount: number;
     expense_date: string;
     evidence_url: string;
     status?: string;
+    type?: string;
 }

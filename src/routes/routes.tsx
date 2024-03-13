@@ -17,6 +17,7 @@ import { Inventory, Kardex } from 'pages/Inventory';
 import { ManageSale, Sale } from 'pages/Sales/Index';
 import { ManageReport, Reports } from 'pages/CashRegister/Index';
 import { CajaIcon, ProductIcon, PurchaseIcon, SaleIcon } from 'assets/icons';
+import { CloseOut, DetailCloseOut } from 'pages/Closeout/Index';
 
 export const routes: RouteConfig[] = [
     {
@@ -106,6 +107,15 @@ export const routes: RouteConfig[] = [
         mainView: <Sale />,
         manageView: (baseUrl) => <ManageSale baseUrl={baseUrl} />,
         icon: () => <SaleIcon style={{ width: 22, height: 22 }} />,
+    },
+    {
+        key: 'closeout',
+        description: 'Cierre de caja',
+        tooltip: 'Ventas',
+        path: paths.CLOSEOUT,
+        mainView: <CloseOut />,
+        manageView: (baseUrl) => <DetailCloseOut baseUrl={baseUrl} />,
+        icon: () => <CajaIcon style={{ width: 22, height: 22 }} />,
     },
 ];
 

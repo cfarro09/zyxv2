@@ -36,11 +36,13 @@ const ExpenseDialog: React.FC<ExpenseDialogProps> = ({ openDialog, setOpenDialog
             description: '',
             evidence_url: '',
             status: 'ACTIVO',
+            type: 'ADMIN'
         }
     });
 
     const registerX = () => {
         register('expenseid');
+        register('type');
         register('expense_amount', { validate: (value) => (value ?? 0) > 0 || "El campo es requerido" });
         register('expense_date', { validate: (value) => Boolean(value?.length) || "El campo es requerido" });
         register('description', { validate: (value) => Boolean(value?.length) || "El campo es requerido" });

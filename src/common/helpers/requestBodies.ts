@@ -210,11 +210,22 @@ export const getSalePayment = (dates: IFilterDate | null = null): IRequestBody =
     },
 });
 
-export const getExpenses = (expenseid: number = 0): IRequestBody => ({
+export const getExpenses = (expenseid: number = 0, dates: IFilterDate | null = null, type: string): IRequestBody => ({
     method: 'UFN_EXPENSE_SEL',
     key: 'UFN_EXPENSE_SEL',
     parameters: {
-        expenseid
+        expenseid,
+        startdate: dates?.startdate || '',
+        enddate: dates?.enddate || '',
+        type
+    },
+});
+
+export const getLastCash = (date: Date): IRequestBody => ({
+    method: 'UFN_LAST_CASH_SEL',
+    key: 'UFN_LAST_CASH_SEL',
+    parameters: {
+        date
     },
 });
 

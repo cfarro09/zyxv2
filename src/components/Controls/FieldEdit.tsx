@@ -51,7 +51,7 @@ const FieldEdit: FC<InputProps> = ({ label, valueDefault = "", onChange, onBlur,
 
                     'WebkitAppearance': 'textfield',
                     // This targets Firefox
-                    'MozAppearance': 'textfield',
+                    // 'MozAppearance': 'textfield',
                     // This removes the inner-spin-button in webkit browsers
                     '&::-webkit-inner-spin-button': {
                         '-webkit-appearance': 'none',

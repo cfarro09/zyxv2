@@ -4,13 +4,15 @@ import React, { useEffect, useState } from "react";
 import { DateRangePicker, Range } from 'react-date-range';
 import { CalendarMonth } from "@mui/icons-material";
 import dayjs from "dayjs";
+import { es } from 'date-fns/locale';
 
 type InputProps = {
     initialRange: Range[];
     onChange?: (_?: Range | null) => number | string | void | null;
+    onlyDay?: boolean;
 } & Omit<ButtonProps, 'error' | "onChange">;
 
-const CustomDatePicker: React.FC<InputProps> = ({ initialRange, onChange }) => {
+const CustomDatePicker: React.FC<InputProps> = ({ initialRange, onChange, onlyDay = false }) => {
     const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
     const open = Boolean(anchorEl);
     const id = open ? 'simple-popover' : undefined;
@@ -75,15 +77,25 @@ const CustomDatePicker: React.FC<InputProps> = ({ initialRange, onChange }) => {
                 <Grid container flexDirection={'column'}>
                     <DateRangePicker
                         editableDateInputs={true}
-                        onChange={(item) => {
-                            setRange([item.selection])
+                        locale={es}
+                        onChange={(ranges) => {
+                            const { startDate, endDate } = ranges.selection;
+                            if (onlyDay) {
+                                if (startDate === endDate) {
+                                    setRange([ranges.selection]);
+                                } else {
+                                    setRange([{ ...ranges.selection, endDate: startDate }]);
+                                }
+                            } else {
+                                setRange([ranges.selection]);
+                            }
+
                         }}
                         moveRangeOnFirstSelection={false}
                         ranges={range}
-                        months={2}
-                        direction="horizontal"
+                        months={1}
                     />
-                    <Grid item container flexDirection={'row-reverse'} mb={2} pr={4}>
+                    <Grid item container flexDirection={'row-reverse'} mb={1} pr={4}>
                         <Button color={'primary'} onClick={handleClose}>Aceptar</Button>
                     </Grid>
                 </Grid>
