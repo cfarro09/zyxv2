@@ -54,7 +54,7 @@ export const DetailCloseOut: React.FC<IMainProps> = ({ baseUrl }) => {
             <Box className="flex max-w-screen-xl mr-auto ml-auto flex-col">
                 <div className="my-3">
                     <Breadcrumbs aria-label="breadcrumb">
-                        <Link color='textPrimary' to={baseUrl}>
+                        <Link color="textPrimary" to={baseUrl + window.location.search}>
                             <Typography color="secondary" fontWeight={500}>Caja</Typography>
                         </Link>
                         <Typography color="textSecondary">Detalle</Typography>

@@ -42,7 +42,7 @@ const columns: ColumnDef<ISale>[] = [
     },
     {
         header: 'FECHA',
-        accessorFn: (row) => row.order_date.substring(0, 10),
+        accessorFn: (row) => new Date(row.order_date).toLocaleString(),
     },
     {
         header: 'PRODUCTOS',

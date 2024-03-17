@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Box, Breadcrumbs, Button, Grid, Link, Paper, Rating, Typography } from '@mui/material';
+import { Box, Breadcrumbs, Button, Grid, Paper, Rating, Typography } from '@mui/material';
 import { IMainProps, ObjectZyx } from '@types';
 import { getProductSel, getValuesFromDomain, productIns } from 'common/helpers';
 import DropZone from 'components/Controls/DropZone';
@@ -7,7 +7,7 @@ import FieldEdit from 'components/Controls/FieldEdit';
 import { FieldSelect } from 'components/Controls/FieldSelect';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, Link } from 'react-router-dom';
 import { IProduct } from '../models';
 import { useSendFormApi } from 'hooks/useSendFormApi';
 import { useMultiData } from 'hooks/useMultiData';
@@ -97,17 +97,12 @@ export const ManageProduct: React.FC<IMainProps & { newTitle?: string, setNewPro
         giveMeData();
     }, []);
 
-    const handleNavigate = (url: string) => {
-        const urlSearchParams = window.location.search
-        navigate(url + urlSearchParams)
-    }
-
     return (
         <Box className="flex max-w-screen-xl mr-auto ml-auto flex-col">
             {!onlyForm &&
                 <div className="my-3">
                     <Breadcrumbs aria-label="breadcrumb">
-                        <Link underline="hover" color="textPrimary" onClick={() => handleNavigate(baseUrl)} sx={{ cursor: 'pointer' }}>
+                        <Link color="textPrimary" to={baseUrl + window.location.search}>
                             <Typography color="secondary" fontWeight={500}>Productos</Typography>
                         </Link>
                         <Typography color="textSecondary">Detalle</Typography>

@@ -1,4 +1,4 @@
-import { Box, Button, Grid, Paper, Tab, Tabs, Typography } from '@mui/material';
+import { Box, Grid, Paper, Tab, Tabs, Typography } from '@mui/material';
 import { a11yProps, expenseIns, getExpenses, getLastCash, getSalePayment } from 'common/helpers';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -9,7 +9,7 @@ import type { ColumnDef } from '@tanstack/react-table';
 import { IExpense, ISale } from '@types';
 import dayjs from 'dayjs';
 import Filters from './FiltersReport';
-import { Delete, Money } from '@mui/icons-material';
+import { Delete } from '@mui/icons-material';
 import TabPanel from 'components/Layout/TabPanel';
 import ExpenseDialog from './ExpenseDialog';
 import { useSendFormApi } from 'hooks/useSendFormApi';

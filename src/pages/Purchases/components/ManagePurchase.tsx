@@ -113,7 +113,7 @@ export const ManagePurchase: React.FC<IMainProps> = ({ baseUrl }) => {
         <Box className="flex max-w-screen-xl mr-auto ml-auto flex-col">
             <div className="my-3">
                 <Breadcrumbs aria-label="breadcrumb">
-                    <Link color='textPrimary' to={baseUrl}>
+                    <Link color="textPrimary" to={baseUrl + window.location.search}>
                         <Typography color="secondary" fontWeight={500}>Ordenes de compra</Typography>
                     </Link>
                     <Typography color="textSecondary">Detalle</Typography>

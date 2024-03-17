@@ -19,6 +19,57 @@ const initialRange: Range = {
     key: 'selection',
 }
 
+const columns: ColumnDef<IKardex>[] = [
+    {
+        header: 'FECHA',
+        accessorKey: 'createdate',
+        cell: (info) => (<span>{dayjs(info.row.original.createdate).format('DD/MM/YYYY HH:mm:ss')}</span>)
+    },
+    {
+        header: 'ENTRADA',
+        accessorKey: 'in_quantity',
+        cell: (info) => (<Typography align="center">{info.row.original.in_quantity}</Typography>),
+        meta: {
+            align: 'center'
+        }
+    },
+    {
+        header: 'SALIDA',
+        accessorKey: 'out_quantity',
+        cell: (info) => (<Typography align="center">{info.row.original.out_quantity}</Typography>),
+        meta: {
+            align: 'center'
+        }
+    },
+    {
+        header: 'DOCUMENTO',
+        accessorKey: 'document_type',
+        cell: (info) => {
+            const { document_type, document_id } = info.row.original;
+            let url = '';
+            if (document_type === 'compra') url = '/purchase_orders';
+            if (document_type === 'venta') url = '/sale_orders';
+            if (['compra', 'venta'].includes(document_type)) {
+                return (
+                    <Link to={`${url}/${document_id}`}>
+                        <Typography color={'primary'}>{document_type.toUpperCase()}</Typography>
+                    </Link>
+                )
+            } else {
+                return (<Typography color={'primary'}>{document_type.toUpperCase()}</Typography>)
+            }
+        }
+    },
+    {
+        header: 'BALANCE',
+        accessorKey: 'final_stock',
+        cell: (info) => (<Typography align="center">{info.row.original.final_stock}</Typography>),
+        meta: {
+            align: 'center'
+        }
+    },
+]
+
 export const Kardex: React.FC<IMainProps> = ({ baseUrl }) => {
     const dispatch = useDispatch();
     const { id } = useParams<{ id?: string }>();
@@ -29,61 +80,6 @@ export const Kardex: React.FC<IMainProps> = ({ baseUrl }) => {
         enddate: initialRange.endDate as Date,
         inventoryid: parseInt(id as string)
     })
-
-    const columns: ColumnDef<IKardex>[] = [
-        {
-            header: 'FECHA',
-            accessorKey: 'createdate',
-            cell: (info) => (<span>{dayjs(info.row.original.createdate).format('DD/MM/YYYY HH:mm:ss')}</span>)
-        },
-        {
-            header: 'PRODUCTO',
-            accessorKey: 'title'
-        },
-        {
-            header: 'ENTRADA',
-            accessorKey: 'in_quantity',
-            cell: (info) => (<Typography align="center">{info.row.original.in_quantity}</Typography>),
-            meta: {
-                align: 'center'
-            }
-        },
-        {
-            header: 'SALIDA',
-            accessorKey: 'out_quantity',
-            cell: (info) => (<Typography align="center">{info.row.original.out_quantity}</Typography>),
-            meta: {
-                align: 'center'
-            }
-        },
-        {
-            header: 'DOCUMENTO',
-            accessorKey: 'document_type',
-            cell: (info) => {
-                const { document_type, document_id } = info.row.original;
-                let url = '';
-                if (document_type === 'compra') url = '/purchase_orders';
-                if (document_type === 'venta') url = '/sale_orders';
-                if (['compra', 'venta'].includes(document_type)) {
-                    return (
-                        <Link to={`${url}/${document_id}`}>
-                            <Typography color={'primary'}>{document_type.toUpperCase()}</Typography>
-                        </Link>
-                    )
-                } else {
-                    return (<Typography color={'primary'}>{document_type.toUpperCase()}</Typography>)
-                }
-            }
-        },
-        {
-            header: 'BALANCE',
-            accessorKey: 'final_stock',
-            cell: (info) => (<Typography align="center">{info.row.original.final_stock}</Typography>),
-            meta: {
-                align: 'center'
-            }
-        },
-    ]
 
     const fetchData = () => {
         dispatch(getCollection(getKardexSel({ ...filters })))
@@ -99,7 +95,7 @@ export const Kardex: React.FC<IMainProps> = ({ baseUrl }) => {
         <Box className="flex max-w-screen-xl mr-auto ml-auto flex-col">
             <div className="mt-3 mx-1">
                 <Breadcrumbs aria-label="breadcrumb">
-                    <Link color="textPrimary" to={baseUrl}>
+                    <Link color="textPrimary" to={baseUrl + window.location.search}>
                         <Typography color="secondary" fontWeight={500}>Inventario</Typography>
                     </Link>
                     <Typography color="textSecondary">Kardex</Typography>
@@ -108,9 +104,9 @@ export const Kardex: React.FC<IMainProps> = ({ baseUrl }) => {
             <Paper className="w-full mt-3">
                 <Box className="px-6 py-3 border-b">
                     <Typography variant="h5">
-                        Kardex
-                        <Typography component={'span'} fontSize={14}>
-                            - ALMACEN PRINCIPAL
+                        {mainData?.[0]?.title}
+                        <Typography component={'span'} fontSize={14} marginLeft={2}>
+                            ({mainData?.[0]?.warehouse})
                         </Typography>
                     </Typography>
                 </Box>
