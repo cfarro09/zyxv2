@@ -11,6 +11,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { IProduct } from '../models';
 import { useSendFormApi } from 'hooks/useSendFormApi';
 import { useMultiData } from 'hooks/useMultiData';
+import { useSelector } from 'hooks';
 
 interface IDataAux {
     listStatus: ObjectZyx[];
@@ -23,6 +24,8 @@ export const ManageProduct: React.FC<IMainProps & { newTitle?: string, setNewPro
     const [dataAux, setDataAux] = useState<IDataAux>({ listStatus: [], listCategory: [], listUnidad: [] });
     const [formData, setFormData] = useState<IProduct | null>(null);
     const { id } = useParams<{ id?: string }>();
+    const role = useSelector(state => state.login?.validateToken?.user?.rolename);
+
     const { onSubmitData } = useSendFormApi({
         operation: "INSERT",
         onSave: (data) => {
@@ -170,15 +173,17 @@ export const ManageProduct: React.FC<IMainProps & { newTitle?: string, setNewPro
                                         variant="outlined"
                                     />
                                 </Grid>
-                                <Grid item xs={12} sm={6}>
-                                    <FieldEdit
-                                        label={'Precio compra'}
-                                        valueDefault={getValues('purchase_price')}
-                                        onChange={(value) => setValue('purchase_price', parseFloat(value || "0.0"))}
-                                        error={errors.purchase_price?.message}
-                                        variant="outlined"
-                                    />
-                                </Grid>
+                                {role === "SUPERADMIN" && (
+                                    <Grid item xs={12} sm={6}>
+                                        <FieldEdit
+                                            label={'Precio compra'}
+                                            valueDefault={getValues('purchase_price')}
+                                            onChange={(value) => setValue('purchase_price', parseFloat(value || "0.0"))}
+                                            error={errors.purchase_price?.message}
+                                            variant="outlined"
+                                        />
+                                    </Grid>
+                                )}
                                 <Grid item xs={12} sm={6}>
                                     <FieldEdit
                                         label={'Precio venta'}

@@ -9,7 +9,7 @@ export interface IUser {
     document: string;
     document_type: string;
     email?: string;
-status: string;
+    status: string;
     createdate: string;
 }
 
@@ -21,6 +21,7 @@ export interface IUserSession {
     email: string;
     firstname: string;
     lastname: string;
+    rolename: string;
     status: string;
     token: string;
     usr: string;
