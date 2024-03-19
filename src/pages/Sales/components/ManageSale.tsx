@@ -61,8 +61,8 @@ export const ManageSale: React.FC<IMainProps> = ({ baseUrl }) => {
 
             sale.order_number = ((data as ObjectZyx)?.vordernumber as string || "") as string;
             sale.cashier = ((data as ObjectZyx)?.vcashier || "") as string;
-            fetchPrint(sale)
-            navigate(baseUrl)
+            fetchPrint(sale);
+            navigate(baseUrl + window.location.search);
         },
     });
     const methods = useForm<ISale>({

@@ -32,7 +32,7 @@ export const ManagePurchase: React.FC<IMainProps> = ({ baseUrl }) => {
     const [dataAux, setDataAux] = useState<IDataAux>({ listStatus: [], listProduct: [], listPaymentMethod: [], listSupplier: [], listWarehouse: [] });
     const { onSubmitData } = useSendFormApi({
         operation: "INSERT",
-        onSave: () => navigate(baseUrl),
+        onSave: () => navigate(baseUrl + window.location.search),
     });
     const methods = useForm<IPurchase>({
         defaultValues: {

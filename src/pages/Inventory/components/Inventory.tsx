@@ -136,9 +136,9 @@ export const Inventory: React.FC<unknown> = () => {
 								<Button
 									onClick={handlerOpenTransferDialog}
 									variant="outlined"
-									disabled={Object.keys(keysSelected).length === 0 || !filters.warehouse}
+									disabled={Object.keys(keysSelected).length === 0}
 								>
-									<MoveUpIcon fontSize="small" /> Transferir
+									<MoveUpIcon fontSize="small" />Transferir
 								</Button>
 							</>
 						}

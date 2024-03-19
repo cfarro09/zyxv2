@@ -28,7 +28,7 @@ export const ManageUser: React.FC<IMainProps> = ({ baseUrl }) => {
     const [dataAux, setDataAux] = useState<IDataAux>({ listDocumentType: [], listStatus: [], listRoles: [] });
     const { onSubmitData } = useSendFormApi({
         operation: "INSERT",
-        onSave: () => navigate(baseUrl),
+        onSave: () => navigate(baseUrl + window.location.search),
     });
     const {
         register,

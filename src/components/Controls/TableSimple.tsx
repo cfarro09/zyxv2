@@ -8,7 +8,6 @@ import { flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel
 import { useLocation, useNavigate } from 'react-router-dom';
 import type { ColumnDef, FilterFn, OnChangeFn, SortingState, SortDirection } from '@tanstack/react-table';
 import { FieldSelect } from './FieldSelect';
-import { rankItem } from '@tanstack/match-sorter-utils';
 import { ObjectZyx } from '@types';
 import { normalizePathname } from 'common/helpers';
 
@@ -152,22 +151,24 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
         setAnchorEl(null);
     };
 
-    const fuzzyFilter: FilterFn<T> = (row, columnId, value, addMeta) => {
-        const itemRank = rankItem(row.getValue(columnId), value);
-        addMeta({ itemRank });
-        return itemRank.passed;
-    };
+    const containsFilter: FilterFn<T> = (row, columnId, value, addMeta) => {
+        const cellValue = `${row.getValue(columnId)}`.toLowerCase();
+        const searchValue = value.toString().toLowerCase();
+        const isMatch = cellValue.includes(searchValue);
+        addMeta({ isMatch });
+        return isMatch;
+      };
 
     const table = useReactTable({
         data,
         columns: columns1,
         enableMultiRowSelection: true,
-        filterFns: { fuzzy: fuzzyFilter },
+        filterFns: { contains: containsFilter  },
         state: { globalFilter, rowSelection: rowsSelected, sorting, },
         getRowId: (row, relativeIndex) => columnKey ? `${(row as ObjectZyx)[columnKey]}` : `${relativeIndex}`,
         onRowSelectionChange: setRowsSelected,
         onGlobalFilterChange: setGlobalFilter,
-        globalFilterFn: fuzzyFilter,
+        globalFilterFn: containsFilter,
         getFilteredRowModel: getFilteredRowModel(),
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
@@ -314,6 +315,7 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
                                                 onClickOnRow && onClickOnRow(row.original);
                                             }
                                         }}
+                                        title={cell.getValue() + ""}
                                     >{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
                                 ))}
                             </TableRow>

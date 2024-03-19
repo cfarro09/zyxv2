@@ -18,7 +18,6 @@ interface IDataAux {
 
 const fetchDocument = async (type: string, document: string) => {
     try {
-        // const urlparams = type === "RUC" ? `ruc?numero=${document}` : `dni?numero=${document}`
         const response = await axios.post('http://38.242.249.178:6014/api/main/getdocument', {
             document, type
         }, {
@@ -43,7 +42,7 @@ export const ManageCustomer: React.FC<IMainProps> = ({ baseUrl, onlyForm, callba
         operation: "INSERT",
         onSave: () => {
             if (!onlyForm) {
-                navigate(baseUrl);
+                navigate(baseUrl + window.location.search);
             }
             callback && callback();
         }

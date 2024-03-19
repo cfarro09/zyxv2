@@ -30,7 +30,7 @@ export const ManageProduct: React.FC<IMainProps & { newTitle?: string, setNewPro
         operation: "INSERT",
         onSave: (data) => {
             if (!onlyForm) {
-                navigate(baseUrl);
+                navigate(baseUrl + window.location.search);
             }
             callback && callback();
             setNewProduct && setNewProduct({ ...formData, productid: data?.[0]?.vproductid || 0 } as IProduct)
