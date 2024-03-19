@@ -68,6 +68,10 @@ const columns: ColumnDef<IKardex>[] = [
             align: 'center'
         }
     },
+    {
+        header: 'REGISTRADO POR',
+        accessorKey: 'createdby',
+    },
 ]
 
 export const Kardex: React.FC<IMainProps> = ({ baseUrl }) => {

@@ -48,6 +48,7 @@ export interface IKardex {
     createdate: string;
     title: string;
     final_stock: number;
+    createdby?: string;
 }
 
 export interface IKardexFilter {
