@@ -150,6 +150,7 @@ export const Sale: React.FC = () => {
                         columnKey={"saleorderid"}
                         buttonsElement={[
                             <Button
+                                fullWidth
                                 onClick={() => setOpenPaymentResumeDialog(true)}
                                 variant="outlined"
                             >
