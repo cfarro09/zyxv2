@@ -63,7 +63,7 @@ const columns: ColumnDef<IUser>[] = [
         accessorKey: 'document',
     },
     {
-        id: 'estado',
+        header: 'estado',
         accessorKey: 'status',
         cell: (info) => {
             const status = info.row.original.status;

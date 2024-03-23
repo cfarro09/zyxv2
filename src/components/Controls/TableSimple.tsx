@@ -272,8 +272,8 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
                             </Button>
                         </Grid>
                     }
-                    {buttonsElement.map(button => (
-                        <Grid item xs={6} sm={4} md={2} lg={2}>
+                    {buttonsElement.map((button, index) => (
+                        <Grid key={index} item xs={6} sm={4} md={2} lg={2}>
                             {button}
                         </Grid>
                     ))}

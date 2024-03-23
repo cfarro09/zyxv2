@@ -20,7 +20,7 @@ const columns: ColumnDef<IDomain>[] = [
         accessorKey: 'registros',
     },
     {
-        id: 'estado',
+        header: 'estado',
         accessorKey: 'status',
         cell: (info) => {
             const status = info.row.original.status;
