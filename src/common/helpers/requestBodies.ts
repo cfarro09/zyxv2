@@ -155,7 +155,7 @@ export const saleOrderIns = (sale: ISale & { operation: string }): IRequestBody 
     parameters: {
         ...sale,
         order_number: '',
-        type: 'NINGUNO',
+        type: sale.billing ? 'FACTURA' : 'NINGUNO',
     },
 });
 

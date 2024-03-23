@@ -47,9 +47,9 @@ export const ManageSale: React.FC<IMainProps> = ({ baseUrl }) => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const [openAddCustomerDialog, setOpenAddCustomerDialog] = useState(false);
-    const [tab, settab] = React.useState(0);
+    const [tab, setTab] = React.useState(0);
 
-    const handleChangeTab = (_: React.SyntheticEvent, newValue: number) => settab(newValue);
+    const handleChangeTab = (_: React.SyntheticEvent, newValue: number) => setTab(newValue);
 
     const { id } = useParams<{ id?: string }>();
     const [dataAux, setDataAux] = useState<IDataAux>({ listStatus: [], listProduct: [], listPaymentMethod: [], listCustomer: [] });
@@ -59,7 +59,7 @@ export const ManageSale: React.FC<IMainProps> = ({ baseUrl }) => {
             const sale = getValues()
             sale.products = sale.products.filter(x => x.productid > 0);
 
-            sale.order_number = ((data as ObjectZyx)?.vordernumber as string || "") as string;
+            sale.order_number = ((data as ObjectZyx)?.vordernumber) as string;
             sale.cashier = ((data as ObjectZyx)?.vcashier || "") as string;
             fetchPrint(sale);
             navigate(baseUrl + window.location.search);
@@ -80,7 +80,7 @@ export const ManageSale: React.FC<IMainProps> = ({ baseUrl }) => {
         },
     });
 
-    const { control, register, handleSubmit, setValue, getValues, reset, formState: { errors }, trigger, watch } = methods;
+    const { control, register, handleSubmit, setValue, getValues, reset, formState: { errors }, trigger } = methods;
 
     const watches = useWatch({
         control,
@@ -133,7 +133,7 @@ export const ManageSale: React.FC<IMainProps> = ({ baseUrl }) => {
             dispatch(showSnackbar({ show: true, severity: "warning", message: `Debes ingresar al menos un producto` }));
             return;
         }
-        if (totalProducts.toFixed(2) !== totalPayments.toFixed(2)) {
+        if ((totalProducts * (data.billing ? 1.18 : 1)).toFixed(2) !== totalPayments.toFixed(2)) {
             dispatch(showSnackbar({ show: true, severity: "warning", message: `La diferencia a pagar es diferente al total de productos.` }));
             return;
         }

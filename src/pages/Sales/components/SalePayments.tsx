@@ -11,7 +11,7 @@ import { useDispatch } from 'react-redux';
 import { showSnackbar } from "stores/popus/actions";
 
 export const SalePayments: React.FC<{
-    control: Control<ISale, object, ISale>;
+    control: Control<ISale>;
     loading: boolean;
     listPaymentMethod: ObjectZyx[];
     errors: FieldErrors<ISale>;
@@ -44,7 +44,7 @@ export const SalePayments: React.FC<{
 
     React.useEffect(() => {
         const position = fields.findIndex(p => p.payment_method === 'EFECTIVO');
-        const amountPaid = getValues('payments').filter((p, index) => index !== position).reduce((acc: number, item: IPayment) => acc + item.payment_amount, 0);
+        const amountPaid = getValues('payments').filter((_, index) => index !== position).reduce((acc: number, item: IPayment) => acc + item.payment_amount, 0);
         const amountToPay = getValues('total_amount');
 
         if (amountToPay > 0) {
@@ -58,6 +58,7 @@ export const SalePayments: React.FC<{
                 })
             } else {
                 setValue(`payments.${position}.payment_amount`, round2(amountToPay - amountPaid));
+                trigger(`payments.${position}.payment_amount`);
             }
         }
     }, [watch("total_amount")])

@@ -12,7 +12,7 @@ const regexOnlyNumber = /^\d+$/;
 
 
 export const SaleProducts: React.FC<{
-    control: Control<ISale, object, ISale>;
+    control: Control<ISale>;
     loading: boolean;
     listProduct: ObjectZyx[];
     errors: FieldErrors<ISale>;
@@ -87,7 +87,6 @@ export const SaleProducts: React.FC<{
             if (e.key !== 'Enter') {
                 e.stopPropagation();
                 setBarcode(regexOnlyNumber.test(barcode + e.key) ? barcode + e.key : '');
-                return;
             } else if (barcode !== '') {
                 if (barcode.length >= 6) {
                     insertProductFromReader(barcode);
@@ -191,7 +190,7 @@ export const SaleProducts: React.FC<{
                                         disabled={disabled}
                                         fregister={{
                                             ...register(`products.${i}.quantity`, {
-                                                validate: (value) => getValues(`products.${i}.productid`) === 0 || ((value > 0) ? (value <= getValues(`products.${i}.stock`)! || `La cantidad debe ser menor a la del stock: ${getValues(`products.${i}.stock`)}`) : "Debe ser mayor de 0")
+                                                validate: (value) => getValues(`products.${i}.productid`) === 0 || ((value > 0) ? (value <= getValues(`products.${i}.stock`)! || 'La cantidad debe ser menor a la del stock: ' + getValues(`products.${i}.stock`)) : "Debe ser mayor de 0")
                                             }),
                                         }}
                                         type="number"
