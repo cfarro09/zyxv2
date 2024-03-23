@@ -26,6 +26,7 @@ const columns: ColumnDef<IPurchase>[] = [
     },
     {
         header: 'FECHA',
+        accessorKey: 'order_date',
         accessorFn: (row) => dayjs(row.order_date).format('DD/MM/YYYY'),
     },
     {

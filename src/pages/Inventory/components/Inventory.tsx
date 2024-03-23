@@ -48,6 +48,7 @@ const columns: ColumnDef<IInventory>[] = [
 	},
 	{
 		header: 'FECHA CREACION',
+		accessorKey: 'changedate',
 		accessorFn: (row: IInventory) => dayjs(row.changedate).format('DD/MM/YYYY'),
 	},
 ]
@@ -113,6 +114,7 @@ export const Inventory: React.FC<unknown> = () => {
 						showOptions={false}
 						columns={columns}
 						redirectOnSelect={true}
+						titlemodule={"inventory"}
 						columnKey={"inventoryid"}
 						selection={true}
 						rowsSelected={keysSelected}
@@ -125,23 +127,23 @@ export const Inventory: React.FC<unknown> = () => {
 								handleChange={handleChange}
 							/>
 						}
-						buttonElement={
-							<>
-								<Button
-									onClick={() => setOpenImportDialog(true)}
-									variant="outlined"
-								>
-									<FileUpload fontSize="small" /> Importar
-								</Button>
-								<Button
-									onClick={handlerOpenTransferDialog}
-									variant="outlined"
-									disabled={Object.keys(keysSelected).length === 0}
-								>
-									<MoveUpIcon fontSize="small" />Transferir
-								</Button>
-							</>
-						}
+						buttonsElement={[
+							<Button
+								onClick={() => setOpenImportDialog(true)}
+								variant="outlined"
+								fullWidth
+							>
+								<FileUpload fontSize="small" /> Importar
+							</Button>,
+							<Button
+								onClick={handlerOpenTransferDialog}
+								variant="outlined"
+								fullWidth
+								disabled={Object.keys(keysSelected).length === 0}
+							>
+								<MoveUpIcon fontSize="small" />Transferir
+							</Button>
+						]}
 					/>
 				</Box>
 			</Paper>

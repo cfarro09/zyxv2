@@ -9,8 +9,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import type { ColumnDef, FilterFn, OnChangeFn, SortingState, SortDirection } from '@tanstack/react-table';
 import { FieldSelect } from './FieldSelect';
 import { ObjectZyx } from '@types';
-import { normalizePathname } from 'common/helpers';
-
+import { exportExcel, normalizePathname } from 'common/helpers';
+import DownloadIcon from '@mui/icons-material/Download';
 interface IPageSizes {
     label: string;
     value: number;
@@ -34,16 +34,18 @@ interface ArrayOptionMenu<T> {
 
 interface ReactTableProps<T extends object> {
     data: T[];
+    titlemodule?: string;
     showOptions?: boolean;
     optionsMenu?: ArrayOptionMenu<T>[];
     loading?: boolean;
     addButton?: boolean;
     columns: ColumnDef<T>[];
+    download?: boolean;
     redirectOnSelect?: boolean;
     onClickOnRow?: ((_: T | null) => void);
     columnKey?: string;
     filterElement?: React.ReactNode;
-    buttonElement?: React.ReactNode;
+    buttonsElement?: React.ReactNode[];
     enableGlobalFilter?: boolean;
     selection?: boolean;
     setRowSelection?: ObjectZyx;
@@ -85,7 +87,7 @@ function IndeterminateCheckbox({ indeterminate, className = '', ...rest }: Indet
     );
 }
 
-const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSelect, loading, showOptions, optionsMenu, addButton, onClickOnRow, filterElement, buttonElement, enableGlobalFilter = true, selection, rowsSelected, setRowsSelected }: ReactTableProps<T>) => {
+const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSelect, loading, showOptions, optionsMenu, addButton, onClickOnRow, filterElement, buttonsElement = [], enableGlobalFilter = true, selection, rowsSelected, setRowsSelected, titlemodule, download = true }: ReactTableProps<T>) => {
     const [sorting, setSorting] = useState<SortingState>([])
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [globalFilter, setGlobalFilter] = useState('');
@@ -157,13 +159,13 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
         const isMatch = cellValue.includes(searchValue);
         addMeta({ isMatch });
         return isMatch;
-      };
+    };
 
     const table = useReactTable({
         data,
         columns: columns1,
         enableMultiRowSelection: true,
-        filterFns: { contains: containsFilter  },
+        filterFns: { contains: containsFilter },
         state: { globalFilter, rowSelection: rowsSelected, sorting, },
         getRowId: (row, relativeIndex) => columnKey ? `${(row as ObjectZyx)[columnKey]}` : `${relativeIndex}`,
         onRowSelectionChange: setRowsSelected,
@@ -228,14 +230,14 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
     return (
         <>
             {filterElement && (
-                <Grid className="border-b flex justify-between py-2 px-6">
+                <Grid className="border-b flex justify-between py-2 px-3">
                     {filterElement}
                 </Grid>
             )}
             {enableGlobalFilter && (
-                <Grid container className="border-b flex-row-reverse py-2 px-6" gap={2}>
+                <Grid container className="border-b flex-row-reverse py-2 px-3" spacing={1}>
                     {addButton &&
-                        <Grid item xs={12} sm={4} md={3} lg={3}>
+                        <Grid item xs={6} sm={4} md={2} lg={2}>
                             <Button
                                 className="flex gap-1"
                                 id="basic-buttons"
@@ -250,12 +252,31 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
                                     }
                                 }}
                             >
-                                <Add />
-                                Nuevo
+                                <Add /> Nuevo
                             </Button>
                         </Grid>
                     }
-                    {buttonElement && buttonElement}
+                    {download &&
+                        <Grid item xs={6} sm={4} md={2} lg={2}>
+                            <Button
+                                className="flex gap-1"
+                                id="basic-buttons"
+                                fullWidth
+                                variant="contained"
+                                disabled={loading}
+                                onClick={() => {
+                                    exportExcel(String(titlemodule || '') + "Report", table.getFilteredRowModel().rows.map(x => x.original), columns)
+                                }}
+                            >
+                                <DownloadIcon /> Descargar
+                            </Button>
+                        </Grid>
+                    }
+                    {buttonsElement.map(button => (
+                        <Grid item xs={6} sm={4} md={2} lg={2}>
+                            {button}
+                        </Grid>
+                    ))}
                     <Grid item xs={12} sm={4} md={3} lg={3}>
                         <TextField
                             value={globalFilter}

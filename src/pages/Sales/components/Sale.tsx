@@ -42,6 +42,7 @@ const columns: ColumnDef<ISale>[] = [
     },
     {
         header: 'FECHA',
+        accessorKey: 'order_date',
         accessorFn: (row) => new Date(row.order_date).toLocaleString(),
     },
     {
@@ -55,7 +56,6 @@ const columns: ColumnDef<ISale>[] = [
     {
         id: 'estado',
         accessorKey: 'status',
-        header: () => "ESTADO",
         cell: (info) => {
             const status = info.row.original.status;
             return (
@@ -148,16 +148,14 @@ export const Sale: React.FC = () => {
                         columns={columns}
                         redirectOnSelect={true}
                         columnKey={"saleorderid"}
-                        buttonElement={
-                            <>
-                                <Button
-                                    onClick={() => setOpenPaymentResumeDialog(true)}
-                                    variant="outlined"
-                                >
-                                    <PointOfSale fontSize="small" sx={{ marginRight: '4px' }} /> Resumen ventas
-                                </Button>
-                            </>
-                        }
+                        buttonsElement={[
+                            <Button
+                                onClick={() => setOpenPaymentResumeDialog(true)}
+                                variant="outlined"
+                            >
+                                <PointOfSale fontSize="small" sx={{ marginRight: '4px' }} /> Resumen
+                            </Button>
+                        ]}
                     />
                 </Box>
             </Paper>

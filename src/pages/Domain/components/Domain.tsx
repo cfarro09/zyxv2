@@ -22,7 +22,6 @@ const columns: ColumnDef<IDomain>[] = [
     {
         id: 'estado',
         accessorKey: 'status',
-        header: () => <Box className="text-center">ESTADO</Box>,
         cell: (info) => {
             const status = info.row.original.status;
             return (

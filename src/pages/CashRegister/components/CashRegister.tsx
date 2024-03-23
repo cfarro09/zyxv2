@@ -148,13 +148,13 @@ export const Reports: React.FC = () => {
                                 columns={columns}
                                 redirectOnSelect={true}
                                 columnKey={"name"}
-                                buttonElement={
+                                buttonsElement={[
                                     <Button
                                         onClick={() => setOpenProfitResumeDialog(true)}
                                         variant="outlined">
                                         <Money fontSize="small" sx={{ marginRight: '4px' }} />PROFIT
                                     </Button>
-                                }
+                                ]}
                             />
                         </TabPanel>
                         <TabPanel value={tab} index={1}>

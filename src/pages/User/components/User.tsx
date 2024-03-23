@@ -65,7 +65,6 @@ const columns: ColumnDef<IUser>[] = [
     {
         id: 'estado',
         accessorKey: 'status',
-        header: () => <Box className="text-center">ESTADO</Box>,
         cell: (info) => {
             const status = info.row.original.status;
             return (
@@ -86,6 +85,7 @@ const columns: ColumnDef<IUser>[] = [
     },
     {
         header: 'FECHA CREACION',
+        accessorKey: 'createdate',
         accessorFn: (row: IUser) => dayjs(row.createdate).format('DD/MM/YYYY'),
     },
 ];

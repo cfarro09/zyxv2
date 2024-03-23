@@ -97,7 +97,6 @@ export const Product: React.FC = () => {
                 id: 'estado',
                 accessorKey: 'status',
                 maxSize: 80,
-                header: () => <Box className="text-center">ESTADO</Box>,
                 cell: (info) => {
                     const status = info.row.original.status;
                     return (
