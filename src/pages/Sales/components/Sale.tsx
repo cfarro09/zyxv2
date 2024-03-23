@@ -56,7 +56,7 @@ const columns: ColumnDef<ISale>[] = [
     {
         header: 'ESTADO',
         accessorKey: 'status',
-        accessorFn: (row) => {
+        cell: (row) => {
             const status = row.status;
             return (
                 <Box >
