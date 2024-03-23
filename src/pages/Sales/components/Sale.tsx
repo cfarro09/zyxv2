@@ -56,8 +56,8 @@ const columns: ColumnDef<ISale>[] = [
     {
         header: 'ESTADO',
         accessorKey: 'status',
-        cell: (row) => {
-            const status = row.status;
+        cell: (info) => {
+            const status = info.row.original.status;
             return (
                 <Box >
                     <Chip
@@ -69,7 +69,7 @@ const columns: ColumnDef<ISale>[] = [
                             'w-24',
                             'font-medium',
                         )}
-                        label={row.status}
+                        label={info.row.original.status}
                     />
                 </Box>
             );
