@@ -18,17 +18,21 @@ const columns: ColumnDef<IUser>[] = [
     {
         header: 'USUARIO',
         accessorKey: 'username',
+        id: 'username',
     },
     {
         header: 'NOMBRE',
         accessorKey: 'firstname',
+        id: 'firstname',
     },
     {
         header: 'APELLIDO',
         accessorKey: 'lastname',
+        id: 'lastname',
     },
     {
         accessorKey: 'rolename',
+        id: 'rolename',
         header: 'ROL',
         cell: (info) => {
             const rolename = info.row.original.rolename;
@@ -57,14 +61,17 @@ const columns: ColumnDef<IUser>[] = [
     {
         header: 'TIPO DOC.',
         accessorKey: 'document_type',
+        id: 'document_type',
     },
     {
         header: 'DOCUMENTO',
         accessorKey: 'document',
+        id: 'document',
     },
     {
         header: 'estado',
         accessorKey: 'status',
+        id: 'status',
         cell: (info) => {
             const status = info.row.original.status;
             return (
@@ -86,6 +93,7 @@ const columns: ColumnDef<IUser>[] = [
     {
         header: 'FECHA CREACION',
         accessorKey: 'createdate',
+        id: 'createdate',
         accessorFn: (row: IUser) => dayjs(row.createdate).format('DD/MM/YYYY'),
     },
 ];
@@ -128,6 +136,7 @@ export const User: React.FC = () => {
                         loading={mainResult.loading}
                         data={mainData}
                         showOptions={true}
+                        titlemodule='usuarios'
                         addButton={true}
                         optionsMenu={[{
                             description: "Eliminar",

@@ -24,6 +24,7 @@ export const Product: React.FC = () => {
             {
                 header: 'Producto',
                 accessorKey: 'title',
+                id: 'title',
                 enableResizing: true,
                 size: 350,
                 cell: (info) => {
@@ -54,49 +55,60 @@ export const Product: React.FC = () => {
             {
                 header: 'Categoria',
                 accessorKey: 'category',
+                id: 'category',
             },
             {
                 header: 'Código',
                 accessorKey: 'code',
-                maxSize: 100,
+                id: 'code',
             },
             {
                 header: 'Cod. Barra',
                 accessorKey: 'barcode',
-                maxSize: 100,
+                id: 'barcode',
             },
             ...(role === "SUPERADMIN" ? [
                 {
-                    header: 'Precio Compra',
+                    header: 'P Compra',
                     accessorKey: 'purchase_price',
-                    maxSize: 100,
+                    meta: {
+                        type: "number"
+                    },
+                    id: 'purchase_price',
                     cell: (info) => "S/ " + formatMoney(`${info.row.original.purchase_price}`),
-                    
+
                 } as ColumnDef<IProduct>
             ] : []),
             {
-                header: 'Precio Venta',
+                header: 'P Venta',
                 accessorKey: 'selling_price',
-                maxSize: 100,
+                id: 'selling_price',
+                meta: {
+                    type: "number"
+                },
                 cell: (info) => "S/ " + formatMoney(`${info.row.original.selling_price}`),
 
             },
             {
                 header: 'En Stock',
                 accessorKey: 'store_stock',
-                maxSize: 100,
-                cell: (info) => <Typography textAlign={"center"}>{info.row.original.store_stock}</Typography>
+                id: 'store_stock',
+                meta: {
+                    type: "number"
+                },
             },
             {
                 header: 'En Almacen',
                 accessorKey: 'stock',
-                maxSize: 100,
-                cell: (info) => <Typography textAlign={"center"}>{info.row.original.stock}</Typography>
+                id: 'stock',
+                meta: {
+                    type: "number"
+                },
             },
             {
-                id: 'estado',
+                header: "Estado",
                 accessorKey: 'status',
-                maxSize: 80,
+                id: 'status',
                 cell: (info) => {
                     const status = info.row.original.status;
                     return (
@@ -156,6 +168,7 @@ export const Product: React.FC = () => {
                         columns={columns}
                         redirectOnSelect={true}
                         addButton={true}
+                        titlemodule='productos'
                         columnKey={'productid'}
                         showOptions={true}
                         optionsMenu={[{

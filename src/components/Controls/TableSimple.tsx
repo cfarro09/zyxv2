@@ -11,6 +11,8 @@ import { FieldSelect } from './FieldSelect';
 import { ObjectZyx } from '@types';
 import { exportExcel, normalizePathname } from 'common/helpers';
 import DownloadIcon from '@mui/icons-material/Download';
+import FilterTableR, { filterCellValue } from './FilterTableR';
+
 interface IPageSizes {
     label: string;
     value: number;
@@ -48,7 +50,6 @@ interface ReactTableProps<T extends object> {
     buttonsElement?: React.ReactNode[];
     enableGlobalFilter?: boolean;
     selection?: boolean;
-    setRowSelection?: ObjectZyx;
     rowsSelected?: Record<string, boolean>
     setRowsSelected?: OnChangeFn<Record<string, boolean>>,
 }
@@ -100,6 +101,7 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
             {
                 id: 'selection',
                 size: 50,
+                enableColumnFilter: false,
                 maxSize: 50,
                 header: ({ table }) => (
                     <IndeterminateCheckbox
@@ -124,29 +126,30 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
         ] as ColumnDef<T>[] : []),
         ...((showOptions && columnKey) ? [{
             accessorKey: columnKey,
+            enableColumnFilter: false,
             header: "",
             size: 40,
             maxSize: 40,
-            cell: (info) => {
-                return (
-                    <IconButton
-                        aria-label="more"
-                        aria-controls="long-menu"
-                        aria-haspopup="true"
-                        size="small"
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            setAnchorEl(e.currentTarget);
-                            setRowSelected(info.row.original)
-                        }}
-                    >
-                        <MoreVert style={{ color: '#B6B4BA' }} />
-                    </IconButton>
-                );
-            },
+            cell: (info) => (
+                <IconButton
+                    aria-label="more"
+                    aria-controls="long-menu"
+                    aria-haspopup="true"
+                    size="small"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        setAnchorEl(e.currentTarget);
+                        setRowSelected(info.row.original)
+                    }}
+                >
+                    <MoreVert style={{ color: '#B6B4BA' }} />
+                </IconButton>
+            ),
         } as ColumnDef<T>] : []),
-        ...columns,
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        ...(columns.map(x => ({
+            ...x,
+            filterFn: 'myCustomFilter'
+        })) as ColumnDef<T>[]),
     ], [])
 
     const handleClose = () => {
@@ -165,7 +168,9 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
         data,
         columns: columns1,
         enableMultiRowSelection: true,
-        filterFns: { contains: containsFilter },
+        filterFns: {
+            myCustomFilter: (row, columnId, filterValue) => filterCellValue(row.getValue(columnId), filterValue),
+        },
         state: { globalFilter, rowSelection: rowsSelected, sorting, },
         getRowId: (row, relativeIndex) => columnKey ? `${(row as ObjectZyx)[columnKey]}` : `${relativeIndex}`,
         onRowSelectionChange: setRowsSelected,
@@ -264,9 +269,11 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
                                 fullWidth
                                 variant="contained"
                                 disabled={loading}
-                                onClick={() => {
-                                    exportExcel(String(titlemodule || '') + "Report", table.getFilteredRowModel().rows.map(x => x.original), columns)
-                                }}
+                                onClick={() => exportExcel<T>({
+                                    filename: "reporte-" + String(titlemodule || ''),
+                                    csvData: table.getFilteredRowModel().rows.map(x => x.original),
+                                    columnsexport: columns
+                                })}
                             >
                                 <DownloadIcon /> Descargar
                             </Button>
@@ -302,7 +309,7 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
                                     <TableCell
                                         key={header.id}
                                         sortDirection={false}
-                                        sx={{ width: header.column.getSize(), textAlign: header.column.columnDef.meta?.align || 'left' }}
+                                        sx={{ width: header.column.getSize(), textTransform: "uppercase", textAlign: header.column.columnDef.meta?.align || 'left' }}
                                     >
                                         <TableSortLabel
                                             active={!!header.column.getIsSorted()}
@@ -311,6 +318,12 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
                                         >
                                             {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                                         </TableSortLabel>
+                                        {header.column.getCanFilter() ? (
+                                            <FilterTableR
+                                                column={header.column}
+                                                type={header.column.columnDef.meta?.type}
+                                            />
+                                        ) : null}
                                     </TableCell>
                                 ))}
                             </TableRow>
@@ -325,7 +338,7 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
                                         key={cell.id}
                                         sx={{
                                             width: cell.column.getSize(),
-                                            textAlign: (typeof cell.getValue() === 'number' ? "right" : undefined),
+                                            textAlign: (cell.column.columnDef.meta?.type === 'number' ? "right" : undefined),
                                             overflow: 'hidden',
                                             textOverflow: 'ellipsis',
                                             whiteSpace: 'nowrap',
@@ -408,9 +421,9 @@ const TableSimple = <T extends object>({ data, columns, columnKey, redirectOnSel
                     'aria-labelledby': 'basic-button',
                 }}
             >
-                {optionsMenu?.map(({ description, Icon, onClick, validation }, index) => (
+                {optionsMenu?.map(({ description, Icon, onClick, validation }) => (
                     <MenuItem
-                        key={index}
+                        key={description}
                         disabled={validation && !validation(rowSelected)}
                         onClick={(e) => {
                             e.stopPropagation();

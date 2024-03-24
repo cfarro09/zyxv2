@@ -1,5 +1,5 @@
 import { Box, Button, Paper, Tab, Tabs, Typography } from '@mui/material';
-import { a11yProps, expenseIns, getExpenses, getSalePayment } from 'common/helpers';
+import { a11yProps, expenseIns, formatMoney, getExpenses, getSalePayment } from 'common/helpers';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from 'stores';
@@ -19,18 +19,30 @@ const columns: ColumnDef<ISale>[] = [
     {
         header: 'FECHA',
         accessorKey: 'createdate',
+        id: 'createdate',
     },
     {
         header: 'METODO DE PAGO',
         accessorKey: 'payment_method',
+        id: 'payment_method',
     },
     {
         header: 'TRANSACCIONES',
         accessorKey: 'count',
+        id: 'count',
+        meta: {
+            type: "number"
+        },
     },
     {
         header: 'TOTAL',
         accessorKey: 'total',
+        id: 'total',
+        meta: {
+            type: "number"
+        },
+        cell: (info) => "S/ " + formatMoney(`${info.row.original.total}`),
+
     },
 ];
 
@@ -38,26 +50,36 @@ const columnsExpense: ColumnDef<IExpense>[] = [
     {
         header: 'EGRESO',
         accessorKey: 'description',
+        id: 'description',
     },
     {
         header: 'FECHA',
         accessorKey: 'expense_date',
+        id: 'expense_date',
     },
     {
         header: 'MONTO',
         accessorKey: 'expense_amount',
+        id: 'expense_amount',
+        meta: {
+            type: "number"
+        },
+        cell: (info) => "S/ " + formatMoney(`${info.row.original.expense_amount}`),
     },
     {
         header: 'TIPO',
         accessorKey: 'type',
+        id: 'type',
     },
     {
         header: 'REGISTRADO POR',
         accessorKey: 'changeby',
+        id: 'changeby',
     },
     {
         header: 'FECHA REGISTRO',
         accessorKey: 'createdate',
+        id: 'createdate',
         cell: (info) => new Date(info.row.original.createdate ?? "").toLocaleString()
     },
 ];
@@ -145,11 +167,14 @@ export const Reports: React.FC = () => {
                                         fetchData={fetchDataIncome}
                                     />
                                 }
+                                titlemodule='caja'
                                 columns={columns}
                                 redirectOnSelect={true}
                                 columnKey={"name"}
                                 buttonsElement={[
                                     <Button
+                                        key={"profit"}
+                                        fullWidth
                                         onClick={() => setOpenProfitResumeDialog(true)}
                                         variant="outlined">
                                         <Money fontSize="small" sx={{ marginRight: '4px' }} />PROFIT
@@ -161,6 +186,7 @@ export const Reports: React.FC = () => {
                             <TableSimple
                                 data={mainExpenseData}
                                 addButton={true}
+                                titlemodule='gastos'
                                 showOptions={true}
                                 columnKey={"expenseid"}
                                 filterElement={

@@ -1,5 +1,5 @@
 import { Box, Grid, Paper, Tab, Tabs, Typography } from '@mui/material';
-import { a11yProps, expenseIns, getExpenses, getLastCash, getSalePayment } from 'common/helpers';
+import { a11yProps, expenseIns, formatMoney, getExpenses, getLastCash, getSalePayment } from 'common/helpers';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from 'stores';
@@ -18,18 +18,29 @@ const columns: ColumnDef<ISale>[] = [
     {
         header: 'FECHA',
         accessorKey: 'createdate',
+        id: 'createdate',
     },
     {
         header: 'METODO DE PAGO',
         accessorKey: 'payment_method',
+        id: 'payment_method',
     },
     {
         header: 'TRANSACCIONES',
         accessorKey: 'count',
+        id: 'count',
+        meta: {
+			type: "number"
+		}
     },
     {
         header: 'TOTAL',
         accessorKey: 'total',
+        id: 'total',
+        meta: {
+			type: "number"
+		},
+        cell: (info) => "S/ " + formatMoney(`${info.row.original.total}`),
     },
 ];
 
@@ -37,22 +48,31 @@ const columnsExpense: ColumnDef<IExpense>[] = [
     {
         header: 'EGRESO',
         accessorKey: 'description',
+        id: 'description',
     },
     {
         header: 'FECHA',
         accessorKey: 'expense_date',
+        id: 'expense_date',
     },
     {
         header: 'MONTO',
         accessorKey: 'expense_amount',
+        id: 'expense_amount',
+        meta: {
+            type: "number"
+        },
+        cell: (info) => "S/ " + formatMoney(`${info.row.original.expense_amount}`),
     },
     {
         header: 'REGISTRADO POR',
         accessorKey: 'changeby',
+        id: 'changeby',
     },
     {
         header: 'FECHA REGISTRO',
         accessorKey: 'createdate',
+        id: 'createdate',
         cell: (info) => new Date(info.row.original.createdate ?? "").toLocaleString()
     },
 ];
@@ -67,13 +87,13 @@ export const CloseOut: React.FC = () => {
     const mainResult2 = useSelector((state: IRootState) => state.main.mainAux2);
     const [mainData, setMainData] = useState<ISale[]>([]);
     const [mainExpenseData, setMainExpenseData] = useState<IExpense[]>([]);
-    const [tab, settab] = React.useState(0);
-    const [current, setcurrent] = useState(0)
-    const [yesterday, setyesterday] = useState(0)
-    const [expenses, setexpenses] = useState(0)
+    const [tab, setTab] = React.useState(0);
+    const [current, setCurrent] = useState(0)
+    const [yesterday, setYesterday] = useState(0)
+    const [expenses, setExpenses] = useState(0)
     const [expenseSelected, setExpenseSelected] = useState<IExpense>(null!)
 
-    const handleChangeTab = (_: React.SyntheticEvent, newValue: number) => settab(newValue);
+    const handleChangeTab = (_: React.SyntheticEvent, newValue: number) => setTab(newValue);
     const [filters, setFilters] = useState<{ startdate: Date; enddate: Date; }>({
         startdate: dayjs().toDate(),
         enddate: dayjs().toDate(),
@@ -105,7 +125,7 @@ export const CloseOut: React.FC = () => {
     useEffect(() => {
         if (!mainResult.loading && !mainResult.error) {
             if (mainResult.key === 'UFN_SALE_PAYMENTS_RESUME_REPORT') {
-                setcurrent(mainResult.data.find(x => x.payment_method === "EFECTIVO")?.total ?? 0)
+                setCurrent(mainResult.data.find(x => x.payment_method === "EFECTIVO")?.total ?? 0)
                 setMainData((mainResult.data as ISale[]) || []);
             }
         }
@@ -114,7 +134,7 @@ export const CloseOut: React.FC = () => {
     useEffect(() => {
         if (!mainResult2.loading && !mainResult2.error) {
             if (mainResult2.key === "UFN_EXPENSE_SEL") {
-                setexpenses((mainResult2.data).reduce((acc, item) => acc + parseFloat(item.expense_amount ?? "0"), 0))
+                setExpenses((mainResult2.data).reduce((acc, item) => acc + parseFloat(item.expense_amount ?? "0"), 0))
                 setMainExpenseData((mainResult2.data as IExpense[]) || []);
             }
         }
@@ -123,7 +143,7 @@ export const CloseOut: React.FC = () => {
     useEffect(() => {
         if (!mainResult1.loading && !mainResult1.error) {
             if (mainResult1.key === "UFN_LAST_CASH_SEL") {
-                setyesterday((mainResult1.data[0]?.money ?? 0) - ((mainResult1.data[0]?.expense ?? 0)))
+                setYesterday((mainResult1.data[0]?.money ?? 0) - ((mainResult1.data[0]?.expense ?? 0)))
             }
         }
     }, [mainResult1]);
@@ -181,6 +201,7 @@ export const CloseOut: React.FC = () => {
                             <TableSimple
                                 loading={mainResult.loading}
                                 data={mainData}
+                                titlemodule='caja'
                                 addButton={false}
                                 filterElement={
                                     <Filters
@@ -200,6 +221,7 @@ export const CloseOut: React.FC = () => {
                                 addButton={true}
                                 showOptions={true}
                                 columnKey={"expenseid"}
+                                titlemodule='egresos'
                                 filterElement={
                                     <Filters
                                         filters={filters}

@@ -23,27 +23,29 @@ const columns: ColumnDef<IKardex>[] = [
     {
         header: 'FECHA',
         accessorKey: 'createdate',
+        id: 'createdate',
         cell: (info) => (<span>{dayjs(info.row.original.createdate).format('DD/MM/YYYY HH:mm:ss')}</span>)
     },
     {
         header: 'ENTRADA',
         accessorKey: 'in_quantity',
-        cell: (info) => (<Typography align="center">{info.row.original.in_quantity}</Typography>),
+        id: 'in_quantity',
         meta: {
-            align: 'center'
+            type: "number"
         }
     },
     {
         header: 'SALIDA',
         accessorKey: 'out_quantity',
-        cell: (info) => (<Typography align="center">{info.row.original.out_quantity}</Typography>),
+        id: 'out_quantity',
         meta: {
-            align: 'center'
+            type: "number"
         }
     },
     {
         header: 'DOCUMENTO',
         accessorKey: 'document_type',
+        id: 'document_type',
         cell: (info) => {
             const { document_type, document_id } = info.row.original;
             let url = '';
@@ -63,14 +65,12 @@ const columns: ColumnDef<IKardex>[] = [
     {
         header: 'BALANCE',
         accessorKey: 'final_stock',
-        cell: (info) => (<Typography align="center">{info.row.original.final_stock}</Typography>),
-        meta: {
-            align: 'center'
-        }
+        id: 'final_stock',
     },
     {
         header: 'REGISTRADO POR',
         accessorKey: 'createdby',
+        id: 'createdby',
     },
 ]
 

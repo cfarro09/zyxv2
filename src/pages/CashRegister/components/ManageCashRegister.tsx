@@ -17,19 +17,26 @@ const columns: ColumnDef<ObjectZyx>[] = [
     {
         header: 'Nº ORDEN',
         accessorKey: 'order_number',
+        id: 'order_number',
     },
     {
         header: 'Cajero',
         accessorKey: 'createdby',
+        id: 'createdby',
     },
     {
         header: 'Hora',
         accessorKey: 'createdate',
+        id: 'createdate',
         cell: (info) => dayjs(`${info.row.original.createdate}`).format('HH:mm:ss')
     },
     {
         header: 'Monto',
         accessorKey: 'payment_amount',
+        id: 'payment_amount',
+        meta: {
+			type: "number"
+		}
     }
 ];
 

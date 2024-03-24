@@ -1,5 +1,5 @@
 import { Box, Button, Chip, Paper, Typography } from '@mui/material';
-import { CancelSale, formatMoney, getSaleOrder, initialRange } from 'common/helpers';
+import { CancelSale, formatMoney, getSaleOrder } from 'common/helpers';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from 'stores';
@@ -35,27 +35,36 @@ const columns: ColumnDef<ISale>[] = [
     {
         header: 'Nº ORDEN',
         accessorKey: 'order_number',
+        id: 'order_number',
     },
     {
         header: 'CLIENTE',
         accessorKey: 'customerdesc',
+        id: 'customerdesc',
     },
     {
         header: 'FECHA',
         accessorKey: 'order_date',
+        id: 'order_date',
         accessorFn: (row) => new Date(row.order_date).toLocaleString(),
     },
     {
         header: 'PRODUCTOS',
         accessorKey: 'quantity',
+        id: 'quantity',
+        meta: {
+            type: "number"
+        }
     },
     {
         header: 'GENERADA POR',
         accessorKey: 'createby',
+        id: 'createby',
     },
     {
         header: 'ESTADO',
         accessorKey: 'status',
+        id: 'status',
         cell: (info) => {
             const status = info.row.original.status;
             return (
@@ -78,7 +87,11 @@ const columns: ColumnDef<ISale>[] = [
     {
         header: 'TOTAL',
         accessorKey: 'total_amount',
-        cell: (info) => <Typography textAlign={'center'}>S/ {formatMoney(`${info.row.original.total_amount}`)}</Typography>,
+        id: 'total_amount',
+        meta: {
+            type: "number"
+        },
+        cell: (info) => "S/ " + formatMoney(`${info.row.original.total_amount}`),
     },
 ];
 
@@ -124,11 +137,12 @@ export const Sale: React.FC = () => {
                         data={mainData}
                         showOptions={true}
                         addButton={true}
+                        titlemodule='ventas'
                         optionsMenu={[
                             {
                                 description: "Imprimir",
                                 Icon: Print,
-                                onClick: (sale) => sale && fetchPrint(sale),
+                                onClick: (sale) => { sale && fetchPrint(sale) },
                                 validation: (sale) => sale?.status === 'ACTIVO'
                             },
                             {
@@ -150,6 +164,7 @@ export const Sale: React.FC = () => {
                         columnKey={"saleorderid"}
                         buttonsElement={[
                             <Button
+                                key={1}
                                 fullWidth
                                 onClick={() => setOpenPaymentResumeDialog(true)}
                                 variant="outlined"

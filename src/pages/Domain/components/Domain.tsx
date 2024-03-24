@@ -14,14 +14,20 @@ const columns: ColumnDef<IDomain>[] = [
     {
         header: 'DOMINIO',
         accessorKey: 'domainname',
+        id: 'domainname',
     },
     {
         header: 'VALORES',
         accessorKey: 'registros',
+        id: 'registros',
+        meta: {
+            type: "number"
+        }
     },
     {
-        header: 'estado',
+        header: 'ESTADO',
         accessorKey: 'status',
+        id: 'status',
         cell: (info) => {
             const status = info.row.original.status;
             return (
@@ -71,6 +77,7 @@ export const Domain: React.FC = () => {
                         loading={mainResult.loading}
                         data={mainData}
                         addButton={false}
+                        titlemodule='dominios'
                         showOptions={false}
                         columns={columns}
                         redirectOnSelect={true}

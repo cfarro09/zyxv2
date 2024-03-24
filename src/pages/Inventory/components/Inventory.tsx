@@ -19,36 +19,42 @@ const columns: ColumnDef<IInventory>[] = [
 	{
 		header: 'PRODUCTO',
 		accessorKey: 'title',
+		id: 'title',
 		size: 300,
 	},
 	{
 		header: 'CÓDIGO',
-		accessorKey: 'code'
+		accessorKey: 'code',
+		id: 'code'
 	},
 	{
 		header: 'STOCK',
 		accessorKey: 'stock',
-		cell: (info) => <Typography textAlign={"center"}>{info.row.original.stock}</Typography>,
+		id: 'stock',
 		meta: {
-			align: 'center'
+			type: "number"
 		}
 	},
 	{
 		header: 'ALMACEN',
 		accessorKey: 'warehouse',
+		id: 'warehouse',
 		size: 200,
 	},
 	{
 		header: 'COD BARRAS',
-		accessorKey: 'barcode'
+		accessorKey: 'barcode',
+		id: 'barcode'
 	},
 	{
 		header: 'CATEGORIA',
-		accessorKey: 'category'
+		accessorKey: 'category',
+		id: 'category'
 	},
 	{
 		header: 'FECHA CREACION',
 		accessorKey: 'changedate',
+		id: 'changedate',
 		accessorFn: (row: IInventory) => dayjs(row.changedate).format('DD/MM/YYYY'),
 	},
 ]
@@ -129,6 +135,7 @@ export const Inventory: React.FC<unknown> = () => {
 						}
 						buttonsElement={[
 							<Button
+								key={1}
 								onClick={() => setOpenImportDialog(true)}
 								variant="outlined"
 								fullWidth
@@ -136,6 +143,7 @@ export const Inventory: React.FC<unknown> = () => {
 								<FileUpload fontSize="small" /> Importar
 							</Button>,
 							<Button
+								key={2}
 								onClick={handlerOpenTransferDialog}
 								variant="outlined"
 								fullWidth

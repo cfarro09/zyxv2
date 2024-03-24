@@ -16,18 +16,22 @@ const columns: ColumnDef<ICustomer>[] = [
     {
         header: 'NOMBRE COMPLETO',
         accessorKey: 'name',
+        id: 'name',
     },
     {
         header: 'TIPO DOC.',
         accessorKey: 'document_type',
+        id: 'document_type',
     },
     {
         header: 'DOCUMENTO',
         accessorKey: 'document',
+        id: 'document',
     },
     {
         header: 'estado',
         accessorKey: 'status',
+        id: 'status',
         cell: (info) => {
             const status = info.row.original.status;
             return (
@@ -87,6 +91,7 @@ export const Customer: React.FC = () => {
                         data={mainData}
                         showOptions={true}
                         addButton={true}
+                        titlemodule='clientes'
                         optionsMenu={[{
                             description: "Eliminar",
                             Icon: DeleteIcon,

@@ -22,15 +22,18 @@ const columns: ColumnDef<IDomainValue>[] = [
     {
         header: 'DOMINIO',
         accessorKey: 'domainname',
+        id: 'domainname',
         enableResizing: false,
     },
     {
         header: 'DESCRIPCION',
         accessorKey: 'domaindesc',
+        id: 'domaindesc',
     },
     {
         header: 'VALOR',
         accessorKey: 'domainvalue',
+        id: 'domainvalue',
     }
 ];
 
@@ -91,6 +94,7 @@ export const ManageDomain: React.FC<IMainProps> = ({ baseUrl }) => {
                             <Grid item xs={12} sm={12}>
                                 <TableSimple
                                     loading={loading}
+                                    titlemodule={domainname}
                                     data={dataAux.domainValues}
                                     addButton={true}
                                     showOptions={true}

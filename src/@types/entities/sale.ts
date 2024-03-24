@@ -16,6 +16,7 @@ export interface ISale {
     sub_total: number;
     moneyFromCustomer: number;
     total_quantity?: number;
+    total?: number//no usar para sale, solo es para reporte de cashregister
 }
 
 export interface IExpense {

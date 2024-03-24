@@ -17,19 +17,26 @@ const columns: ColumnDef<ObjectZyx>[] = [
     {
         header: 'Nº ORDEN',
         accessorKey: 'order_number',
+        id: 'order_number',
     },
     {
-        header: 'Cajero',
+        header: 'CAJERO',
         accessorKey: 'createdby',
+        id: 'createdby',
     },
     {
-        header: 'Hora',
+        header: 'HORA',
         accessorKey: 'createdate',
+        id: 'createdate',
         cell: (info) => dayjs(`${info.row.original.createdate}`).format('HH:mm:ss')
     },
     {
-        header: 'Monto',
+        header: 'MONTO',
         accessorKey: 'payment_amount',
+        id: 'payment_amount',
+        meta: {
+            type: "number"
+        }
     }
 ];
 
@@ -50,44 +57,43 @@ export const DetailCloseOut: React.FC<IMainProps> = ({ baseUrl }) => {
     }, []);
 
     return (
-        <>
-            <Box className="flex max-w-screen-xl mr-auto ml-auto flex-col">
-                <div className="my-3">
-                    <Breadcrumbs aria-label="breadcrumb">
-                        <Link color="textPrimary" to={baseUrl + window.location.search}>
-                            <Typography color="secondary" fontWeight={500}>Caja</Typography>
-                        </Link>
-                        <Typography color="textSecondary">Detalle</Typography>
-                    </Breadcrumbs>
-                </div>
-                <Paper className="w-full" sx={{ marginTop: 0 }}>
-                    <Grid container className="px-6 py-3 border-b">
-                        <Grid item xs={12} sm={6}>
-                            <Box>
-                                <Typography variant="h5">
-                                    {id?.replace("--", " con ")}
-                                </Typography>
-                            </Box>
+        <Box className="flex max-w-screen-xl mr-auto ml-auto flex-col">
+            <div className="my-3">
+                <Breadcrumbs aria-label="breadcrumb">
+                    <Link color="textPrimary" to={baseUrl + window.location.search}>
+                        <Typography color="secondary" fontWeight={500}>Caja</Typography>
+                    </Link>
+                    <Typography color="textSecondary">Detalle</Typography>
+                </Breadcrumbs>
+            </div>
+            <Paper className="w-full" sx={{ marginTop: 0 }}>
+                <Grid container className="px-6 py-3 border-b">
+                    <Grid item xs={12} sm={6}>
+                        <Box>
+                            <Typography variant="h5">
+                                {id?.replace("--", " con ")}
+                            </Typography>
+                        </Box>
+                    </Grid>
+                </Grid>
+                <Box className="p-6">
+                    <Grid container spacing={2}>
+                        <Grid item xs={12} sm={12}>
+                            <TableSimple
+                                loading={loading}
+                                titlemodule={id}
+                                data={dataAux.listPayment}
+                                columnKey={"saleorderpaymentid"}
+                                columns={columns}
+                                onClickOnRow={(row) => {
+                                    window.open(`/sale_orders/${row?.saleorderid}`)
+                                }}
+                            />
                         </Grid>
                     </Grid>
-                    <Box className="p-6">
-                        <Grid container spacing={2}>
-                            <Grid item xs={12} sm={12}>
-                                <TableSimple
-                                    loading={loading}
-                                    data={dataAux.listPayment}
-                                    columnKey={"saleorderpaymentid"}
-                                    columns={columns}
-                                    onClickOnRow={(row) => {
-                                        window.open(`/sale_orders/${row?.saleorderid}`)
-                                    }}
-                                />
-                            </Grid>
-                        </Grid>
-                    </Box>
-                </Paper>
-            </Box >
-        </>
+                </Box>
+            </Paper>
+        </Box >
     );
 };
 

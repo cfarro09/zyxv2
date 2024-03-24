@@ -1,5 +1,5 @@
 import { Box, Paper, Typography } from '@mui/material';
-import { cancelPurchaseOrder, getPurchaseOrder } from 'common/helpers';
+import { cancelPurchaseOrder, formatMoney, getPurchaseOrder } from 'common/helpers';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from 'stores';
@@ -15,27 +15,40 @@ const columns: ColumnDef<IPurchase>[] = [
     {
         header: 'Nº ORDEN',
         accessorKey: 'order_number',
+        id: 'order_number',
     },
     {
         header: 'ALMACEN',
         accessorKey: 'warehouse',
+        id: 'warehouse',
     },
     {
         header: 'PROVEEDOR',
         accessorKey: 'supplier',
+        id: 'supplier',
     },
     {
         header: 'FECHA',
         accessorKey: 'order_date',
+        id: 'order_date',
         accessorFn: (row) => dayjs(row.order_date).format('DD/MM/YYYY'),
     },
     {
         header: 'TOTAL',
         accessorKey: 'total_amount',
+        id: 'total_amount',
+        meta: {
+            type: "number"
+        },
+        cell: (info) => "S/ " + formatMoney(`${info.row.original.total_amount}`),
     },
     {
         header: 'PRODUCTOS',
         accessorKey: 'quantity',
+        id: 'quantity',
+        meta: {
+            type: "number"
+        }
     },
 ];
 
@@ -78,6 +91,7 @@ export const Purchase: React.FC = () => {
                         data={mainData}
                         showOptions={true}
                         addButton={true}
+                        titlemodule='compras'
                         optionsMenu={[{
                             description: "Anular",
                             Icon: DeleteIcon,

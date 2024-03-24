@@ -1,30 +1,22 @@
+import { ColumnDef } from '@tanstack/react-table';
 import FileSaver from 'file-saver';
 
-type ColumnTmp = {
-    Header: string;
-    accessor: string;
-    prefixTranslation?: string;
+interface IExportExcel<T> {
+    filename: string;
+    csvData: T[];
+    columnsexport?: ColumnDef<T>[]
 }
-interface ObjectZyx {
-    [key: string]: string | number | boolean | null;
-}
-export function exportExcel(filename: string, csvData: unknown[], columnsexport?: ColumnTmp[]): void {
+
+export const exportExcel = <T>({ filename, csvData, columnsexport }: IExportExcel<T>): void => {
     import('xlsx').then(XLSX => {
         const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
         const fileExtension = '.xlsx';
-        let datafromtable = csvData;
-        if (columnsexport) {
-            debugger
-            // Initialize datafromtable as an array of ObjectZyx instead of unknown
-            datafromtable = csvData.map((x: ObjectZyx) => {
-                const newx: ObjectZyx = {}; // ObjectZyx here instead of unknown
-                columnsexport.forEach((y: ColumnTmp) => {
-                    newx[y.header] = x[y.accessorKey]; // Make sure accessor matches the keys in csvData objects
-                });
-                return newx;
-            });
-        }
-        console.log("datafromtable", datafromtable);
+        
+        const datafromtable = columnsexport ? csvData.map((x) => (columnsexport.reduce((acc, item) => ({
+            ...acc,
+            [`${item.header}`]: (x as Record<string, object>)[item.id!!]
+        }), {}) as T)) : csvData;
+        
         const ws = XLSX.utils.json_to_sheet(datafromtable);
         const wb = { Sheets: { 'data': ws }, SheetNames: ['data'] };
         const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
